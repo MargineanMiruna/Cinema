@@ -12,3 +12,5 @@ The main goals of this project are:
 2. Improved Data Management for Cinemas: Moving ticket sales and customer data online allows for better data organization, sales tracking, and customer insights.
 
 This project brings together the convenience of digital booking with the efficiency of automated data management, making the cinema experience better for both customers and staff.
+
+![UML](https://github.com/user-attachments/assets/ae2d3123-7898-4424-a39f-a0a90a089fc9)
