@@ -9,6 +9,7 @@ Users can log in either as a Customer or as Staff.
 3.	Easy ticket booking for individuals and groups simplifies event planning and seating arrangements.
 
 *Staff login*: 
+
 Staff members have access to the platform's content management tools, enabling them to add new movies, create showtimes, and keep schedules up-to-date for customers.
 
 The main goals of this project are:
