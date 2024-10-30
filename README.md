@@ -3,7 +3,7 @@
 This project seeks to improve the movie-ticket reservation experience by offering a user-friendly online booking platform. It simplifies the process for customers, offering convenient features and a smooth user experience.
 Users can log in either as a Customer or as Staff.
 
-Customer login:
+#Customer login:
 1.	Membership Creation: Customers can register for membership, which offers benefits such as discounts.
 2.	Movie Listings: Customers can view a list of available movies, including showtimes and genres.
 3.	Easy ticket booking for individuals and groups simplifies event planning and seating arrangements.
