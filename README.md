@@ -3,9 +3,9 @@
 This project seeks to improve the movie-ticket reservation experience by offering a user-friendly online booking platform. It simplifies the process for customers, offering convenient features and a seamless user experience.
 
 Features for Users:
-•	Membership Creation: Users can register for membership, which offers benefits such as discounts.
-• Movie Listings: Users can view a list of available movies, including showtimes and genres.
-• Easy ticket booking for individuals and groups simplifies event planning and seating arrangements.
+1. Membership Creation: Users can register for membership, which offers benefits such as discounts.
+2. Movie Listings: Users can view a list of available movies, including showtimes and genres.
+3. Easy ticket booking for individuals and groups simplifies event planning and seating arrangements.
 
 The main goals of this project are:
 1. Improved Customer Experience: The web platform simplifies the booking process, saving customers time and effort.
