@@ -18,4 +18,6 @@ Staff members have access to the platform's content management tools, enabling t
 
 This project brings together the convenience of digital booking with the efficiency of automated data management, making the cinema experience better for both customers and staff.
 
-![UML](https://github.com/user-attachments/assets/ae2d3123-7898-4424-a39f-a0a90a089fc9)
+![UML (2)](https://github.com/user-attachments/assets/780dfa6a-53b5-4495-82af-f270cf43f957)
+
+
