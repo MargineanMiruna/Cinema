@@ -18,6 +18,7 @@ The main goals of this project are:
 This project brings together the convenience of digital booking with the efficiency of automated data management, making the cinema experience better for both customers and staff.
 
 *UML diagram*
-![UML (2)](https://github.com/user-attachments/assets/780dfa6a-53b5-4495-82af-f270cf43f957)
+
+![UML (3)](https://github.com/user-attachments/assets/d6209169-0dd4-4025-b2ab-7b68d69db3fa)
 
 
