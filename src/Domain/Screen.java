@@ -4,15 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Screen {
-    private int id;
     private int nrStandardSeats;
     private int nrVipSeats;
     private int nrPremiumSeats;
     private List<Seat> seats;
 
 
-    public Screen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
-        this.id = id;
+    public Screen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         this.nrStandardSeats = nrStandardSeats;
         this.nrVipSeats = nrVipSeats;
         this.nrPremiumSeats = nrPremiumSeats;
@@ -31,14 +29,6 @@ public class Screen {
             seats.add(new Seat(seatid,i,false, SeatType.premium));
             seatid ++;
         }
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getNrStandardSeats() {

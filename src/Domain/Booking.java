@@ -4,15 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class Booking {
-    private int id;
     private int customerId;
     private int showtimeId;
     private LocalDate date;
     private int nrOfCustomers;
     private List<Seat> chosenSeats;
 
-    public Booking(int id, int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
-        this.id = id;
+    public Booking(int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
         this.customerId = customerId;
         this.showtimeId = showtimeId;
         this.date = LocalDate.now();
@@ -20,15 +18,9 @@ public class Booking {
         this.chosenSeats = chosenSeats;
     }
 
-    public void setId(int id) {
-        this.id = id;
-    }
-
     public void setCustomerId(int customerId) {
         this.customerId = customerId;
     }
-
-
 
     public void setDate(LocalDate date) {
         this.date = date;
@@ -40,10 +32,6 @@ public class Booking {
 
     public void setChosenSeats(List<Seat> chosenSeats) {
         this.chosenSeats = chosenSeats;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getCustomerId() {

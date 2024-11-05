@@ -1,20 +1,14 @@
 package Domain;
 
 public class Seat {
-    private int id;
     private int seatNr;
     private boolean booked;
     private SeatType type;
 
-    public Seat(int id, int seatNr, boolean booked, SeatType type) {
-        this.id = id;
+    public Seat(int seatNr, boolean booked, SeatType type) {
         this.seatNr = seatNr;
         this.booked = booked;
         this.type = type;
-    }
-
-    public int getId() {
-        return id;
     }
 
     public int getSeatNr() {
