@@ -1,5 +1,7 @@
-public class Main {
+import UI.ConsoleApp;
+class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        ConsoleApp app = new ConsoleApp();
+        app.run();
     }
 }

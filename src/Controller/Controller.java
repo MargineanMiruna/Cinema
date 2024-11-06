@@ -1,6 +1,7 @@
 package Controller;
 
-import Domain.Customer;
+
+import Domain.*;
 import Service.CinemaService;
 
 import java.time.LocalDate;
@@ -37,5 +38,21 @@ public class Controller {
 
     public void createStaff(String firstname, String lastname, String email) {
         cinemaService.addStaff(firstname, lastname, email);
+    }
+
+    public Staff logStaff(String email) {
+        try {
+            if(cinemaService.findCustomerByEmail(email) != null) {
+                return cinemaService.findStaffByEmail(email);
+            }
+            else {
+                System.out.println("No account by this email!");
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("An error occurred: ");
+            return null;
+
+        }
     }
 }

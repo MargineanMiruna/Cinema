@@ -70,13 +70,13 @@ public class CinemaService {
         screenRepo.update(id, screen);
     }
 
-    public void addSeat(int seatNr, boolean booked, SeatType type) {
-        Seat seat = new Seat(seatNr,booked,type);
+    public void addSeat(int seatNr,  SeatType type) {
+        Seat seat = new Seat(seatNr,type);
         seatRepo.add(seat);
     }
 
-    public void updateSeat(int id, int seatNr, boolean booked, SeatType type) {
-        Seat seat = new Seat(seatNr,booked,type);
+    public void updateSeat(int id, int seatNr,  SeatType type) {
+        Seat seat = new Seat(seatNr, type);
         seatRepo.update(id, seat);
     }
 
@@ -129,6 +129,15 @@ public class CinemaService {
         for(Customer customer : customers){
             if ( customer.getEmail().equals(email))
                 return customer;
+        }
+        return null;
+    }
+
+    public Staff findStaffByEmail(String email){
+        List<Staff> staffs = staffRepo.getAll();
+        for(Staff staff : staffs){
+            if ( staff.getEmail().equals(email))
+                return staff;
         }
         return null;
     }

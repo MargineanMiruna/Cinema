@@ -1,6 +1,7 @@
 package UI;
 
 import Controller.Controller;
+import Domain.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -40,7 +41,7 @@ public class ConsoleApp {
                     System.out.println("Log in");
                     System.out.println("Please enter your email: ");
                     String email = sc.next();
-                    ctrl.logCustomer(email);
+                    Customer loggedCustomer = ctrl.logCustomer(email);
                     break;
                 }
                 case 2: {
@@ -63,7 +64,7 @@ public class ConsoleApp {
                     System.out.println("Log in");
                     System.out.println("Please enter your email: ");
                     String email = sc.next();
-                    //ctrl.logStaff(email);
+                    Staff loggedStaff = ctrl.logStaff(email);
                     break;
                 }
                 case 3: break;
