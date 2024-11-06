@@ -4,12 +4,20 @@ public class Customer implements User {
     private String firstName;
     private String lastName;
     private boolean underaged;
+    private String email;
 
-    public Customer(String firstName, String lastName, boolean underaged) {
+    public Customer(String firstName, String lastName, String email, boolean underaged) {
         this.firstName = firstName;
         this.lastName = lastName;
+        this.email = email;
         this.underaged = underaged;
     }
+
+    @Override
+    public String getEmail() {
+        return email;
+    }
+
 
     @Override
     public String getFirstName() {
@@ -21,7 +29,9 @@ public class Customer implements User {
         return lastName;
     }
 
-    boolean getUnderaged(){
+    public boolean getUnderaged(){
         return underaged;
     }
+
+
 }

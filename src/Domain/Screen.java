@@ -18,15 +18,15 @@ public class Screen {
         this.seats = new ArrayList<Seat>();
         int seatid = 0;
         for (int i = 1; i <= nrStandardSeats; i++) {
-            seats.add(new Seat(seatid,i,false, SeatType.standard));
+            seats.add(new Seat(i,false, SeatType.standard));
             seatid ++;
         }
-        for (int i = 1; i <= nrVipSeats ; i++) {
-            seats.add(new Seat(seatid,i,false, SeatType.vip));
+        for (int i = 1 + nrStandardSeats; i <= nrVipSeats + nrStandardSeats; i++) {
+            seats.add(new Seat(i,false, SeatType.vip));
             seatid ++;
         }
-        for( int i = 1; i <=nrPremiumSeats; i++) {
-            seats.add(new Seat(seatid,i,false, SeatType.premium));
+        for( int i = 1 + nrStandardSeats + nrVipSeats; i <=nrPremiumSeats + nrVipSeats + nrStandardSeats; i++) {
+            seats.add(new Seat(i,false, SeatType.premium));
             seatid ++;
         }
     }

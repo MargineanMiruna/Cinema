@@ -4,6 +4,7 @@ import Domain.*;
 import Repo.InMemoryRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 public class CinemaService {
@@ -19,93 +20,117 @@ public class CinemaService {
 
     public CinemaService() {}
 
-    void addCustomer(String firstName, String lastName, boolean underage) {
-        Customer customer = new Customer(firstName, lastName, underage);
+    public void addCustomer(String firstName, String lastName, String email, boolean underage) {
+        Customer customer = new Customer(firstName, lastName, email, underage);
         customerRepo.add(customer);
     }
 
-    void updateCustomer(int id, String firstName, String lastName, boolean underage) {
-        Customer customer = new Customer(firstName, lastName, underage);
+    public void updateCustomer(int id, String firstName, String lastName,String email, boolean underage) {
+        Customer customer = new Customer(firstName, lastName, email, underage);
         customerRepo.update(id, customer);
     }
 
-    void addStaff(String firstName, String lastName) {
-        Staff staff = new Staff(firstName, lastName);
+    public void addStaff(String firstName, String lastName, String email) {
+        Staff staff = new Staff(firstName, lastName, email);
         staffRepo.add(staff);
     }
 
-    void updateStaff(int id, String firstName, String lastName) {
-        Staff staff = new Staff(firstName, lastName);
+    public void updateStaff(int id, String firstName, String lastName, String email) {
+        Staff staff = new Staff(firstName, lastName, email);
         staffRepo.update(id, staff);
     }
 
-    void addMovie(String title, boolean pg, String genre, LocalDate releaseDate) {
+    public void addMovie(String title, boolean pg, String genre, LocalDate releaseDate) {
         Movie movie = new Movie(title, pg, genre, releaseDate);
         movieRepo.add(movie);
     }
 
-    void updateMovie(int id, String title, boolean pg, String genre, LocalDate releaseDate) {
+    public void updateMovie(int id, String title, boolean pg, String genre, LocalDate releaseDate) {
         Movie movie = new Movie(title, pg, genre, releaseDate);
         movieRepo.update(id, movie);
     }
 
-    void addShowtime(int screenId, int movieId, int startTime, double duration) {
+    public void addShowtime(int screenId, int movieId, int startTime, double duration) {
         Showtime showtime = new Showtime(screenId, movieId, startTime, duration);
         showtimeRepo.add(showtime);
     }
 
-    void updateShowtime(int id, int screenId, int movieId, int startTime, double duration) {
+    public void updateShowtime(int id, int screenId, int movieId, int startTime, double duration) {
         Showtime showtime = new Showtime(screenId, movieId, startTime, duration);
         showtimeRepo.update(id, showtime);
     }
 
-    void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
+    public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.add(screen);
     }
 
-    void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
+    public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.update(id, screen);
     }
 
-    void addSeat(int seatNr, boolean booked, SeatType type) {
+    public void addSeat(int seatNr, boolean booked, SeatType type) {
         Seat seat = new Seat(seatNr,booked,type);
         seatRepo.add(seat);
     }
 
-    void updateSeat(int id, int seatNr, boolean booked, SeatType type) {
+    public void updateSeat(int id, int seatNr, boolean booked, SeatType type) {
         Seat seat = new Seat(seatNr,booked,type);
         seatRepo.update(id, seat);
     }
 
-    void addBooking(int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
+    public void addBooking(int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
         Booking booking = new Booking(customerId, bookingId, date, nrOfCustomers, chosenSeats);
         bookingRepo.add(booking);
     }
 
-    void updateBooking(int id, int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
+    public void updateBooking(int id, int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
         Booking booking = new Booking(customerId, bookingId, date, nrOfCustomers, chosenSeats);
         bookingRepo.update(id, booking);
     }
 
-    void addBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public void addBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
         BasicMembership basicMembership = new BasicMembership(customer, startDate,endDate, bookings);
         basicMembershipRepo.add(basicMembership);
     }
 
-    void updateBasicMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public void updateBasicMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
         BasicMembership basicMembership = new BasicMembership(customer, startDate,endDate, bookings);
         basicMembershipRepo.update(id, basicMembership);
     }
 
-    void addPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public void addPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
         PremiumMembership premiumMembership = new PremiumMembership(customer, startDate,endDate, bookings);
         premiumMembershipRepo.add(premiumMembership);
     }
 
-    void updatePremiumMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public void updatePremiumMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
         PremiumMembership premiumMembership = new PremiumMembership(customer, startDate,endDate, bookings);
         premiumMembershipRepo.update(id, premiumMembership);
     }
+
+    public List displayShowtimes(Customer customer) {
+        if (customer.getUnderaged()) {
+            List<Showtime> showtimes = showtimeRepo.getAll();
+            List<Showtime> filteredShowtimes = new ArrayList<>();
+            for(Showtime showtime : showtimes)
+            {
+                if(!movieRepo.read(showtime.getMovieId()).getPg())
+                    filteredShowtimes.add(showtime);
+            }
+            return filteredShowtimes;
+        }
+        return showtimeRepo.getAll();
+    }
+
+    public Customer findCustomerByEmail(String email){
+        List<Customer> customers = customerRepo.getAll();
+        for(Customer customer : customers){
+            if ( customer.getEmail().equals(email))
+                return customer;
+        }
+        return null;
+    }
+
 }
