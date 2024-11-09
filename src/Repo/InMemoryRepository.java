@@ -16,7 +16,7 @@ public class InMemoryRepository<T> implements IRepository<T> {
 
         if (lastEntry == null)
             return 1;
-        return lastEntry.getKey();
+        return lastEntry.getKey() + 1;
     }
 
     @Override
@@ -40,7 +40,7 @@ public class InMemoryRepository<T> implements IRepository<T> {
     }
 
     @Override
-    public List getAll() {
-        return List.of(objects.values());
+    public Map<Integer, T> getAll() {
+        return objects;
     }
 }

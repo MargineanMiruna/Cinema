@@ -6,17 +6,18 @@ import Repo.InMemoryRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class CinemaService {
-    InMemoryRepository<Customer> customerRepo;
-    InMemoryRepository<Staff> staffRepo;
-    InMemoryRepository<Movie> movieRepo;
-    InMemoryRepository<Showtime> showtimeRepo;
-    InMemoryRepository<Screen> screenRepo;
-    InMemoryRepository<Seat> seatRepo;
-    InMemoryRepository<Booking> bookingRepo;
-    InMemoryRepository<BasicMembership> basicMembershipRepo;
-    InMemoryRepository<PremiumMembership> premiumMembershipRepo;
+    InMemoryRepository<Customer> customerRepo = new InMemoryRepository<Customer>();
+    InMemoryRepository<Staff> staffRepo = new InMemoryRepository<Staff>();
+    InMemoryRepository<Movie> movieRepo = new InMemoryRepository<Movie>();
+    InMemoryRepository<Showtime> showtimeRepo = new InMemoryRepository<Showtime>();
+    InMemoryRepository<Screen> screenRepo = new InMemoryRepository<Screen>();
+    InMemoryRepository<Seat> seatRepo = new InMemoryRepository<Seat>();
+    InMemoryRepository<Booking> bookingRepo = new InMemoryRepository<Booking>();
+    InMemoryRepository<BasicMembership> basicMembershipRepo = new InMemoryRepository<BasicMembership>();
+    InMemoryRepository<PremiumMembership> premiumMembershipRepo = new InMemoryRepository<PremiumMembership>();
 
     public CinemaService() {}
 
@@ -110,35 +111,41 @@ public class CinemaService {
         premiumMembershipRepo.update(id, premiumMembership);
     }
 
-    public List displayShowtimes(Customer customer) {
-        if (customer.getUnderaged()) {
-            List<Showtime> showtimes = showtimeRepo.getAll();
+    public List<Showtime> displayShowtimes(Customer customer) {
+        Map<Integer, Showtime> showtimes = showtimeRepo.getAll();
+        List<Showtime> unfilteredShowtimes = new ArrayList<Showtime>(showtimeRepo.getAll().size());
+
+        if(customer.getUnderaged()) {
             List<Showtime> filteredShowtimes = new ArrayList<>();
-            for(Showtime showtime : showtimes)
-            {
-                if(!movieRepo.read(showtime.getMovieId()).getPg())
-                    filteredShowtimes.add(showtime);
+            for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
+                if(!movieRepo.read(entry.getValue().getMovieId()).getPg())
+                    filteredShowtimes.add(entry.getValue());
             }
             return filteredShowtimes;
         }
-        return showtimeRepo.getAll();
+
+        return unfilteredShowtimes;
     }
 
     public Customer findCustomerByEmail(String email){
-        List<Customer> customers = customerRepo.getAll();
-        for(Customer customer : customers){
-            if ( customer.getEmail().equals(email))
-                return customer;
+        Map<Integer, Customer> customers = customerRepo.getAll();
+
+        for(Map.Entry<Integer, Customer> entry : customers.entrySet()){
+            if(entry.getValue().getEmail().equals(email))
+                return entry.getValue();
         }
+
         return null;
     }
 
     public Staff findStaffByEmail(String email){
-        List<Staff> staffs = staffRepo.getAll();
-        for(Staff staff : staffs){
-            if ( staff.getEmail().equals(email))
-                return staff;
+        Map<Integer, Staff> staffs = staffRepo.getAll();
+
+        for(Map.Entry<Integer, Staff> entry : staffs.entrySet()){
+            if(entry.getValue().getEmail().equals(email))
+                return entry.getValue();
         }
+
         return null;
     }
 

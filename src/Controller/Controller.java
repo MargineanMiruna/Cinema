@@ -42,7 +42,7 @@ public class Controller {
 
     public Staff logStaff(String email) {
         try {
-            if(cinemaService.findCustomerByEmail(email) != null) {
+            if(cinemaService.findStaffByEmail(email) != null) {
                 return cinemaService.findStaffByEmail(email);
             }
             else {
