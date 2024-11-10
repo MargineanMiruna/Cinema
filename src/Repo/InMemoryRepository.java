@@ -20,8 +20,10 @@ public class InMemoryRepository<T> implements IRepository<T> {
     }
 
     @Override
-    public void add(T obj) {
-        objects.put(createNewId(), obj);
+    public int add(T obj) {
+        int id = createNewId();
+        objects.put(id, obj);
+        return id;
     }
 
     @Override

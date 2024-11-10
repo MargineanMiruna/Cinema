@@ -118,9 +118,13 @@ public class CinemaService {
         seatRepo.update(id, seat);
     }
 
-    public void addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
+    public int addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers);
-        bookingRepo.add(booking);
+        return bookingRepo.add(booking);
+    }
+
+    public Booking getBooking(int id) {
+        return bookingRepo.read(id);
     }
 
     public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
@@ -128,9 +132,13 @@ public class CinemaService {
         bookingRepo.update(id, booking);
     }
 
-    public void addTicket(int bookingId, int seatId, double price) {
+    public int addTicket(int bookingId, int seatId, double price) {
         Ticket ticket = new Ticket(bookingId, seatId, price);
-        ticketRepo.add(ticket);
+        return ticketRepo.add(ticket);
+    }
+
+    public Ticket getTicket(int id) {
+        return ticketRepo.read(id);
     }
 
     public void updateTicket(int id, int bookingId, int seatId, double price) {

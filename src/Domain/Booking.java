@@ -8,7 +8,7 @@ public class Booking {
     private int showtimeId;
     private LocalDate date;
     private int nrOfCustomers;
-    private List<Ticket> tickets;
+    private List<Integer> tickets;
 
     public Booking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         this.customerId = customerId;
@@ -29,7 +29,7 @@ public class Booking {
         this.nrOfCustomers = nrOfCustomers;
     }
 
-    public void setChosenSeats(List<Ticket> tickets) {
+    public void setTickets(List<Integer> tickets) {
         this.tickets = tickets;
     }
 
@@ -53,7 +53,7 @@ public class Booking {
         return nrOfCustomers;
     }
 
-    public List<Ticket> getTickets() {
+    public List<Integer> getTickets() {
         return tickets;
     }
 }

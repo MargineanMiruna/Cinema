@@ -62,7 +62,7 @@ public class Controller {
     }
 
     public void customerMenu() {
-        System.out.println("1. View today's showtimes\n2. Create a booking\n3. Create a Membership");
+        System.out.println("1. View today's showtimes\n2. Create a booking\n3. Create a Membership\n4. Exit");
     }
 
     public void displayShowtimes(Customer customer) {
@@ -83,26 +83,29 @@ public class Controller {
         }
     }
 
-    public void createBooking(int loggedCustomerId, int showtimeId, LocalDate date, int nrOfSeats) {
-        cinemaService.addBooking(loggedCustomerId, showtimeId, date, nrOfSeats);
+    public int createBooking(int loggedCustomerId, int showtimeId, LocalDate date, int nrOfSeats) {
+        return cinemaService.addBooking(loggedCustomerId, showtimeId, date, nrOfSeats);
     }
 
-    public int getIdOfBooking(Booking booking) {
-        return cinemaService.getIdOfBooking(booking);
+    public Booking getBooking(int bookingId) {
+        return cinemaService.getBooking(bookingId);
     }
 
-    public void createTickets(int bookingId, List<Integer> seats) {
-        for(int i = 0; i < seats.size(); i++) {
-            cinemaService.addTicket(bookingId, cinemaService.getSeat(seats.get(i)).getSeatNr(), cinemaService.getSeat(seats.get(i)).getPrice());
-        }
+    public int createTicket(int bookingId, int seatId) {
+        return cinemaService.addTicket(bookingId, seatId, cinemaService.getSeat(seatId).getPrice());
     }
 
-    public List<Ticket> currentBookingTickets(int bookingId) {
-        return cinemaService.bookingTickets(bookingId);
+    public void displayTickets(Customer customer, Booking booking, int ticketId) {
+        String ticketInfo = """
+                Booking made by """ + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + """
+                Seat number """ + cinemaService.getSeat(cinemaService.getTicket(ticketId).getSeatId()).getSeatNr() + " type " + cinemaService.getSeat(cinemaService.getTicket(ticketId).getSeatId()).getType() + """
+                Price """ + cinemaService.getTicket(cinemaService.getTicket(ticketId).getSeatId()).getPrice();
+        System.out.println(ticketInfo);
     }
+
 
     public void staffMenu() {
-        System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen");
+        System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen\n4. Back");
     }
 
     public void staffMenu2() {
