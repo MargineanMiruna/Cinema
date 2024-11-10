@@ -8,14 +8,13 @@ public class Booking {
     private int showtimeId;
     private LocalDate date;
     private int nrOfCustomers;
-    private List<Seat> chosenSeats;
+    private List<Ticket> tickets;
 
-    public Booking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
+    public Booking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         this.customerId = customerId;
         this.showtimeId = showtimeId;
         this.date = LocalDate.now();
         this.nrOfCustomers = nrOfCustomers;
-        this.chosenSeats = chosenSeats;
     }
 
     public void setCustomerId(int customerId) {
@@ -30,8 +29,8 @@ public class Booking {
         this.nrOfCustomers = nrOfCustomers;
     }
 
-    public void setChosenSeats(List<Seat> chosenSeats) {
-        this.chosenSeats = chosenSeats;
+    public void setChosenSeats(List<Ticket> tickets) {
+        this.tickets = tickets;
     }
 
     public int getCustomerId() {
@@ -54,7 +53,7 @@ public class Booking {
         return nrOfCustomers;
     }
 
-    public List<Seat> getChosenSeats() {
-        return chosenSeats;
+    public List<Ticket> getTickets() {
+        return tickets;
     }
 }

@@ -11,9 +11,7 @@ public class Ticket {
         this.price = price;
     }
 
-    public int getBookingId() {
-        return bookingId;
-    }
+    public int getBookingId() { return bookingId; }
 
     public int getSeatId() {
         return seatId;

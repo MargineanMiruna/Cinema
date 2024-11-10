@@ -48,6 +48,15 @@ public class CinemaService {
         movieRepo.add(movie);
     }
 
+    public Integer findMovieIdByTitle(String title) {
+        for (Map.Entry<Integer, Movie> entry : movieRepo.getAll().entrySet()) {
+            if (entry.getValue().getTitle().equalsIgnoreCase(title)) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
+
     public Movie getMovie(int id) {
         return movieRepo.read(id);
     }
@@ -56,24 +65,34 @@ public class CinemaService {
         Movie movie = new Movie(title, pg, genre, releaseDate);
         movieRepo.update(id, movie);
     }
+    public void deleteMovie(int id) {
+       movieRepo.delete(id);
+    }
 
-    public void addShowtime(int screenId, int movieId, int startTime, double duration) {
-        Showtime showtime = new Showtime(screenId, movieId, startTime, duration);
+    public void addShowtime(int screenId, int movieId, LocalDate date, int startTime, double duration) {
+        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration);
         showtimeRepo.add(showtime);
+    }
+
+    public void deleteShowtime(int id){
+        showtimeRepo.delete(id);
     }
 
     public Showtime getShowtime(int id) {
         return showtimeRepo.read(id);
     }
 
-    public void updateShowtime(int id, int screenId, int movieId, int startTime, double duration) {
-        Showtime showtime = new Showtime(screenId, movieId, startTime, duration);
+    public void updateShowtime(int id, int screenId, int movieId, LocalDate date, int startTime, double duration) {
+        Showtime showtime = new Showtime(screenId, movieId, date, startTime, duration);
         showtimeRepo.update(id, showtime);
     }
 
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.add(screen);
+    }
+    public void deleteScreen(int id){
+        screenRepo.delete(id);
     }
 
     public Screen getScreen(int id) {
@@ -90,28 +109,32 @@ public class CinemaService {
         seatRepo.add(seat);
     }
 
+    public Seat getSeat(int id) {
+        return seatRepo.read(id);
+    }
+
     public void updateSeat(int id, int seatNr,  SeatType type) {
         Seat seat = new Seat(seatNr, type);
         seatRepo.update(id, seat);
     }
 
-    public void addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
-        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers, chosenSeats);
+    public void addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
+        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers);
         bookingRepo.add(booking);
     }
 
-    public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
-        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers, chosenSeats);
+    public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
+        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers);
         bookingRepo.update(id, booking);
     }
 
-    public void addTicket(int bookingID, int seatID, double price) {
-        Ticket ticket = new Ticket(bookingID, seatID, price);
+    public void addTicket(int bookingId, int seatId, double price) {
+        Ticket ticket = new Ticket(bookingId, seatId, price);
         ticketRepo.add(ticket);
     }
 
-    public void updateTicket(int id, int bookingID, int seatID, double price) {
-        Ticket ticket = new Ticket(bookingID, seatID, price);
+    public void updateTicket(int id, int bookingId, int seatId, double price) {
+        Ticket ticket = new Ticket(bookingId, seatId, price);
         ticketRepo.update(id, ticket);
     }
 
@@ -159,6 +182,40 @@ public class CinemaService {
         }
 
         return null;
+    }
+
+    public int getIdOfCustomer(Customer customer){
+        Map<Integer, Customer> customers = customerRepo.getAll();
+
+        for(Map.Entry<Integer, Customer> entry : customers.entrySet()){
+            if(entry.getValue().equals(customer))
+                return entry.getKey();
+        }
+
+        return 0;
+    }
+
+    public int getIdOfBooking(Booking booking) {
+        Map<Integer, Booking> bookings = bookingRepo.getAll();
+
+        for(Map.Entry<Integer, Booking> entry : bookings.entrySet()){
+            if(entry.getValue().equals(bookings))
+                return entry.getKey();
+        }
+
+        return 0;
+    }
+
+    public List<Ticket> bookingTickets(int bookingId) {
+        Map<Integer, Ticket> tickets = ticketRepo.getAll();
+        List<Ticket> bookingTickets = new ArrayList<>();
+
+        for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()){
+            if(entry.getValue().getBookingId() == bookingId)
+                bookingTickets.add(entry.getValue());
+        }
+
+        return bookingTickets;
     }
 
     public Staff findStaffByEmail(String email){
