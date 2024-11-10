@@ -12,16 +12,16 @@ public class ConsoleApp {
 
     public void run() {
         Scanner sc = new Scanner(System.in);
-
+        System.out.println("Welcome to the CinemApp!\n1. Customer\n2. Staff\n3. Exit");
         while(true) {
-            System.out.println("Welcome to the CinemApp!\n1. Customer\n2. Staff\n3. Exit");
             int userType = sc.nextInt();
             sc.nextLine();
             switch(userType) {
                 case 1: {
-                    System.out.println("1. Log in\n2. Sign up\n3. Exit");
+                    System.out.println("1. Log in\n2. Sign up\n3. Back");
                     int opt = sc.nextInt();
                     sc.nextLine();
+
                     if(opt == 3)
                         break;
                     if(opt == 2) {
@@ -44,10 +44,41 @@ public class ConsoleApp {
                     String email = sc.next();
                     Customer loggedCustomer = ctrl.logCustomer(email);
                     System.out.println("Hello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully");
+
+                    ctrl.customerMenu();
+                    opt = sc.nextInt();
+                    sc.nextLine();
+                    switch(opt) {
+                        case 1: {
+                            //display Showtimes
+                            ctrl.displayShowtimes(loggedCustomer);
+                            break;
+                        }
+                        case 2: {
+                            //create Booking
+                            ctrl.displayShowtimes(loggedCustomer);
+                            System.out.println("Please choose the Showtime number: ");
+                            int showtimeId = sc.nextInt();
+                            sc.nextLine();
+                            System.out.println("Number of tickets you want to buy: ");
+                            int nrOfCustomers = sc.nextInt();
+                            sc.nextLine();
+                            ctrl.displayAvailableSeats(showtimeId);
+                            System.out.println("Please choose your seats: ");
+                            //List<Seat> seats = ctrl.chooseSeats();
+                            LocalDate today = LocalDate.now();
+                            //ctrl.createBooking(loggedCustomer, showtimeId, LocalDate.now(), nrOfCustomers, seats);
+                            break;
+                        }
+                        case 3: {
+                            //create Membership
+                            break;
+                        }
+                    }
                     break;
                 }
                 case 2: {
-                    System.out.println("1. Log in\n2. Sign up\n3. Exit");
+                    System.out.println("1. Log in\n2. Sign up\n3. Back");
                     int opt = sc.nextInt();
                     if(opt == 3)
                         break;

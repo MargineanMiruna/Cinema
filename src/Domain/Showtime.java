@@ -1,15 +1,16 @@
 package Domain;
 
 public class Showtime {
-    private int screenId;
-    private int movieId;
-    private int startTime;
-    private int endTime;
+    int screenId;
+    int movieId;
+    int startTime;
+    double duration;
 
     public Showtime(int screenId, int movieId, int startTime, double duration) {
         this.screenId = screenId;
         this.movieId = movieId;
         this.startTime = startTime;
+        this.duration = duration;
     }
 
     public int getScreenId() {
@@ -24,6 +25,10 @@ public class Showtime {
         return startTime;
     }
 
+    public double getDuration() {
+        return duration;
+    }
+
     public void setScreenId(int screenId) {
         this.screenId = screenId;
     }
@@ -36,11 +41,7 @@ public class Showtime {
         this.startTime = startTime;
     }
 
-    public int getEndTime() {
-        return endTime;
-    }
-
-    public void setEndTime(int endTime) {
-        this.endTime = endTime;
+    public void setDuration(double duration) {
+        this.duration = duration;
     }
 }

@@ -10,7 +10,7 @@ public class Booking {
     private int nrOfCustomers;
     private List<Seat> chosenSeats;
 
-    public Booking(int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
+    public Booking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
         this.customerId = customerId;
         this.showtimeId = showtimeId;
         this.date = LocalDate.now();

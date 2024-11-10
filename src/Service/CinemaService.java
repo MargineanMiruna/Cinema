@@ -5,6 +5,7 @@ import Repo.InMemoryRepository;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -16,6 +17,7 @@ public class CinemaService {
     InMemoryRepository<Screen> screenRepo = new InMemoryRepository<Screen>();
     InMemoryRepository<Seat> seatRepo = new InMemoryRepository<Seat>();
     InMemoryRepository<Booking> bookingRepo = new InMemoryRepository<Booking>();
+    InMemoryRepository<Ticket> ticketRepo = new InMemoryRepository<Ticket>();
     InMemoryRepository<BasicMembership> basicMembershipRepo = new InMemoryRepository<BasicMembership>();
     InMemoryRepository<PremiumMembership> premiumMembershipRepo = new InMemoryRepository<PremiumMembership>();
 
@@ -46,6 +48,10 @@ public class CinemaService {
         movieRepo.add(movie);
     }
 
+    public Movie getMovie(int id) {
+        return movieRepo.read(id);
+    }
+
     public void updateMovie(int id, String title, boolean pg, String genre, LocalDate releaseDate) {
         Movie movie = new Movie(title, pg, genre, releaseDate);
         movieRepo.update(id, movie);
@@ -56,6 +62,10 @@ public class CinemaService {
         showtimeRepo.add(showtime);
     }
 
+    public Showtime getShowtime(int id) {
+        return showtimeRepo.read(id);
+    }
+
     public void updateShowtime(int id, int screenId, int movieId, int startTime, double duration) {
         Showtime showtime = new Showtime(screenId, movieId, startTime, duration);
         showtimeRepo.update(id, showtime);
@@ -64,6 +74,10 @@ public class CinemaService {
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.add(screen);
+    }
+
+    public Screen getScreen(int id) {
+        return screenRepo.read(id);
     }
 
     public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
@@ -81,14 +95,24 @@ public class CinemaService {
         seatRepo.update(id, seat);
     }
 
-    public void addBooking(int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
-        Booking booking = new Booking(customerId, bookingId, date, nrOfCustomers, chosenSeats);
+    public void addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
+        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers, chosenSeats);
         bookingRepo.add(booking);
     }
 
-    public void updateBooking(int id, int customerId, int bookingId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
-        Booking booking = new Booking(customerId, bookingId, date, nrOfCustomers, chosenSeats);
+    public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Seat> chosenSeats) {
+        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers, chosenSeats);
         bookingRepo.update(id, booking);
+    }
+
+    public void addTicket(int bookingID, int seatID, double price) {
+        Ticket ticket = new Ticket(bookingID, seatID, price);
+        ticketRepo.add(ticket);
+    }
+
+    public void updateTicket(int id, int bookingID, int seatID, double price) {
+        Ticket ticket = new Ticket(bookingID, seatID, price);
+        ticketRepo.update(id, ticket);
     }
 
     public void addBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
@@ -111,15 +135,14 @@ public class CinemaService {
         premiumMembershipRepo.update(id, premiumMembership);
     }
 
-    public List<Showtime> displayShowtimes(Customer customer) {
-        Map<Integer, Showtime> showtimes = showtimeRepo.getAll();
-        List<Showtime> unfilteredShowtimes = new ArrayList<Showtime>(showtimeRepo.getAll().size());
+    public Map<Integer, Showtime> displayShowtimes(Customer customer) {
+        Map<Integer, Showtime> unfilteredShowtimes = showtimeRepo.getAll();
 
         if(customer.getUnderaged()) {
-            List<Showtime> filteredShowtimes = new ArrayList<>();
-            for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
+            Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
+            for(Map.Entry<Integer, Showtime> entry : unfilteredShowtimes.entrySet()) {
                 if(!movieRepo.read(entry.getValue().getMovieId()).getPg())
-                    filteredShowtimes.add(entry.getValue());
+                    filteredShowtimes.put(entry.getKey(), entry.getValue());
             }
             return filteredShowtimes;
         }

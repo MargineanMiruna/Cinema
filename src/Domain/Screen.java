@@ -16,18 +16,14 @@ public class Screen {
         this.nrPremiumSeats = nrPremiumSeats;
 
         this.seats = new ArrayList<Seat>();
-        int seatid = 0;
         for (int i = 1; i <= nrStandardSeats; i++) {
             seats.add(new Seat(i, SeatType.standard));
-            seatid ++;
         }
         for (int i = 1 + nrStandardSeats; i <= nrVipSeats + nrStandardSeats; i++) {
             seats.add(new Seat(i, SeatType.vip));
-            seatid ++;
         }
         for( int i = 1 + nrStandardSeats + nrVipSeats; i <=nrPremiumSeats + nrVipSeats + nrStandardSeats; i++) {
             seats.add(new Seat(i, SeatType.premium));
-            seatid ++;
         }
     }
 
@@ -53,5 +49,9 @@ public class Screen {
 
     public void setNrPremiumSeats(int nrPremiumSeats) {
         this.nrPremiumSeats = nrPremiumSeats;
+    }
+
+    public List<Seat> getSeats() {
+        return seats;
     }
 }
