@@ -2,19 +2,23 @@ package Domain;
 
 public class Ticket {
     int bookingId;
-    int seatId;
+    int screenId;
+    int seatNr;
     double price;
 
-    public Ticket(int bookingId, int seatId, double price) {
+    public Ticket(int bookingId, int screenId, int seatNr, double price) {
         this.bookingId = bookingId;
-        this.seatId = seatId;
+        this.screenId = screenId;
+        this.seatNr = seatNr;
         this.price = price;
     }
 
     public int getBookingId() { return bookingId; }
 
-    public int getSeatId() {
-        return seatId;
+    public int getScreenId() { return screenId; }
+
+    public int getSeatNr() {
+        return seatNr;
     }
 
     public double getPrice() {

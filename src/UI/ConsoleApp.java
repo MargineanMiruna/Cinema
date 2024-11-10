@@ -4,6 +4,7 @@ import Controller.Controller;
 import Domain.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +14,10 @@ public class ConsoleApp {
     Controller ctrl = new Controller();
 
     public void run() {
+        ctrl.add();
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+        DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("HH:mm");
         System.out.println("Welcome to the CinemApp!");
 
         while (true) {
@@ -225,11 +228,11 @@ public class ConsoleApp {
                                         LocalDate date = LocalDate.parse(strDate, fmt);
 
                                         System.out.println("Please enter a starting time: ");
-                                        int startTime = sc.nextInt();
-                                        sc.nextLine();
+                                        String time = sc.nextLine();
+                                        LocalTime startTime = LocalTime.parse(time, fmt2);
 
                                         System.out.println("Please enter duration: ");
-                                        double duration = sc.nextDouble();
+                                        int duration = sc.nextInt();
                                         sc.nextLine();
 
                                         ctrl.addShowtime(screenId, movieId, date, startTime, duration);
@@ -257,11 +260,11 @@ public class ConsoleApp {
                                         LocalDate newDate = LocalDate.parse(strDate, fmt);
 
                                         System.out.println("Please enter a starting time: ");
-                                        int newStartTime = sc.nextInt();
-                                        sc.nextLine();
+                                        String time = sc.nextLine();
+                                        LocalTime newStartTime = LocalTime.parse(time, fmt2);
 
                                         System.out.println("Please enter duration: ");
-                                        double newDuration = sc.nextDouble();
+                                        int newDuration = sc.nextInt();
                                         sc.nextLine();
 
                                         ctrl.updateShowtime(id, newScreenId, newMovieId, newDate, newStartTime, newDuration);

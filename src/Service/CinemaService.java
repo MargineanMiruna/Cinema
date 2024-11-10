@@ -4,6 +4,7 @@ import Domain.*;
 import Repo.InMemoryRepository;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,15 +49,6 @@ public class CinemaService {
         movieRepo.add(movie);
     }
 
-    public Integer findMovieIdByTitle(String title) {
-        for (Map.Entry<Integer, Movie> entry : movieRepo.getAll().entrySet()) {
-            if (entry.getValue().getTitle().equalsIgnoreCase(title)) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
     public Movie getMovie(int id) {
         return movieRepo.read(id);
     }
@@ -65,34 +57,52 @@ public class CinemaService {
         Movie movie = new Movie(title, pg, genre, releaseDate);
         movieRepo.update(id, movie);
     }
+
     public void deleteMovie(int id) {
        movieRepo.delete(id);
     }
 
-    public void addShowtime(int screenId, int movieId, LocalDate date, int startTime, double duration) {
-        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration);
-        showtimeRepo.add(showtime);
+    public Integer findMovieIdByTitle(String title) {
+        for (Map.Entry<Integer, Movie> entry : movieRepo.getAll().entrySet()) {
+            if (entry.getValue().getTitle().equalsIgnoreCase(title)) {
+                return entry.getKey();
+            }
+        }
+
+        return null;
     }
 
-    public void deleteShowtime(int id){
-        showtimeRepo.delete(id);
+    public void addShowtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
+        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration);
+        showtimeRepo.add(showtime);
     }
 
     public Showtime getShowtime(int id) {
         return showtimeRepo.read(id);
     }
 
-    public void updateShowtime(int id, int screenId, int movieId, LocalDate date, int startTime, double duration) {
+    public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         Showtime showtime = new Showtime(screenId, movieId, date, startTime, duration);
         showtimeRepo.update(id, showtime);
+    }
+
+    public void deleteShowtime(int id) {
+        showtimeRepo.delete(id);
     }
 
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.add(screen);
-    }
-    public void deleteScreen(int id){
-        screenRepo.delete(id);
+
+        for (int i = 1; i <= nrStandardSeats; i++) {
+            seatRepo.add(new Seat(i, SeatType.standard));
+        }
+        for (int i = 1; i <= nrVipSeats; i++) {
+            seatRepo.add(new Seat(i, SeatType.vip));
+        }
+        for( int i = 1; i <=nrPremiumSeats; i++) {
+            seatRepo.add(new Seat(i, SeatType.premium));
+        }
     }
 
     public Screen getScreen(int id) {
@@ -102,6 +112,10 @@ public class CinemaService {
     public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.update(id, screen);
+    }
+
+    public void deleteScreen(int id){
+        screenRepo.delete(id);
     }
 
     public void addSeat(int seatNr,  SeatType type) {
@@ -118,6 +132,18 @@ public class CinemaService {
         seatRepo.update(id, seat);
     }
 
+    public Seat findSeatBySeatNr(int screenId, int seatNr) {
+        Screen screen = screenRepo.read(screenId);
+
+        for(Seat seat : screen.getSeats()) {
+            if(seat.getSeatNr() == seatNr) {
+                return seat;
+            }
+        }
+
+        return null;
+    }
+
     public int addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers);
         return bookingRepo.add(booking);
@@ -132,8 +158,8 @@ public class CinemaService {
         bookingRepo.update(id, booking);
     }
 
-    public int addTicket(int bookingId, int seatId, double price) {
-        Ticket ticket = new Ticket(bookingId, seatId, price);
+    public int addTicket(int bookingId, int screenId, int seatId, double price) {
+        Ticket ticket = new Ticket(bookingId, screenId, seatId, price);
         return ticketRepo.add(ticket);
     }
 
@@ -141,8 +167,8 @@ public class CinemaService {
         return ticketRepo.read(id);
     }
 
-    public void updateTicket(int id, int bookingId, int seatId, double price) {
-        Ticket ticket = new Ticket(bookingId, seatId, price);
+    public void updateTicket(int id, int bookingId, int screenId, int seatId, double price) {
+        Ticket ticket = new Ticket(bookingId, screenId, seatId, price);
         ticketRepo.update(id, ticket);
     }
 

@@ -1,24 +1,16 @@
 package Domain;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 public class Showtime {
     private int screenId;
     private int movieId;
     private LocalDate date;
-    private int startTime;
-    private double duration;
+    private LocalTime startTime;
+    private int duration;
 
-    public void setDate(LocalDate date) {
-        this.date = date;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-
-    public Showtime(int screenId, int movieId, LocalDate date, int startTime, double duration) {
+    public Showtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         this.screenId = screenId;
         this.movieId = movieId;
         this.date = date;
@@ -34,12 +26,16 @@ public class Showtime {
         return movieId;
     }
 
-    public int getStartTime() {
+    public LocalTime getStartTime() {
         return startTime;
     }
 
-    public double getDuration() {
+    public int getDuration() {
         return duration;
+    }
+
+    public LocalDate getDate() {
+        return date;
     }
 
     public void setScreenId(int screenId) {
@@ -50,11 +46,16 @@ public class Showtime {
         this.movieId = movieId;
     }
 
-    public void setStartTime(int startTime) {
+    public void setStartTime(LocalTime startTime) {
         this.startTime = startTime;
     }
 
-    public void setDuration(double duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
+
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
 }

@@ -5,12 +5,20 @@ import Domain.*;
 import Service.CinemaService;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 import java.util.Map;
 
 public class Controller {
     CinemaService cinemaService = new CinemaService();
+
+    public void add(){
+        cinemaService.addCustomer("Miruna", "Marginean", "miruna", false);
+        cinemaService.addScreen(5,2,3);
+        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.ofEpochDay(17-12-1998));
+        cinemaService.addShowtime(1,1, LocalDate.now(), LocalTime.now(), 120);
+    }
 
     int getAge(LocalDate birthday) {
         LocalDate today = LocalDate.now();
@@ -91,15 +99,17 @@ public class Controller {
         return cinemaService.getBooking(bookingId);
     }
 
-    public int createTicket(int bookingId, int seatId) {
-        return cinemaService.addTicket(bookingId, seatId, cinemaService.getSeat(seatId).getPrice());
+    public int createTicket(int bookingId, int seatNr) {
+        Showtime showtime = cinemaService.getShowtime(cinemaService.getBooking(bookingId).getShowtimeId());
+        Seat seat = cinemaService.findSeatBySeatNr(showtime.getScreenId(), seatNr);
+        return cinemaService.addTicket(bookingId, showtime.getScreenId(), seatNr, seat.getPrice());
     }
 
     public void displayTickets(Customer customer, Booking booking, int ticketId) {
-        String ticketInfo = """
-                Booking made by """ + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + """
-                Seat number """ + cinemaService.getSeat(cinemaService.getTicket(ticketId).getSeatId()).getSeatNr() + " type " + cinemaService.getSeat(cinemaService.getTicket(ticketId).getSeatId()).getType() + """
-                Price """ + cinemaService.getTicket(cinemaService.getTicket(ticketId).getSeatId()).getPrice();
+        String ticketInfo = "Booking made by " + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + "\n";
+        ticketInfo += "Movie " + cinemaService.getMovie(cinemaService.getShowtime(booking.getShowtimeId()).getMovieId()).getTitle() + "\n";
+        ticketInfo += "Room " + cinemaService.getTicket(ticketId).getScreenId() + " seat number " + cinemaService.getTicket(ticketId).getSeatNr() + " type " + cinemaService.findSeatBySeatNr(cinemaService.getTicket(ticketId).getScreenId(), cinemaService.getTicket(ticketId).getSeatNr()).getType() + "\n";
+        ticketInfo += "Price " + cinemaService.getTicket(ticketId).getPrice() + "\n";
         System.out.println(ticketInfo);
     }
 
@@ -137,23 +147,27 @@ public class Controller {
         return cinemaService.findMovieIdByTitle(title);
     }
 
-    public void addShowtime(int screenId, int movieId, LocalDate date, int startTime, double duration) {
+    public void addShowtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         cinemaService.addShowtime(screenId, movieId, date,startTime, duration);
     }
 
-    public void updateShowtime(int id, int screenId, int movieId, LocalDate date,int startTime, double duration) {
+    public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         cinemaService.updateShowtime(id, screenId, movieId, date, startTime, duration);
     }
+
     public void deleteShowtime(int id){
         cinemaService.deleteShowtime(id);
     }
+
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         cinemaService.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
     }
+
     public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         cinemaService.updateScreen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
     }
-    public void deleteScreen(int id){
+
+    public void deleteScreen(int id) {
         cinemaService.deleteScreen(id);
     }
 
