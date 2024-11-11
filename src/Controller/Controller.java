@@ -7,6 +7,7 @@ import Service.CinemaService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -25,12 +26,13 @@ public class Controller {
         cinemaService.addScreen(50,20,10);
         cinemaService.addScreen(20,25,20);
 
-        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.ofEpochDay(17-12-1998));
-        cinemaService.addMovie("Barbie", true, "comedy", LocalDate.of(2024, 4, 25));
+        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
+        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
         cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
 
-        cinemaService.addShowtime(1,1, LocalDate.now(), LocalTime.now(), 120);
+        cinemaService.addShowtime(1,1, LocalDate.of(2025, 1, 5), LocalTime.now(), 120);
         cinemaService.addShowtime(2,1, LocalDate.of(2024,12,24), LocalTime.now(), 120);
+        cinemaService.addShowtime(3,2, LocalDate.of(2024,12,14), LocalTime.now(), 190);
 
     }
 
@@ -79,7 +81,6 @@ public class Controller {
         } catch (Exception e) {
             System.out.println("An error occurred: ");
             return null;
-
         }
     }
 
@@ -92,13 +93,13 @@ public class Controller {
 
         for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
             Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
-            System.out.println("Showtime " + entry.getKey() + ":\n" + movie.getTitle() + "\n" + movie.getGenre() + "\n" + movie.getReleaseDate() + "\nScreen " + entry.getValue().getScreenId() + "\nStarts at " + entry.getValue().getStartTime() +  "\nDuration: " + entry.getValue().getDuration());
+            System.out.println("Showtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration() + "\n");
         }
     }
 
     public void displayAvailableSeats(int showtimeId) {
-        Screen screen = cinemaService.getScreen(cinemaService.getShowtime(showtimeId).getScreenId());
-        List<Seat> seats = screen.getSeats();
+        Showtime showtime= cinemaService.getShowtime(showtimeId);
+        List<Seat> seats = showtime.getSeats();
 
         for(Seat seat : seats) {
             System.out.println("Seat number " + seat.getSeatNr() + " type " + seat.getType() + " costs " + seat.getPrice());
@@ -109,10 +110,7 @@ public class Controller {
         Showtime showtime = cinemaService.getShowtime(showtimeId);
         List<Seat> seatsAvailable = showtime.getSeats();
 
-        for(Seat seat : seatsAvailable) {
-            if(seats.contains(seat.getSeatNr()))
-                seatsAvailable.remove(seat);
-        }
+        seatsAvailable.removeIf(seat -> seats.contains(seat.getSeatNr()));
 
         showtime.setSeats(seatsAvailable);
     }
@@ -148,10 +146,11 @@ public class Controller {
 
     public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
         int type = cinemaService.getMembershipType(loggedCustomerId);
-        Membership membership;
+        Membership membership = null;
+        double discountedPrice = 0;
         if(type == 1)
             membership = cinemaService.getBasicMembership(cinemaService.getCustomer(loggedCustomerId).getMembershipId());
-        else
+        else if(type == 2)
             membership = cinemaService.getPremiumMembership(cinemaService.getCustomer(loggedCustomerId).getMembershipId());
 
         List<Integer> tickets = cinemaService.getBooking(currentBookingId).getTickets();
@@ -160,9 +159,13 @@ public class Controller {
         for(Integer ticket : tickets) {
             totalPrice += cinemaService.getTicket(ticket).getPrice();
         }
-        double discountedPrice = cinemaService.calculateDiscountedPrice(totalPrice, membership);
 
-        System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei\n");
+        if(type != 0) {
+            discountedPrice = cinemaService.calculateDiscountedPrice(totalPrice, membership);
+            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei\n");
+        }
+        else
+            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + discountedPrice + " lei\nTotal to pay " + totalPrice + " lei\n");
     }
 
     public void staffMenu() {
@@ -221,11 +224,17 @@ public class Controller {
     public void deleteScreen(int id) {
         cinemaService.deleteScreen(id);
     }
-    public BasicMembership createBasicMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        return cinemaService.addBasicMembership(customerId, startDate, endDate, bookings);
+
+    public BasicMembership createBasicMembership(int customerId, LocalDate startDate, LocalDate endDate) {
+        return cinemaService.addBasicMembership(customerId, startDate, endDate);
     }
-    public PremiumMembership createPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        return cinemaService.addPremiumMembership(customerId, startDate, endDate, bookings);
+
+    public PremiumMembership createPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate) {
+        return cinemaService.addPremiumMembership(customerId, startDate, endDate);
+    }
+
+    public void terminateMemberships() {
+        cinemaService.terminateMemberships();
     }
 
 }

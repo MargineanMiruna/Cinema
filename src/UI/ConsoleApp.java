@@ -17,6 +17,7 @@ public class ConsoleApp {
 
     public void run() {
         ctrl.add();
+        ctrl.terminateMemberships();
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("HH:mm");
@@ -36,7 +37,7 @@ public class ConsoleApp {
 
             switch (userType) {
                 case 1: {
-                    System.out.println("1. Log in\n2. Sign up\n3. Back");
+                    System.out.println("1. Log in\n2. Sign up\n3. Back\nPlease enter your choice: ");
                     int opt = sc.nextInt();
                     sc.nextLine();
 
@@ -66,7 +67,7 @@ public class ConsoleApp {
                     String email = sc.next();
                     Customer loggedCustomer = ctrl.logCustomer(email);
                     int loggedCustomerId = ctrl.getIdOfCustomer(loggedCustomer);
-                    System.out.println("Hello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully");
+                    System.out.println("Hello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully!");
 
                     while(true) {
                         ctrl.customerMenu();
@@ -100,7 +101,7 @@ public class ConsoleApp {
                                 ctrl.removeSeatsFromAvailable(showtimeId, seats);
 
                                 int currentBookingId = ctrl.createBooking(loggedCustomerId, showtimeId, LocalDate.now(), nrOfTickets);
-                                System.out.println("Booking successfully created!");
+                                System.out.println("Booking created successfully!");
 
                                 List<Integer> tickets = new ArrayList<>();
                                 for(int i = 0; i < nrOfTickets; i++) {
@@ -122,7 +123,7 @@ public class ConsoleApp {
                             }
                             case 3: {
                                 //create Membership
-                                System.out.println("Please choose the type of membership you want to have(1.basic /2.premium): ");
+                                System.out.println("1. Basic\n2. Premium\nPlease choose the type of membership you want to purchase: ");
                                 int type = sc.nextInt();
                                 LocalDate starDate = LocalDate.now();
                                 LocalDate endDate = starDate.plusDays(30);
@@ -134,7 +135,7 @@ public class ConsoleApp {
                                     PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomerId,starDate,endDate);
                                     System.out.println("Your total is: " + membership.getPrice() );
                                 }
-                                System.out.println("Membership successfully created! ");
+                                System.out.println("Membership created successfully! ");
                                 break;
                             }
                             case 4: {
@@ -144,7 +145,7 @@ public class ConsoleApp {
                     }
                 }
                 case 2: {
-                    System.out.println("1. Log in\n2. Sign up\n3. Back");
+                    System.out.println("1. Log in\n2. Sign up\n3. Back\nPlease enter your choice: ");
                     int opt = sc.nextInt();
                     if (opt == 3)
                         break;

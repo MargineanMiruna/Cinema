@@ -73,13 +73,16 @@ public class CinemaService {
                 return entry.getKey();
             }
         }
-
         return null;
     }
 
     public void addShowtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         Screen screen = getScreen(screenId);
-        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration, screen.getSeats());
+        List<Seat> seatsCopy = new ArrayList<>();
+        for (Seat seat : screen.getSeats()) {
+            seatsCopy.add(new Seat(seat.getSeatNr(), seat.getType()));
+        }
+        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration, seatsCopy);
         showtimeRepo.add(showtime);
     }
 
@@ -195,6 +198,10 @@ public class CinemaService {
         basicMembershipRepo.update(id, basicMembership);
     }
 
+    public void deleteBasicMembership(int id) {
+        basicMembershipRepo.delete(id);
+    }
+
     public PremiumMembership addPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate) {
         PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate);
         Customer customer = getCustomer(customerId);
@@ -209,6 +216,10 @@ public class CinemaService {
     public void updatePremiumMembership(int id, int customerId, LocalDate startDate, LocalDate endDate) {
         PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate);
         premiumMembershipRepo.update(id, premiumMembership);
+    }
+
+    public void deletePremiumMembership(int id) {
+        premiumMembershipRepo.delete(id);
     }
 
     public int getMembershipType(int customerId) {
@@ -239,6 +250,7 @@ public class CinemaService {
                 if(!movieRepo.read(entry.getValue().getMovieId()).getPg())
                     filteredShowtimes.put(entry.getKey(), entry.getValue());
             }
+
             return filteredShowtimes;
         }
 
@@ -290,7 +302,7 @@ public class CinemaService {
         return bookingTickets;
     }
 
-    public Staff findStaffByEmail(String email){
+    public Staff findStaffByEmail(String email) {
         Map<Integer, Staff> staffs = staffRepo.getAll();
 
         for(Map.Entry<Integer, Staff> entry : staffs.entrySet()){
@@ -303,6 +315,26 @@ public class CinemaService {
 
     public double calculateDiscountedPrice(double price, Membership membership) {
         return membership.offerDiscount(price);
+    }
+
+    public void terminateMemberships() {
+        Map<Integer, BasicMembership> basicMembershipMap = basicMembershipRepo.getAll();
+
+        for(Map.Entry<Integer, BasicMembership> entry : basicMembershipMap.entrySet()){
+            if(entry.getValue().getEndDate() == LocalDate.now()) {
+                getCustomer(entry.getValue().getCustomerId()).setMembershipId(0);
+                deleteBasicMembership(entry.getKey());
+            }
+        }
+
+        Map<Integer, PremiumMembership> premiumMembershipMap = premiumMembershipRepo.getAll();
+
+        for(Map.Entry<Integer, PremiumMembership> entry : premiumMembershipMap.entrySet()){
+            if(entry.getValue().getEndDate() == LocalDate.now()) {
+                getCustomer(entry.getValue().getCustomerId()).setMembershipId(0);
+                deleteBasicMembership(entry.getKey());
+            }
+        }
     }
 
 }
