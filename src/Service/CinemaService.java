@@ -103,10 +103,10 @@ public class CinemaService {
         for (int i = 1; i <= nrStandardSeats; i++) {
             seatRepo.add(new Seat(i, SeatType.standard));
         }
-        for (int i = 1; i <= nrVipSeats; i++) {
+        for (int i = 1 + nrStandardSeats; i <= nrVipSeats + nrStandardSeats; i++) {
             seatRepo.add(new Seat(i, SeatType.vip));
         }
-        for( int i = 1; i <=nrPremiumSeats; i++) {
+        for(int i = 1 + nrStandardSeats + nrVipSeats; i <=nrPremiumSeats + nrVipSeats + nrStandardSeats; i++) {
             seatRepo.add(new Seat(i, SeatType.premium));
         }
     }
@@ -178,24 +178,25 @@ public class CinemaService {
         ticketRepo.update(id, ticket);
     }
 
-    public BasicMembership addBasicMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate, bookings);
+    public BasicMembership addBasicMembership(int customerId, LocalDate startDate, LocalDate endDate) {
+        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate);
         Customer customer = getCustomer(customerId);
         customer.setMembershipId(basicMembershipRepo.add(basicMembership));
         return basicMembership;
+
     }
 
     public BasicMembership getBasicMembership(int id) {
         return basicMembershipRepo.read(id);
     }
 
-    public void updateBasicMembership(int id, int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate, bookings);
+    public void updateBasicMembership(int id, int customerId, LocalDate startDate, LocalDate endDate) {
+        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate);
         basicMembershipRepo.update(id, basicMembership);
     }
 
-    public PremiumMembership addPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate, bookings);
+    public PremiumMembership addPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate) {
+        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate);
         Customer customer = getCustomer(customerId);
         customer.setMembershipId(premiumMembershipRepo.add(premiumMembership));
         return premiumMembership;
@@ -205,8 +206,8 @@ public class CinemaService {
         return premiumMembershipRepo.read(id);
     }
 
-    public void updatePremiumMembership(int id, int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate, bookings);
+    public void updatePremiumMembership(int id, int customerId, LocalDate startDate, LocalDate endDate) {
+        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate);
         premiumMembershipRepo.update(id, premiumMembership);
     }
 

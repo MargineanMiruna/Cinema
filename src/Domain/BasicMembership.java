@@ -4,14 +4,13 @@ import java.time.LocalDate;
 import java.util.List;
 
 public class BasicMembership extends Membership{
-    int customerId;
-    LocalDate startDate;
-    LocalDate endDate;
-    List<Booking> bookings;
-    double price = 50;
-    double discount = 10;
+    private int customerId;
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private double price = 50;
+    private double discount = 10;
 
-    public BasicMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public BasicMembership(int customerId, LocalDate startDate, LocalDate endDate) {
         super(customerId, startDate, endDate);
     }
 

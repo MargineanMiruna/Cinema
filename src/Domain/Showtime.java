@@ -12,6 +12,15 @@ public class Showtime {
     int duration;
     List<Seat> seats;
 
+    /**
+     *
+     * @param screenId
+     * @param movieId
+     * @param date of the showtime
+     * @param startTime of the showtime
+     * @param duration of the showtime
+     * @param seats list of available
+     */
 
     public Showtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration, List<Seat> seats) {
         this.screenId = screenId;

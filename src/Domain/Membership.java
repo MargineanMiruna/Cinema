@@ -10,6 +10,12 @@ public abstract class Membership {
     List<Booking> bookings;
     double discount;
 
+    /**
+     *
+     * @param customerId the unique id of the customer
+     * @param startDate start date of the membership
+     * @param endDate end date of the membership ( a membership lasts a month)
+     */
     public Membership(int customerId, LocalDate startDate, LocalDate endDate) {
         this.customerId = customerId;
         this.startDate = LocalDate.now();

@@ -15,9 +15,23 @@ public class Controller {
 
     public void add(){
         cinemaService.addCustomer("Miruna", "Marginean", "miruna", false);
-        cinemaService.addScreen(5,2,3);
+        cinemaService.addCustomer("Tea", "Nicola", "tea", false);
+        cinemaService.addCustomer("Bence", "Molnar", "bence", true);
+
+        cinemaService.addStaff("Alexandra","Olah","alexandra");
+        cinemaService.addStaff("Klara","Orban","klara");
+
+        cinemaService.addScreen(30,10,10);
+        cinemaService.addScreen(50,20,10);
+        cinemaService.addScreen(20,25,20);
+
         cinemaService.addMovie("The Notebook", true, "romance", LocalDate.ofEpochDay(17-12-1998));
+        cinemaService.addMovie("Barbie", true, "comedy", LocalDate.of(2024, 4, 25));
+        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
+
         cinemaService.addShowtime(1,1, LocalDate.now(), LocalTime.now(), 120);
+        cinemaService.addShowtime(2,1, LocalDate.of(2024,12,24), LocalTime.now(), 120);
+
     }
 
     int getAge(LocalDate birthday) {
@@ -70,7 +84,7 @@ public class Controller {
     }
 
     public void customerMenu() {
-        System.out.println("1. View today's showtimes\n2. Create a booking\n3. Create a Membership\n4. Exit");
+        System.out.println("1. View showtimes\n2. Create a booking\n3. Create a membership\n4. Exit");
     }
 
     public void displayShowtimes(Customer customer) {
@@ -124,6 +138,13 @@ public class Controller {
         ticketInfo += "Price " + cinemaService.getTicket(ticketId).getPrice() + "\n";
         System.out.println(ticketInfo);
     }
+
+    /**
+     *
+     * @param loggedCustomerId
+     * @param currentBookingId
+     * calculates the total price of the booking
+     */
 
     public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
         int type = cinemaService.getMembershipType(loggedCustomerId);

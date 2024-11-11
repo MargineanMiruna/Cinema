@@ -7,11 +7,17 @@ public class PremiumMembership extends Membership{
     int customerId;
     LocalDate startDate;
     LocalDate endDate;
-    List<Booking> bookings;
     double price = 100;
     double discount = 20;
 
-    public PremiumMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    /**
+     *
+     * @param customerId
+     * @param startDate of the membership
+     * @param endDate startDate +30 days
+     */
+
+    public PremiumMembership(int customerId, LocalDate startDate, LocalDate endDate) {
         super(customerId, startDate, endDate);
     }
 

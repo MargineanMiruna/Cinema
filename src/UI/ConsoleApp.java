@@ -6,7 +6,9 @@ import Domain.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -22,8 +24,15 @@ public class ConsoleApp {
 
         while (true) {
             System.out.println("1. Customer\n2. Staff\n3. Exit\nPlease enter your choice: ");
-            int userType = sc.nextInt();
-            sc.nextLine();
+            int userType = 0;
+            try {
+                userType = sc.nextInt();
+                sc.nextLine();
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a number.");
+                sc.nextLine();
+                continue;
+            }
 
             switch (userType) {
                 case 1: {
@@ -40,11 +49,16 @@ public class ConsoleApp {
                         String lastName = sc.nextLine();
                         System.out.println("Please enter your email: ");
                         String email = sc.nextLine();
-                        System.out.println("Please enter your birthday: ");
+                        System.out.println("Please enter your birthday (dd-MM-yyyy): ");
                         String date = sc.nextLine();
-                        LocalDate birthday = LocalDate.parse(date, fmt);
-                        ctrl.createCustomer(firstName, lastName, email, birthday);
-                        System.out.println("Account created successfully!");
+
+                        try {
+                            LocalDate birthday = LocalDate.parse(date, fmt);
+                            ctrl.createCustomer(firstName, lastName, email, birthday);
+                            System.out.println("Account created successfully!");
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        }
                     }
 
                     System.out.println("Log in");
@@ -108,17 +122,16 @@ public class ConsoleApp {
                             }
                             case 3: {
                                 //create Membership
-                                System.out.println("Please choose the type of membership you want to have(1. basic\n 2. premium: \n ");
+                                System.out.println("Please choose the type of membership you want to have(1.basic /2.premium): ");
                                 int type = sc.nextInt();
                                 LocalDate starDate = LocalDate.now();
                                 LocalDate endDate = starDate.plusDays(30);
-                                List<Booking> bookings = new ArrayList<>();
 
                                 if (type == 1) {
-                                    BasicMembership membership = ctrl.createBasicMembership(loggedCustomerId,starDate,endDate,bookings);
+                                    BasicMembership membership = ctrl.createBasicMembership(loggedCustomerId,starDate,endDate);
                                     System.out.println("Your total is: " + membership.getPrice() );
                                 } else if (type == 2) {
-                                    PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomerId,starDate,endDate,bookings);
+                                    PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomerId,starDate,endDate);
                                     System.out.println("Your total is: " + membership.getPrice() );
                                 }
                                 System.out.println("Membership successfully created! ");

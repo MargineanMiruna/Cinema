@@ -10,6 +10,14 @@ public class Booking {
     private int nrOfCustomers;
     private List<Integer> tickets;
 
+    /**
+     *
+     * @param customerId
+     * @param showtimeId
+     * @param date of the booking
+     * @param nrOfCustomers
+     */
+
     public Booking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         this.customerId = customerId;
         this.showtimeId = showtimeId;

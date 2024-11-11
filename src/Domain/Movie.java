@@ -6,6 +6,14 @@ public class Movie {
     private boolean pg;
     private String genre;
     private LocalDate releaseDate;
+    /**
+     *
+     * @param title of the movie
+     * @param pg true-> the customer can watch the movie only if he is not underaged
+     *           false-> any cusrtomer can watch the movie
+     * @param genre of the movie
+     * @param releaseDate of the movie
+     */
 
     public Movie(String title, boolean pg, String genre, LocalDate releaseDate) {
         this.title = title;
