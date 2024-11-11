@@ -2,20 +2,24 @@ package Domain;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 public class Showtime {
-    private int screenId;
-    private int movieId;
-    private LocalDate date;
-    private LocalTime startTime;
-    private int duration;
+    int screenId;
+    int movieId;
+    LocalDate date;
+    LocalTime startTime;
+    int duration;
+    List<Seat> seats;
 
-    public Showtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
+
+    public Showtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration, List<Seat> seats) {
         this.screenId = screenId;
         this.movieId = movieId;
         this.date = date;
         this.startTime = startTime;
         this.duration = duration;
+        this.seats = seats;
     }
 
     public int getScreenId() {
@@ -37,6 +41,10 @@ public class Showtime {
     public LocalDate getDate() {
         return date;
     }
+
+    public List<Seat> getSeats() { return seats; }
+
+    public void setSeats(List<Seat> seats) { this.seats = seats; }
 
     public void setScreenId(int screenId) {
         this.screenId = screenId;

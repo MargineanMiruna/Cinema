@@ -4,19 +4,20 @@ import java.time.LocalDate;
 import java.util.List;
 
 public abstract class Membership {
-    private Customer customer;
-    private LocalDate startDate;
-    private LocalDate endDate;
-    private List<Booking> bookings;
+    int customerId;
+    LocalDate startDate;
+    LocalDate endDate;
+    List<Booking> bookings;
+    double discount;
 
-    public Membership(Customer customer, LocalDate startDate, LocalDate endDate) {
-        this.customer = customer;
+    public Membership(int customerId, LocalDate startDate, LocalDate endDate) {
+        this.customerId = customerId;
         this.startDate = LocalDate.now();
         this.endDate = endDate;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public int getCustomerId() {
+        return customerId;
     }
 
     public LocalDate getStartDate() {
@@ -31,15 +32,7 @@ public abstract class Membership {
         return bookings;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
-    }
+    public void setBookings(List<Booking> bookings) { this.bookings = bookings; }
 
-    public void setStartDate(LocalDate startDate) {
-        this.startDate = startDate;
-    }
-
-    public void setEndDate(LocalDate endDate) {
-        this.endDate = endDate;
-    }
+    public abstract double offerDiscount(double price);
 }

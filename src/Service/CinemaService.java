@@ -3,6 +3,7 @@ package Service;
 import Domain.*;
 import Repo.InMemoryRepository;
 
+import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -27,6 +28,10 @@ public class CinemaService {
     public void addCustomer(String firstName, String lastName, String email, boolean underage) {
         Customer customer = new Customer(firstName, lastName, email, underage);
         customerRepo.add(customer);
+    }
+
+    public Customer getCustomer(int id) {
+        return customerRepo.read(id);
     }
 
     public void updateCustomer(int id, String firstName, String lastName,String email, boolean underage) {
@@ -73,7 +78,8 @@ public class CinemaService {
     }
 
     public void addShowtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
-        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration);
+        Screen screen = getScreen(screenId);
+        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration, screen.getSeats());
         showtimeRepo.add(showtime);
     }
 
@@ -81,8 +87,8 @@ public class CinemaService {
         return showtimeRepo.read(id);
     }
 
-    public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
-        Showtime showtime = new Showtime(screenId, movieId, date, startTime, duration);
+    public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration, List<Seat> seats) {
+        Showtime showtime = new Showtime(screenId, movieId, date, startTime, duration, seats);
         showtimeRepo.update(id, showtime);
     }
 
@@ -172,26 +178,55 @@ public class CinemaService {
         ticketRepo.update(id, ticket);
     }
 
-    public BasicMembership addBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        BasicMembership basicMembership = new BasicMembership(customer, startDate,endDate, bookings);
-        basicMembershipRepo.add(basicMembership);
+    public BasicMembership addBasicMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate, bookings);
+        Customer customer = getCustomer(customerId);
+        customer.setMembershipId(basicMembershipRepo.add(basicMembership));
         return basicMembership;
     }
 
-    public void updateBasicMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        BasicMembership basicMembership = new BasicMembership(customer, startDate,endDate, bookings);
+    public BasicMembership getBasicMembership(int id) {
+        return basicMembershipRepo.read(id);
+    }
+
+    public void updateBasicMembership(int id, int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate, bookings);
         basicMembershipRepo.update(id, basicMembership);
     }
 
-    public PremiumMembership addPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        PremiumMembership premiumMembership = new PremiumMembership(customer, startDate,endDate, bookings);
-        premiumMembershipRepo.add(premiumMembership);
+    public PremiumMembership addPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate, bookings);
+        Customer customer = getCustomer(customerId);
+        customer.setMembershipId(premiumMembershipRepo.add(premiumMembership));
         return premiumMembership;
     }
 
-    public void updatePremiumMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        PremiumMembership premiumMembership = new PremiumMembership(customer, startDate,endDate, bookings);
+    public PremiumMembership getPremiumMembership(int id) {
+        return premiumMembershipRepo.read(id);
+    }
+
+    public void updatePremiumMembership(int id, int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate, bookings);
         premiumMembershipRepo.update(id, premiumMembership);
+    }
+
+    public int getMembershipType(int customerId) {
+        Map<Integer, BasicMembership> basicMemberships = basicMembershipRepo.getAll();
+        Map<Integer, PremiumMembership> premiumMemberships = premiumMembershipRepo.getAll();
+
+        for(BasicMembership basicMembership : basicMemberships.values()) {
+            if(basicMembership.getCustomerId() == customerId) {
+                return 1;
+            }
+        }
+
+        for(PremiumMembership premiumMembership : premiumMemberships.values()) {
+            if(premiumMembership.getCustomerId() == customerId) {
+                return 2;
+            }
+        }
+
+        return 0;
     }
 
     public Map<Integer, Showtime> displayShowtimes(Customer customer) {
@@ -263,6 +298,10 @@ public class CinemaService {
         }
 
         return null;
+    }
+
+    public double calculateDiscountedPrice(double price, Membership membership) {
+        return membership.offerDiscount(price);
     }
 
 }

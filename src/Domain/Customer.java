@@ -1,10 +1,11 @@
 package Domain;
 
 public class Customer implements User {
-    private String firstName;
-    private String lastName;
-    private boolean underaged;
-    private String email;
+    String firstName;
+    String lastName;
+    boolean underaged;
+    String email;
+    int membershipId = 0;
 
     public Customer(String firstName, String lastName, String email, boolean underaged) {
         this.firstName = firstName;
@@ -17,7 +18,6 @@ public class Customer implements User {
     public String getEmail() {
         return email;
     }
-
 
     @Override
     public String getFirstName() {
@@ -33,5 +33,7 @@ public class Customer implements User {
         return underaged;
     }
 
+    public int getMembershipId(){ return membershipId; }
 
+    public void setMembershipId(int membershipId){ this.membershipId = membershipId; }
 }

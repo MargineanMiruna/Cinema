@@ -83,6 +83,7 @@ public class ConsoleApp {
                                     seats.add(sc.nextInt());
                                     sc.nextLine();
                                 }
+                                ctrl.removeSeatsFromAvailable(showtimeId, seats);
 
                                 int currentBookingId = ctrl.createBooking(loggedCustomerId, showtimeId, LocalDate.now(), nrOfTickets);
                                 System.out.println("Booking successfully created!");
@@ -100,6 +101,9 @@ public class ConsoleApp {
                                     ctrl.displayTickets(loggedCustomer, currentBooking, tickets.get(i));
                                 }
 
+                                System.out.println("Your total: ");
+                                ctrl.calculateTotalPrice(loggedCustomerId, currentBookingId);
+
                                 break;
                             }
                             case 3: {
@@ -111,10 +115,10 @@ public class ConsoleApp {
                                 List<Booking> bookings = new ArrayList<>();
 
                                 if (type == 1) {
-                                    BasicMembership membership = ctrl.createBasicMembership(loggedCustomer,starDate,endDate,bookings);
+                                    BasicMembership membership = ctrl.createBasicMembership(loggedCustomerId,starDate,endDate,bookings);
                                     System.out.println("Your total is: " + membership.getPrice() );
                                 } else if (type == 2) {
-                                    PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomer,starDate,endDate,bookings);
+                                    PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomerId,starDate,endDate,bookings);
                                     System.out.println("Your total is: " + membership.getPrice() );
                                 }
                                 System.out.println("Membership successfully created! ");

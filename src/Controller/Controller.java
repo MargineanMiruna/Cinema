@@ -91,6 +91,18 @@ public class Controller {
         }
     }
 
+    public void removeSeatsFromAvailable(int showtimeId, List<Integer> seats) {
+        Showtime showtime = cinemaService.getShowtime(showtimeId);
+        List<Seat> seatsAvailable = showtime.getSeats();
+
+        for(Seat seat : seatsAvailable) {
+            if(seats.contains(seat.getSeatNr()))
+                seatsAvailable.remove(seat);
+        }
+
+        showtime.setSeats(seatsAvailable);
+    }
+
     public int createBooking(int loggedCustomerId, int showtimeId, LocalDate date, int nrOfSeats) {
         return cinemaService.addBooking(loggedCustomerId, showtimeId, date, nrOfSeats);
     }
@@ -113,6 +125,24 @@ public class Controller {
         System.out.println(ticketInfo);
     }
 
+    public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
+        int type = cinemaService.getMembershipType(loggedCustomerId);
+        Membership membership;
+        if(type == 1)
+            membership = cinemaService.getBasicMembership(cinemaService.getCustomer(loggedCustomerId).getMembershipId());
+        else
+            membership = cinemaService.getPremiumMembership(cinemaService.getCustomer(loggedCustomerId).getMembershipId());
+
+        List<Integer> tickets = cinemaService.getBooking(currentBookingId).getTickets();
+
+        double totalPrice = 0;
+        for(Integer ticket : tickets) {
+            totalPrice += cinemaService.getTicket(ticket).getPrice();
+        }
+        double discountedPrice = cinemaService.calculateDiscountedPrice(totalPrice, membership);
+
+        System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei\n");
+    }
 
     public void staffMenu() {
         System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen\n4. Back");
@@ -152,7 +182,7 @@ public class Controller {
     }
 
     public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
-        cinemaService.updateShowtime(id, screenId, movieId, date, startTime, duration);
+        cinemaService.updateShowtime(id, screenId, movieId, date, startTime, duration, cinemaService.getShowtime(id).getSeats());
     }
 
     public void deleteShowtime(int id){
@@ -170,18 +200,11 @@ public class Controller {
     public void deleteScreen(int id) {
         cinemaService.deleteScreen(id);
     }
-    public BasicMembership createBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        return cinemaService.addBasicMembership(customer, startDate, endDate, bookings);
+    public BasicMembership createBasicMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        return cinemaService.addBasicMembership(customerId, startDate, endDate, bookings);
     }
-    public PremiumMembership createPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
-        return cinemaService.addPremiumMembership(customer, startDate, endDate, bookings);
+    public PremiumMembership createPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        return cinemaService.addPremiumMembership(customerId, startDate, endDate, bookings);
     }
-
-
-
-
-
-
-
 
 }
