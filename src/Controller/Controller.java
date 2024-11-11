@@ -170,6 +170,14 @@ public class Controller {
     public void deleteScreen(int id) {
         cinemaService.deleteScreen(id);
     }
+    public BasicMembership createBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        return cinemaService.addBasicMembership(customer, startDate, endDate, bookings);
+    }
+    public PremiumMembership createPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+        return cinemaService.addPremiumMembership(customer, startDate, endDate, bookings);
+    }
+
+
 
 
 

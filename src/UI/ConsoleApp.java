@@ -104,6 +104,20 @@ public class ConsoleApp {
                             }
                             case 3: {
                                 //create Membership
+                                System.out.println("Please choose the type of membership you want to have(1. basic\n 2. premium: \n ");
+                                int type = sc.nextInt();
+                                LocalDate starDate = LocalDate.now();
+                                LocalDate endDate = starDate.plusDays(30);
+                                List<Booking> bookings = new ArrayList<>();
+
+                                if (type == 1) {
+                                    BasicMembership membership = ctrl.createBasicMembership(loggedCustomer,starDate,endDate,bookings);
+                                    System.out.println("Your total is: " + membership.getPrice() );
+                                } else if (type == 2) {
+                                    PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomer,starDate,endDate,bookings);
+                                    System.out.println("Your total is: " + membership.getPrice() );
+                                }
+                                System.out.println("Membership successfully created! ");
                                 break;
                             }
                             case 4: {

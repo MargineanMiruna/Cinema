@@ -172,9 +172,10 @@ public class CinemaService {
         ticketRepo.update(id, ticket);
     }
 
-    public void addBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public BasicMembership addBasicMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
         BasicMembership basicMembership = new BasicMembership(customer, startDate,endDate, bookings);
         basicMembershipRepo.add(basicMembership);
+        return basicMembership;
     }
 
     public void updateBasicMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
@@ -182,9 +183,10 @@ public class CinemaService {
         basicMembershipRepo.update(id, basicMembership);
     }
 
-    public void addPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
+    public PremiumMembership addPremiumMembership(Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
         PremiumMembership premiumMembership = new PremiumMembership(customer, startDate,endDate, bookings);
         premiumMembershipRepo.add(premiumMembership);
+        return premiumMembership;
     }
 
     public void updatePremiumMembership(int id, Customer customer, LocalDate startDate, LocalDate endDate, List<Booking> bookings) {
