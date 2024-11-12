@@ -22,17 +22,17 @@ public class Controller {
         cinemaService.addStaff("Alexandra","Olah","alexandra");
         cinemaService.addStaff("Klara","Orban","klara");
 
-        cinemaService.addScreen(30,10,10);
-        cinemaService.addScreen(50,20,10);
-        cinemaService.addScreen(20,25,20);
+        cinemaService.addScreen(6,10,7);
+        cinemaService.addScreen(12,4,8);
+        cinemaService.addScreen(10,5,2);
 
         cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
         cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
         cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
 
-        cinemaService.addShowtime(1,1, LocalDate.of(2025, 1, 5), LocalTime.now(), 120);
-        cinemaService.addShowtime(2,1, LocalDate.of(2024,12,24), LocalTime.now(), 120);
-        cinemaService.addShowtime(3,2, LocalDate.of(2024,12,14), LocalTime.now(), 190);
+        cinemaService.addShowtime(1,2, LocalDate.of(2025, 1, 5), LocalTime.of(12,45), 120);
+        cinemaService.addShowtime(2,3, LocalDate.of(2024,12,24), LocalTime.of(20, 30), 210);
+        cinemaService.addShowtime(3,1, LocalDate.of(2024,12,14), LocalTime.of(16,20), 190);
 
     }
 
@@ -85,7 +85,8 @@ public class Controller {
     }
 
     public void customerMenu() {
-        System.out.println("1. View showtimes\n2. Create a booking\n3. Create a membership\n4. Exit");
+        System.out.println("\n=================Menu=================");
+        System.out.println("1. View showtimes\n2. Create a booking\n3. Create a membership\n4. Exit\nEnter your choice: ");
     }
 
     public void displayShowtimes(Customer customer) {
@@ -93,7 +94,8 @@ public class Controller {
 
         for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
             Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
-            System.out.println("Showtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration() + "\n");
+            System.out.println("\n======================================");
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
         }
     }
 
@@ -101,9 +103,12 @@ public class Controller {
         Showtime showtime= cinemaService.getShowtime(showtimeId);
         List<Seat> seats = showtime.getSeats();
 
+        System.out.println("\n======================================");
+        System.out.printf("%-5s %-13s %-10s%n", "No", "Type", "Price");
         for(Seat seat : seats) {
-            System.out.println("Seat number " + seat.getSeatNr() + " type " + seat.getType() + " costs " + seat.getPrice());
+            System.out.printf("%-5d %-13s %-10s%n", seat.getSeatNr(), seat.getType(), seat.getPrice() + " lei");
         }
+        System.out.println("\n======================================");
     }
 
     public void removeSeatsFromAvailable(int showtimeId, List<Integer> seats) {
@@ -130,10 +135,11 @@ public class Controller {
     }
 
     public void displayTickets(Customer customer, Booking booking, int ticketId) {
-        String ticketInfo = "Booking made by " + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + "\n";
+        System.out.println("\n======================================");
+        String ticketInfo = "\nBooking made by " + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + "\n";
         ticketInfo += "Movie " + cinemaService.getMovie(cinemaService.getShowtime(booking.getShowtimeId()).getMovieId()).getTitle() + "\n";
         ticketInfo += "Room " + cinemaService.getTicket(ticketId).getScreenId() + " seat number " + cinemaService.getTicket(ticketId).getSeatNr() + " type " + cinemaService.findSeatBySeatNr(cinemaService.getTicket(ticketId).getScreenId(), cinemaService.getTicket(ticketId).getSeatNr()).getType() + "\n";
-        ticketInfo += "Price " + cinemaService.getTicket(ticketId).getPrice() + "\n";
+        ticketInfo += "Price " + cinemaService.getTicket(ticketId).getPrice();
         System.out.println(ticketInfo);
     }
 
@@ -162,18 +168,20 @@ public class Controller {
 
         if(type != 0) {
             discountedPrice = cinemaService.calculateDiscountedPrice(totalPrice, membership);
-            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei\n");
+            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei");
         }
         else
-            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + discountedPrice + " lei\nTotal to pay " + totalPrice + " lei\n");
+            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + discountedPrice + " lei\nTotal to pay " + totalPrice + " lei");
     }
 
     public void staffMenu() {
-        System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen\n4. Back");
+        System.out.println("\n=================Menu=================");
+        System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen\n4. Back\nEnter your choice: ");
     }
 
     public void staffMenu2() {
-        System.out.println("1. Add\n2. Update\n3. Delete");
+        System.out.println("\n======================================");
+        System.out.println("1. Add\n2. Update\n3. Delete\nEnter your choice: ");
     }
 
     public void addMovie(String title, boolean pg, String genre, LocalDate releaseDate) {
