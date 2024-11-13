@@ -11,11 +11,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Controller class that provides methods for managing customer and
+ * staff accounts, movies, showtimes, seats, bookings, tickets,
+ * and memberships through interaction with the CinemaService layer.
+ */
 public class Controller {
     CinemaService cinemaService = new CinemaService();
 
     /**
-     * default entry
+     * default entry point to initialize sample data for testing
      */
     public void add(){
         cinemaService.addCustomer("Miruna", "Marginean", "miruna", false);
@@ -39,16 +44,34 @@ public class Controller {
 
     }
 
+    /**
+     * Calculates the age of a customer based on their birthdate.
+     * @param birthday The birth date of the customer.
+     * @return The age in years.
+     */
     int getAge(LocalDate birthday) {
         LocalDate today = LocalDate.now();
         return Period.between(birthday, today).getYears();
     }
 
+    /**
+     * Creates a new customer based on provided details.
+     * Sets customer as underaged if their age is under 18.
+     * @param firstname The first name of the customer.
+     * @param lastname  The last name of the customer.
+     * @param email     The email of the customer.
+     * @param birthday  The birth date of the customer.
+     */
     public void createCustomer(String firstname, String lastname, String email, LocalDate birthday) {
         boolean underaged = getAge(birthday) < 18;
         cinemaService.addCustomer(firstname, lastname, email, underaged);
     }
 
+    /**
+     * Logs in a customer by finding their account via email.
+     * @param email The email of the customer to log in.
+     * @return The Customer object if found, otherwise null.
+     */
     public Customer logCustomer(String email) {
         try {
             if(cinemaService.findCustomerByEmail(email) != null) {
@@ -64,14 +87,30 @@ public class Controller {
         }
     }
 
+    /**
+     * Retrieves the ID of a specific customer.
+     * @param customer The Customer object.
+     * @return The ID of the customer.
+     */
     public int getIdOfCustomer(Customer customer) {
         return cinemaService.getIdOfCustomer(customer);
     }
 
+    /**
+     * Creates a new staff member with the given information.
+     * @param firstname The first name of the staff member.
+     * @param lastname  The last name of the staff member.
+     * @param email     The email of the staff member.
+     */
     public void createStaff(String firstname, String lastname, String email) {
         cinemaService.addStaff(firstname, lastname, email);
     }
 
+    /**
+     * Logs in a staff member by their email.
+     * @param email The email of the staff member.
+     * @return The Staff object if found, otherwise null.
+     */
     public Staff logStaff(String email) {
         try {
             if(cinemaService.findStaffByEmail(email) != null) {
@@ -87,11 +126,18 @@ public class Controller {
         }
     }
 
+    /**
+     * Displays the customer menu options.
+     */
     public void customerMenu() {
         System.out.println("\n=================Menu=================");
         System.out.println("1. View showtimes\n2. Create a booking\n3. Create a membership\n4. Exit\nEnter your choice: ");
     }
 
+    /**
+     * Displays showtimes for a given customer.
+     * @param customer The customer viewing the showtimes.
+     */
     public void displayShowtimes(Customer customer) {
         Map<Integer, Showtime> showtimes = cinemaService.displayShowtimes(customer);
 
@@ -102,6 +148,10 @@ public class Controller {
         }
     }
 
+    /**
+     * Displays available seats for a given showtime.
+     * @param showtimeId The ID of the showtime.
+     */
     public void displayAvailableSeats(int showtimeId) {
         Showtime showtime= cinemaService.getShowtime(showtimeId);
         List<Seat> seats = showtime.getSeats();
@@ -115,10 +165,9 @@ public class Controller {
     }
 
     /**
-     *
-     * @param showtimeId
-     * @param seats that are booked
-     * if the seats are booked we remove them from the showtimes lists of seats
+     * Removes booked seats from the list of available seats for a showtime.
+     * @param showtimeId The ID of the showtime.
+     * @param seats The list of seat numbers to be booked.
      */
     public void removeSeatsFromAvailable(int showtimeId, List<Integer> seats) {
         Showtime showtime = cinemaService.getShowtime(showtimeId);
@@ -129,20 +178,45 @@ public class Controller {
         showtime.setSeats(seatsAvailable);
     }
 
+    /**
+     * Creates a new booking for a customer.
+     * @param loggedCustomerId The ID of the customer.
+     * @param showtimeId The ID of the showtime.
+     * @param date The date of the booking.
+     * @param nrOfSeats The number of seats booked.
+     * @return The ID of the created booking.
+     */
     public int createBooking(int loggedCustomerId, int showtimeId, LocalDate date, int nrOfSeats) {
         return cinemaService.addBooking(loggedCustomerId, showtimeId, date, nrOfSeats);
     }
 
+    /**
+     * Gets a booking by its ID.
+     * @param bookingId The ID of the booking.
+     * @return The Booking object.
+     */
     public Booking getBooking(int bookingId) {
         return cinemaService.getBooking(bookingId);
     }
 
+    /**
+     * Creates a ticket for a specific seat in a booking.
+     * @param bookingId The ID of the booking.
+     * @param seatNr The seat number.
+     * @return The ID of the created ticket.
+     */
     public int createTicket(int bookingId, int seatNr) {
         Showtime showtime = cinemaService.getShowtime(cinemaService.getBooking(bookingId).getShowtimeId());
         Seat seat = cinemaService.findSeatBySeatNr(showtime.getScreenId(), seatNr);
         return cinemaService.addTicket(bookingId, showtime.getScreenId(), seatNr, seat.getPrice());
     }
 
+    /**
+     * Displays ticket details for a booking.
+     * @param customer The customer who made the booking.
+     * @param booking The booking containing the tickets.
+     * @param ticketId The ID of the ticket to display.
+     */
     public void displayTickets(Customer customer, Booking booking, int ticketId) {
         System.out.println("\n======================================");
         String ticketInfo = "\nBooking made by " + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + "\n";
@@ -153,12 +227,10 @@ public class Controller {
     }
 
     /**
-     *
-     * @param loggedCustomerId
-     * @param currentBookingId
-     * calculates the total price of the booking adding the discount if the customer has a membership
+     * Calculates the total price for a booking, applying membership discount if applicable.
+     * @param loggedCustomerId The ID of the customer.
+     * @param currentBookingId The ID of the current booking.
      */
-
     public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
         int type = cinemaService.getMembershipType(loggedCustomerId);
         Membership membership = null;
@@ -183,20 +255,40 @@ public class Controller {
             System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + discountedPrice + " lei\nTotal to pay " + totalPrice + " lei");
     }
 
+    /**
+     * Displays the staff menu options.
+     */
     public void staffMenu() {
         System.out.println("\n=================Menu=================");
         System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen\n4. Back\nEnter your choice: ");
     }
 
+    /**
+     * Displays additional staff menu options.
+     */
     public void staffMenu2() {
         System.out.println("\n======================================");
         System.out.println("1. Add\n2. Update\n3. Delete\nEnter your choice: ");
     }
 
+    /**
+     * Adds a new movie to the cinema's list.
+     * @param title The title of the movie.
+     * @param pg Parental guidance flag (true if PG).
+     * @param genre The genre of the movie.
+     * @param releaseDate The release date of the movie.
+     */
     public void addMovie(String title, boolean pg, String genre, LocalDate releaseDate) {
         cinemaService.addMovie(title, pg, genre, releaseDate);
     }
 
+    /**
+     * Updates an existing movie's details.
+     * @param title The title of the movie.
+     * @param pg Parental guidance flag (true if PG).
+     * @param genre The genre of the movie.
+     * @param releaseDate The release date of the movie.
+     */
     public void updateMovie( String title, boolean pg, String genre, LocalDate releaseDate) {
         Integer movieId = cinemaService.findMovieIdByTitle(title);
         if (movieId != null) {
@@ -207,9 +299,8 @@ public class Controller {
     }
 
     /**
-     *
-     * @param title the title of the movie we want to delete
-     * we delete a movie and all showtimes with that movie
+     * Deletes a movie by title, including all associated showtimes.
+     * @param title The title of the movie to delete.
      */
     public void deleteMovie(String title){
         Integer movieId = cinemaService.findMovieIdByTitle(title);
@@ -221,49 +312,112 @@ public class Controller {
             System.out.println("Movie not found with title: " + title);
         }
     }
-    public Integer findMovieIdByTitle(String title){
+
+    /**
+     * Finds the ID of a movie by its title.
+     * @param title The title of the movie.
+     * @return The ID of the movie, or null if not found.
+     */
+    public int findMovieIdByTitle(String title){
         return cinemaService.findMovieIdByTitle(title);
     }
 
+    /**
+     * Adds a new showtime to a specified screen and movie.
+     * @param screenId The ID of the screen.
+     * @param movieId The ID of the movie.
+     * @param date The date of the showtime.
+     * @param startTime The start time of the showtime.
+     * @param duration The duration of the showtime.
+     */
     public void addShowtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         cinemaService.addShowtime(screenId, movieId, date,startTime, duration);
     }
 
+    /**
+     * Updates an existing showtime.
+     * @param id The ID of the showtime.
+     * @param screenId The screen ID.
+     * @param movieId The movie ID.
+     * @param date The date of the showtime.
+     * @param startTime The start time.
+     * @param duration The duration of the showtime.
+     */
     public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
         cinemaService.updateShowtime(id, screenId, movieId, date, startTime, duration, cinemaService.getShowtime(id).getSeats());
     }
 
+    /**
+     * Deletes a showtime by ID.
+     * @param id The ID of the showtime to delete.
+     */
     public void deleteShowtime(int id){
         cinemaService.deleteShowtime(id);
     }
 
+    /**
+     * Adds a new screen with specified seat types.
+     * @param nrStandardSeats The number of standard seats.
+     * @param nrVipSeats The number of VIP seats.
+     * @param nrPremiumSeats The number of premium seats.
+     */
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         cinemaService.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
     }
 
+    /**
+     * Updates an existing screen's seat configuration.
+     * @param id The ID of the screen.
+     * @param nrStandardSeats The number of standard seats.
+     * @param nrVipSeats The number of VIP seats.
+     * @param nrPremiumSeats The number of premium seats.
+     */
     public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         cinemaService.updateScreen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
     }
 
+    /**
+     * Deletes a screen by its ID.
+     * @param id The ID of the screen to delete.
+     */
     public void deleteScreen(int id) {
         cinemaService.deleteScreen(id);
         cinemaService.deleteshowtimesByScreenId(id);
     }
 
+    /**
+     * Creates a basic membership for a customer with a specified start and end date.
+     * @param customerId The ID of the customer to whom the membership will be assigned.
+     * @param startDate  The start date of the basic membership.
+     * @param endDate    The end date of the basic membership.
+     * @return A BasicMembership object representing the created membership.
+     */
     public BasicMembership createBasicMembership(int customerId, LocalDate startDate, LocalDate endDate) {
         return cinemaService.addBasicMembership(customerId, startDate, endDate);
     }
 
+    /**
+     * Creates a premium membership for a customer with a specified start and end date.
+     * @param customerId The ID of the customer to whom the membership will be assigned.
+     * @param startDate  The start date of the premium membership.
+     * @param endDate    The end date of the premium membership.
+     * @return A PremiumMembership object representing the created membership.
+     */
     public PremiumMembership createPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate) {
         return cinemaService.addPremiumMembership(customerId, startDate, endDate);
     }
 
+    /**
+     * Terminates all expired memberships by updating their status within the system.
+     * This method identifies memberships whose end date has passed and processes them
+     * to deactivate or remove benefits as per the application's logic.
+     */
     public void terminateMemberships() {
         cinemaService.terminateMemberships();
     }
 
     /**
-     * before a staff updates of removes a showtime a display of all showtimes will show
+     * Displays a list of all showtimes for staff, including movie details and screening information.
      */
     public void displayShowtimesStaff() {
         Map<Integer, Showtime> showtimes = cinemaService.displayShowtimesStaff();
@@ -276,7 +430,7 @@ public class Controller {
     }
 
     /**
-     * before a staff updates of removes a screen a display of all screens will show
+     * Displays a list of all screens for staff.
      */
     public void displayScreensStaff() {
         Map<Integer, Screen> screens = cinemaService.displayScreensStaff();
@@ -287,7 +441,7 @@ public class Controller {
     }
 
     /**
-     * before a staff updates of removes a movie a display of all movies will show
+     * Displays a list of all screens for staff.
      */
     public void displayMoviesStaff() {
         Map<Integer, Movie> movies = cinemaService.displayMoviesStaff();

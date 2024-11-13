@@ -8,13 +8,15 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
     Controller ctrl = new Controller();
 
+    /**
+     * Runs the application by receiving user input and calling the appropriate methods from the Controller Layer.
+     */
     public void run() {
         ctrl.add();
         ctrl.terminateMemberships();
