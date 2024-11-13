@@ -352,6 +352,20 @@ public class CinemaService {
         }
     }
 
+    /**
+     *
+     * @param screenId
+     * if we delete a screen we must delete all showtimes that take place in that room
+     */
+    public void deleteshowtimesByScreenId(int screenId) {
+        Map<Integer,Showtime> allshowtimes = showtimeRepo.getAll();
+
+        for(Map.Entry<Integer,Showtime> entry : allshowtimes.entrySet()){
+            if(entry.getValue().getScreenId() == screenId)
+                showtimeRepo.delete(entry.getKey());
+        }
+
+    }
     public double calculateDiscountedPrice(double price, Membership membership) {
         return membership.offerDiscount(price);
     }
