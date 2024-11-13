@@ -21,7 +21,7 @@ public class Booking {
     public Booking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         this.customerId = customerId;
         this.showtimeId = showtimeId;
-        this.date = LocalDate.now();
+        this.date = date;
         this.nrOfCustomers = nrOfCustomers;
     }
 

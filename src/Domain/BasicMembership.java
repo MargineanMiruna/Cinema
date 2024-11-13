@@ -14,9 +14,7 @@ public class BasicMembership extends Membership{
         super(customerId, startDate, endDate);
     }
 
-    public double getPrice() {
-        return price;
-    }
+    public double getPrice() { return price; }
 
     public void setPrice(double price) {
         this.price = price;

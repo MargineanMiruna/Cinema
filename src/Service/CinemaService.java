@@ -64,7 +64,7 @@ public class CinemaService {
     }
 
     public void deleteMovie(int id) {
-       movieRepo.delete(id);
+        movieRepo.delete(id);
     }
 
     public Integer findMovieIdByTitle(String title) {
@@ -222,6 +222,13 @@ public class CinemaService {
         premiumMembershipRepo.delete(id);
     }
 
+    /**
+     *
+     * @param customerId
+     * @return nr which coresponds to thr type of membership the customer with customerId has
+     * 1 = basic membership
+     * 2 = premium membership
+     */
     public int getMembershipType(int customerId) {
         Map<Integer, BasicMembership> basicMemberships = basicMembershipRepo.getAll();
         Map<Integer, PremiumMembership> premiumMemberships = premiumMembershipRepo.getAll();
@@ -241,6 +248,11 @@ public class CinemaService {
         return 0;
     }
 
+    /**
+     *
+     * @param customer
+     * @return a list of showtimes the customer can watch depending if he is underaged or not
+     */
     public Map<Integer, Showtime> displayShowtimes(Customer customer) {
         Map<Integer, Showtime> unfilteredShowtimes = showtimeRepo.getAll();
 
@@ -255,6 +267,19 @@ public class CinemaService {
         }
 
         return unfilteredShowtimes;
+    }
+
+    public Map<Integer, Movie> displayMoviesStaff(){
+        Map<Integer, Movie> allMovies = movieRepo.getAll();
+        return allMovies;
+    }
+    public Map<Integer, Showtime> displayShowtimesStaff(){
+        Map<Integer, Showtime> allshowtimes = showtimeRepo.getAll();
+        return allshowtimes;
+    }
+    public Map<Integer, Screen> displayScreensStaff(){
+        Map<Integer, Screen> allscreens= screenRepo.getAll();
+        return allscreens;
     }
 
     public Customer findCustomerByEmail(String email){
@@ -313,9 +338,27 @@ public class CinemaService {
         return null;
     }
 
+    /**
+     *
+     * @param movieId
+     * if we delete a movie we must delete all showtimes that contain this movie
+     */
+    public void deleteShowtimesByMovieId(int movieId) {
+        Map<Integer,Showtime> allshowtimes = showtimeRepo.getAll();
+
+        for(Map.Entry<Integer,Showtime> entry : allshowtimes.entrySet()){
+            if(entry.getValue().getMovieId() == movieId)
+                showtimeRepo.delete(entry.getKey());
+        }
+    }
+
     public double calculateDiscountedPrice(double price, Membership membership) {
         return membership.offerDiscount(price);
     }
+
+    /**
+     * after a month ( 30 days the membership terminates itself ( it expires)
+     */
 
     public void terminateMemberships() {
         Map<Integer, BasicMembership> basicMembershipMap = basicMembershipRepo.getAll();

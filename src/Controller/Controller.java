@@ -14,6 +14,9 @@ import java.util.Map;
 public class Controller {
     CinemaService cinemaService = new CinemaService();
 
+    /**
+     * default entry
+     */
     public void add(){
         cinemaService.addCustomer("Miruna", "Marginean", "miruna", false);
         cinemaService.addCustomer("Tea", "Nicola", "tea", false);
@@ -111,6 +114,12 @@ public class Controller {
         System.out.println("\n======================================");
     }
 
+    /**
+     *
+     * @param showtimeId
+     * @param seats that are booked
+     * if the seats are booked we remove them from the showtimes lists of seats
+     */
     public void removeSeatsFromAvailable(int showtimeId, List<Integer> seats) {
         Showtime showtime = cinemaService.getShowtime(showtimeId);
         List<Seat> seatsAvailable = showtime.getSeats();
@@ -147,7 +156,7 @@ public class Controller {
      *
      * @param loggedCustomerId
      * @param currentBookingId
-     * calculates the total price of the booking
+     * calculates the total price of the booking adding the discount if the customer has a membership
      */
 
     public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
@@ -197,10 +206,17 @@ public class Controller {
         }
     }
 
+    /**
+     *
+     * @param title the title of the movie we want to delete
+     * we delete a movie and all showtimes with that movie
+     */
     public void deleteMovie(String title){
         Integer movieId = cinemaService.findMovieIdByTitle(title);
         if (movieId != null) {
             cinemaService.deleteMovie(movieId);
+            cinemaService.deleteShowtimesByMovieId(movieId);
+
         } else {
             System.out.println("Movie not found with title: " + title);
         }
@@ -243,6 +259,41 @@ public class Controller {
 
     public void terminateMemberships() {
         cinemaService.terminateMemberships();
+    }
+
+    /**
+     * before a staff updates of removes a showtime a display of all showtimes will show
+     */
+    public void displayShowtimesStaff() {
+        Map<Integer, Showtime> showtimes = cinemaService.displayShowtimesStaff();
+
+        for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
+            Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
+            System.out.println("\n======================================");
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+        }
+    }
+
+    /**
+     * before a staff updates of removes a screen a display of all screens will show
+     */
+    public void displayScreensStaff() {
+        Map<Integer, Screen> screens = cinemaService.displayScreensStaff();
+
+        for(Map.Entry<Integer, Screen> entry : screens.entrySet()) {
+            System.out.println("\nScreen " + entry.getKey());
+        }
+    }
+
+    /**
+     * before a staff updates of removes a movie a display of all movies will show
+     */
+    public void displayMoviesStaff() {
+        Map<Integer, Movie> movies = cinemaService.displayMoviesStaff();
+
+        for(Map.Entry<Integer, Movie> entry : movies.entrySet()) {
+            System.out.println("\nMovie " + entry.getKey() + ":\nTitle: " + entry.getValue().getTitle() + "\n\t\tGenre: " + entry.getValue().getGenre() + "\n\t\tRealease date: " + entry.getValue().getReleaseDate());
+        }
     }
 
 }

@@ -223,6 +223,7 @@ public class ConsoleApp {
                                         }
                                         case 2: {
                                             //update movie
+                                            ctrl.displayMoviesStaff();
                                             System.out.println("\nPlease enter title of the movie you want to update: ");
                                             String title = sc.nextLine();
 
@@ -244,6 +245,7 @@ public class ConsoleApp {
                                         }
                                         case 3: {
                                             //delete movie
+                                            ctrl.displayMoviesStaff();
                                             System.out.println("\nPlease enter title of the movie you want to delete: ");
                                             String title = sc.nextLine();
 
@@ -298,6 +300,7 @@ public class ConsoleApp {
                                         }
                                         case 2: {
                                             // update showtime
+                                            ctrl.displayShowtimesStaff();
                                             System.out.println("\nPlease enter the ID of the showtime you want to update: ");
                                             int id = sc.nextInt();
                                             sc.nextLine();
@@ -330,6 +333,7 @@ public class ConsoleApp {
                                         }
                                         case 3: {
                                             //delete showtime
+                                            ctrl.displayShowtimesStaff();
                                             System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
                                             int id = sc.nextInt();
                                             sc.nextLine();
@@ -375,7 +379,8 @@ public class ConsoleApp {
                                         }
                                         case 2: {
                                             // update screen
-                                            System.out.println("\nPlease enter the ID of the screen you want to delete: ");
+                                            ctrl.displayScreensStaff();
+                                            System.out.println("\nPlease enter the ID of the screen you want to update: ");
                                             int id = sc.nextInt();
                                             sc.nextLine();
 
@@ -398,6 +403,7 @@ public class ConsoleApp {
                                         }
                                         case 3: {
                                             //delete screen
+                                            ctrl.displayScreensStaff();
                                             System.out.println("\nPlease enter the ID of the screen you want to delete: ");
                                             int id = sc.nextInt();
                                             sc.nextLine();

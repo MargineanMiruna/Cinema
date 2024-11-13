@@ -7,7 +7,6 @@ public abstract class Membership {
     int customerId;
     LocalDate startDate;
     LocalDate endDate;
-    List<Booking> bookings;
     double discount;
 
     /**
@@ -33,12 +32,6 @@ public abstract class Membership {
     public LocalDate getEndDate() {
         return endDate;
     }
-
-    public List<Booking> getBookings() {
-        return bookings;
-    }
-
-    public void setBookings(List<Booking> bookings) { this.bookings = bookings; }
 
     public abstract double offerDiscount(double price);
 }

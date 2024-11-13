@@ -1,10 +1,10 @@
 package Domain;
 
 public class Ticket {
-    int bookingId;
-    int screenId;
-    int seatNr;
-    double price;
+    private int bookingId;
+    private int screenId;
+    private int seatNr;
+    private double price;
 
     /**
      * @param bookingId the id of the booking

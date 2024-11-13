@@ -5,12 +5,12 @@ import java.time.LocalTime;
 import java.util.List;
 
 public class Showtime {
-    int screenId;
-    int movieId;
-    LocalDate date;
-    LocalTime startTime;
-    int duration;
-    List<Seat> seats;
+    private int screenId;
+    private int movieId;
+    private LocalDate date;
+    private LocalTime startTime;
+    private int duration;
+    private List<Seat> seats;
 
     /**
      *
@@ -43,9 +43,7 @@ public class Showtime {
         return startTime;
     }
 
-    public int getDuration() {
-        return duration;
-    }
+    public int getDuration() { return duration; }
 
     public LocalDate getDate() {
         return date;
