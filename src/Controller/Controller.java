@@ -382,7 +382,7 @@ public class Controller {
      */
     public void deleteScreen(int id) {
         cinemaService.deleteScreen(id);
-        cinemaService.deleteshowtimesByScreenId(id);
+        cinemaService.deleteShowtimesByScreenId(id);
     }
 
     /**

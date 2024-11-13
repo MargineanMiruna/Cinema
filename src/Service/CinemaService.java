@@ -610,27 +610,40 @@ public class CinemaService {
      * @param movieId the ID of the movie for which to delete all related showtimes
      */
     public void deleteShowtimesByMovieId(int movieId) {
-        Map<Integer,Showtime> allshowtimes = showtimeRepo.getAll();
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        List<Integer> showtimeIdsToDelete = new ArrayList<>();
 
-        for(Map.Entry<Integer,Showtime> entry : allshowtimes.entrySet()){
-            if(entry.getValue().getMovieId() == movieId)
-                showtimeRepo.delete(entry.getKey());
+        for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
+            if (entry.getValue().getMovieId() == movieId) {
+                showtimeIdsToDelete.add(entry.getKey());
+            }
+        }
+
+        for (Integer showtimeId : showtimeIdsToDelete) {
+            showtimeRepo.delete(showtimeId);
         }
     }
+
 
     /**
      * Deletes all showtimes associated with a given screen ID.
      * @param screenId the ID of the screen for which to delete all related showtimes
      */
-    public void deleteshowtimesByScreenId(int screenId) {
-        Map<Integer,Showtime> allshowtimes = showtimeRepo.getAll();
+    public void deleteShowtimesByScreenId(int screenId) {
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        List<Integer> showtimeIdsToDelete = new ArrayList<>();
 
-        for(Map.Entry<Integer,Showtime> entry : allshowtimes.entrySet()){
-            if(entry.getValue().getScreenId() == screenId)
-                showtimeRepo.delete(entry.getKey());
+        for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
+            if (entry.getValue().getScreenId() == screenId) {
+                showtimeIdsToDelete.add(entry.getKey());
+            }
         }
 
+        for (Integer showtimeId : showtimeIdsToDelete) {
+            showtimeRepo.delete(showtimeId);
+        }
     }
+
 
     /**
      * Calculates the discounted price for a given membership type.
