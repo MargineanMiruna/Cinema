@@ -1,6 +1,5 @@
-package Repo;
+package Repository;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -9,6 +8,13 @@ import java.util.Map;
  * @param <T> the type of objects managed by the repository
  */
 public interface IRepository<T> {
+    /**
+     * Generates a new unique ID for an object.
+     * The ID is one greater than the last entry's ID, or 1 if the repository is empty.
+     * @return a unique integer ID for a new object
+     */
+    int generateNewId();
+
     /**
      * Adds an object to the repository.
      * @param obj the object to be added to the repository
@@ -31,10 +37,9 @@ public interface IRepository<T> {
 
     /**
      * Updates an object in the repository with a new object using the specified ID.
-     * @param id  the unique identifier of the object to update
      * @param obj the new object with which to update the existing object
      */
-    void update(int id, T obj);
+    void update(T obj);
 
     /**
      * Retrieves all objects in the repository as a map.

@@ -1,10 +1,11 @@
-package Domain;
+package Model;
 import java.time.LocalDate;
 
 /**
- * Represents a movie in the cinema system with details about its title, age restrictions, genre, and release date.
+ * The movie class represents a movie in the cinema system.
  */
-public class Movie {
+public class Movie implements HasId {
+    private int id;
     private String title;
     /** The parental guidance status of the movie.
      *  If true, only customers who are not underaged can watch the movie.
@@ -16,17 +17,26 @@ public class Movie {
 
     /**
      * Constructs a Movie with the specified title, parental guidance restriction, genre, and release date.
-     * @param title the title of the movie
+     *
+     * @param id The unoque identifier of the movie
+     * @param title The title of the movie
      * @param pg true if only customers who are not underaged can watch the movie, false otherwise
-     * @param genre the genre of the movie
-     * @param releaseDate the release date of the movie
+     * @param genre The genre of the movie
+     * @param releaseDate The release date of the movie
      */
-    public Movie(String title, boolean pg, String genre, LocalDate releaseDate) {
+    public Movie(int id, String title, boolean pg, String genre, LocalDate releaseDate) {
+        this.id = id;
         this.title = title;
         this.pg = pg;
         this.genre = genre;
         this.releaseDate = releaseDate;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getId() { return id; }
 
     /**
      * Gets the title of the movie.
@@ -58,37 +68,5 @@ public class Movie {
      */
     public LocalDate getReleaseDate() {
         return releaseDate;
-    }
-
-    /**
-     * Sets the title of the movie.
-     * @param title the new title of the movie
-     */
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    /**
-     * Sets the parental guidance restriction of the movie.
-     * @param pg the new parental guidance restriction; true if only non-underaged customers can watch, false otherwise
-     */
-    public void setPg(boolean pg) {
-        this.pg = pg;
-    }
-
-    /**
-     * Sets the genre of the movie.
-     * @param genre the new genre of the movie
-     */
-    public void setGenre(String genre) {
-        this.genre = genre;
-    }
-
-    /**
-     * Sets the release date of the movie.
-     * @param releaseDate the new release date of the movie
-     */
-    public void setReleaseDate(LocalDate releaseDate) {
-        this.releaseDate = releaseDate;
     }
 }

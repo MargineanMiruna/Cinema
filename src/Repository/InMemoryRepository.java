@@ -1,24 +1,24 @@
-package Repo;
+package Repository;
+
+import Model.HasId;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * InMemoryRepository is an in-memory implementation of the {@link IRepository} interface.
+ * The InMemoryRepository class is an in-memory implementation of the {@link IRepository} interface.
  * Stores objects in a HashMap, providing basic CRUD operations for objects of a generic type.
  * @param <T> the type of objects managed by this repository
  */
-
-public class InMemoryRepository<T> implements IRepository<T> {
-    Map<Integer, T> objects = new HashMap<>();
+public class InMemoryRepository<T extends HasId> implements IRepository<T> {
+    private final Map<Integer, T> objects = new HashMap<>();
 
     /**
      * Generates a new unique ID for an object.
      * The ID is one greater than the last entry's ID, or 1 if the repository is empty.
      * @return a unique integer ID for a new object
      */
-    private int createNewId() {
+    public int generateNewId() {
         Map.Entry<Integer, T> lastEntry = null;
 
         for (Map.Entry<Integer, T> entry : objects.entrySet()) {
@@ -37,9 +37,8 @@ public class InMemoryRepository<T> implements IRepository<T> {
      */
     @Override
     public int add(T obj) {
-        int id = createNewId();
-        objects.put(id, obj);
-        return id;
+        objects.put(obj.getId(), obj);
+        return obj.getId();
     }
 
     /**
@@ -67,14 +66,13 @@ public class InMemoryRepository<T> implements IRepository<T> {
      * @param obj the new object with which to update the existing object
      */
     @Override
-    public void update(int id, T obj) {
-        objects.put(id, obj);
+    public void update(T obj) {
+        objects.replace(obj.getId(), obj);
     }
 
     /**
      * Retrieves all objects in the repository as a map.
-     * @return a map containing all objects in the repository,
-     *         with their IDs as keys and the objects as values
+     * @return a map containing all objects in the repository, with their IDs as keys and the objects as values
      */
     @Override
     public Map<Integer, T> getAll() {

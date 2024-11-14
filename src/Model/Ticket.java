@@ -1,12 +1,10 @@
-package Domain;
+package Model;
 
 /**
- * Represents a ticket for a booking in a screening system.
- * Each ticket includes details such as the booking ID, screen ID, seat number, and price.
- *
- * This class is used to store and retrieve information about individual tickets.
+ * The ticket class represents a ticket for a booking in a screening system.
  */
-public class Ticket {
+public class Ticket implements HasId {
+    private int id;
     private int bookingId;
     private int screenId;
     private int seatNr;
@@ -15,18 +13,25 @@ public class Ticket {
     /**
      * Constructs a Ticket instance with specified booking ID, screen ID, seat number, and price.
      *
-     * @param bookingId the id of the booking
-     * @param screenId the id of the screen
-     * @param seatNr the nr of the seat
-     * @param price the price of the ticket
+     * @param id The unique identifier of the ticket
+     * @param bookingId The id of the booking
+     * @param screenId The id of the screen
+     * @param seatNr The nr of the seat
+     * @param price The price of the ticket
      */
-
-    public Ticket(int bookingId, int screenId, int seatNr, double price) {
+    public Ticket(int id, int bookingId, int screenId, int seatNr, double price) {
+        this.id = id;
         this.bookingId = bookingId;
         this.screenId = screenId;
         this.seatNr = seatNr;
         this.price = price;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getId() { return id; }
 
     /**
      * Gets the booking ID associated with this ticket.
@@ -49,10 +54,9 @@ public class Ticket {
     }
 
     /**
-     *Gets the price of the ticket.
+     * Gets the price of the ticket.
      * @return the price as a double.
      */
-
     public double getPrice() {
         return price;
     }

@@ -1,7 +1,7 @@
 package UI;
 
 import Controller.Controller;
-import Domain.*;
+import Model.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -12,7 +12,11 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
-    Controller ctrl = new Controller();
+    Controller ctrl;
+
+    public ConsoleApp(Controller ctrl) {
+        this.ctrl = ctrl;
+    }
 
     /**
      * Runs the application by receiving user input and calling the appropriate methods from the Controller Layer.

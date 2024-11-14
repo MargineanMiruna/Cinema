@@ -1,14 +1,11 @@
-package Domain;
+package Model;
 
 /**
- * Represents different types of seats available, each with an associated price.
+ *  The seat type enum represents different types of seats available, each with an associated price.
  *  The available seat types are:
- *  standard - Standard seat with a base price.
- *  VIP - IP seat with a higher price.
- *  premium - Premium seat with the highest price.
- *
- *  Each SeatType has an associated price that can be retrieved using the getPrice() method.
- *
+ *      standard - Standard seat with a base price.
+ *      VIP - IP seat with a higher price.
+ *      premium - Premium seat with the highest price.
  */
 public enum SeatType {
     standard(30),
@@ -16,6 +13,7 @@ public enum SeatType {
     premium(50);
 
     private int price;
+
     /**
      * Constructs a SeatType with the specified price.
      *

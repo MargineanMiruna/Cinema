@@ -1,15 +1,14 @@
-package Domain;
+package Model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
 
 /**
- * Represents a showtime for a specific movie, including details such as the screen, date, start time, duration and available seats.
- * A Showtime instance includes all the relevant information needed to schedule and display a showtime for a movie.
- * Each showtime is associated with a particular screen and includes a list of available seats.
+ * The showtime class represents a showtime for a specific movie.
  */
-public class Showtime {
+public class Showtime implements HasId {
+    private int id;
     private int screenId;
     private int movieId;
     private LocalDate date;
@@ -20,15 +19,17 @@ public class Showtime {
     /**
      *Constructs a Showtime instance with the specified screen ID, movie ID, date, start time, duration, and seat list.
      *
-     * @param screenId
-     * @param movieId
-     * @param date of the showtime
-     * @param startTime of the showtime
-     * @param duration of the showtime
-     * @param seats list of available
+     * @param id The unique identifier of the showtime
+     * @param screenId The ID of the screen
+     * @param movieId The ID of the movie
+     * @param date The date of the showtime
+     * @param startTime The start time of the showtime
+     * @param duration The duration of the showtime
+     * @param seats A list of available seats for the showtime
      */
 
-    public Showtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration, List<Seat> seats) {
+    public Showtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration, List<Seat> seats) {
+        this.id = id;
         this.screenId = screenId;
         this.movieId = movieId;
         this.date = date;
@@ -36,6 +37,12 @@ public class Showtime {
         this.duration = duration;
         this.seats = seats;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public int getId() { return id; }
 
     /**
      * Gets the screen ID associated with this showtime.
@@ -98,50 +105,5 @@ public class Showtime {
      */
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
-    }
-
-    /**
-     * Sets a new screen ID for this showtime.
-     *
-     * @param screenId the new screen ID.
-     */
-    public void setScreenId(int screenId) {
-        this.screenId = screenId;
-    }
-
-    /**
-     * Sets a new movie ID for this showtime.
-     *
-     * @param movieId the new movie ID.
-     */
-    public void setMovieId(int movieId) {
-        this.movieId = movieId;
-    }
-
-    /**
-     * Sets a new start time for this showtime.
-     *
-     * @param startTime the new start time as a {@code LocalTime}.
-     */
-    public void setStartTime(LocalTime startTime) {
-        this.startTime = startTime;
-    }
-
-    /**
-     * Sets a new duration for this showtime.
-     *
-     * @param duration the new duration in minutes.
-     */
-    public void setDuration(int duration) {
-        this.duration = duration;
-    }
-
-    /**
-     * Sets a new date for this showtime.
-     *
-     * @param date the new date as a {@code LocalDate}.
-     */
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 }

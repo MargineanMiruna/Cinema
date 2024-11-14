@@ -1,13 +1,12 @@
 package Controller;
 
 
-import Domain.*;
+import Model.*;
 import Service.CinemaService;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -17,7 +16,11 @@ import java.util.Map;
  * and memberships through interaction with the CinemaService layer.
  */
 public class Controller {
-    CinemaService cinemaService = new CinemaService();
+    CinemaService cinemaService;
+
+    public Controller(CinemaService cinemaService) {
+        this.cinemaService = cinemaService;
+    }
 
     /**
      * default entry point to initialize sample data for testing

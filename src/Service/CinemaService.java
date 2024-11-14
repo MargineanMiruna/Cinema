@@ -1,9 +1,8 @@
 package Service;
 
-import Domain.*;
-import Repo.InMemoryRepository;
+import Model.*;
+import Repository.IRepository;
 
-import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -14,23 +13,48 @@ import java.util.Map;
 /**
  * Service layer for cinema operations, handling the business logic for managing customers, staff, movies, showtimes,
  * screens, seats, bookings, tickets, and memberships.
- * This class acts as an interface between the domain entities and the repository layer.
- * Provides methods to add, get, update, and delete cinema-related entities.
  */
 public class CinemaService {
     // Repositories for each domain entity
-    InMemoryRepository<Customer> customerRepo = new InMemoryRepository<Customer>();
-    InMemoryRepository<Staff> staffRepo = new InMemoryRepository<Staff>();
-    InMemoryRepository<Movie> movieRepo = new InMemoryRepository<Movie>();
-    InMemoryRepository<Showtime> showtimeRepo = new InMemoryRepository<Showtime>();
-    InMemoryRepository<Screen> screenRepo = new InMemoryRepository<Screen>();
-    InMemoryRepository<Seat> seatRepo = new InMemoryRepository<Seat>();
-    InMemoryRepository<Booking> bookingRepo = new InMemoryRepository<Booking>();
-    InMemoryRepository<Ticket> ticketRepo = new InMemoryRepository<Ticket>();
-    InMemoryRepository<BasicMembership> basicMembershipRepo = new InMemoryRepository<BasicMembership>();
-    InMemoryRepository<PremiumMembership> premiumMembershipRepo = new InMemoryRepository<PremiumMembership>();
+    private final IRepository<Customer> customerRepo;
+    private final IRepository<Staff> staffRepo;
+    private final IRepository<Movie> movieRepo;
+    private final IRepository<Showtime> showtimeRepo;
+    private final IRepository<Screen> screenRepo;
+    private final IRepository<Seat> seatRepo;
+    private final IRepository<Booking> bookingRepo;
+    private final IRepository<Ticket> ticketRepo;
+    private final IRepository<BasicMembership> basicMembershipRepo;
+    private final IRepository<PremiumMembership> premiumMembershipRepo;
 
-    public CinemaService() {}
+    /**
+     * Constructs a CinemaService with specified customerRepo, staffRepo, movieRepo, showtimeRepo, screenRepo, seatRepo, bookingRepo, @param ticketRepo, basicMembershipRepo, premiumMembershipRepo
+     * @param customerRepo The repository for the customers
+     * @param staffRepo The repository for the staff members
+     * @param movieRepo The repository for the movies
+     * @param showtimeRepo The repository for the showtimes
+     * @param screenRepo The repository for the screens
+     * @param seatRepo The repository for the seats
+     * @param bookingRepo The repository for the bookings
+     * @param ticketRepo The repository for the tickets
+     * @param basicMembershipRepo The repository for the basic memberships
+     * @param premiumMembershipRepo The repository for the premium memberships
+     */
+    public CinemaService(IRepository<Customer> customerRepo, IRepository<Staff> staffRepo, IRepository<Movie> movieRepo,
+                         IRepository<Showtime> showtimeRepo, IRepository<Screen> screenRepo, IRepository<Seat> seatRepo,
+                         IRepository<Booking> bookingRepo, IRepository<Ticket> ticketRepo, IRepository<BasicMembership> basicMembershipRepo,
+                         IRepository<PremiumMembership> premiumMembershipRepo) {
+        this.customerRepo = customerRepo;
+        this.staffRepo = staffRepo;
+        this.movieRepo = movieRepo;
+        this.showtimeRepo = showtimeRepo;
+        this.screenRepo = screenRepo;
+        this.seatRepo = seatRepo;
+        this.bookingRepo = bookingRepo;
+        this.ticketRepo = ticketRepo;
+        this.basicMembershipRepo = basicMembershipRepo;
+        this.premiumMembershipRepo = premiumMembershipRepo;
+    }
 
     /**
      * Adds a new customer.
@@ -40,7 +64,8 @@ public class CinemaService {
      * @param underage  indicates if the customer is underage
      */
     public void addCustomer(String firstName, String lastName, String email, boolean underage) {
-        Customer customer = new Customer(firstName, lastName, email, underage);
+        int id = customerRepo.generateNewId();
+        Customer customer = new Customer(id, firstName, lastName, email, underage);
         customerRepo.add(customer);
     }
 
@@ -62,8 +87,8 @@ public class CinemaService {
      * @param underage  indicates if the customer is underage (true if underage, false otherwise)
      */
     public void updateCustomer(int id, String firstName, String lastName,String email, boolean underage) {
-        Customer customer = new Customer(firstName, lastName, email, underage);
-        customerRepo.update(id, customer);
+        Customer customer = new Customer(id, firstName, lastName, email, underage);
+        customerRepo.update(customer);
     }
 
     /**
@@ -73,7 +98,8 @@ public class CinemaService {
      * @param email     the email address of the staff member
      */
     public void addStaff(String firstName, String lastName, String email) {
-        Staff staff = new Staff(firstName, lastName, email);
+        int id = staffRepo.generateNewId();
+        Staff staff = new Staff(id, firstName, lastName, email);
         staffRepo.add(staff);
     }
 
@@ -85,8 +111,8 @@ public class CinemaService {
      * @param email     the new email address of the staff member
      */
     public void updateStaff(int id, String firstName, String lastName, String email) {
-        Staff staff = new Staff(firstName, lastName, email);
-        staffRepo.update(id, staff);
+        Staff staff = new Staff(id, firstName, lastName, email);
+        staffRepo.update(staff);
     }
 
     /**
@@ -97,7 +123,8 @@ public class CinemaService {
      * @param releaseDate the release date of the movie
      */
     public void addMovie(String title, boolean pg, String genre, LocalDate releaseDate) {
-        Movie movie = new Movie(title, pg, genre, releaseDate);
+        int id = movieRepo.generateNewId();
+        Movie movie = new Movie(id, title, pg, genre, releaseDate);
         movieRepo.add(movie);
     }
 
@@ -119,8 +146,8 @@ public class CinemaService {
      * @param releaseDate the new release date of the movie
      */
     public void updateMovie(int id, String title, boolean pg, String genre, LocalDate releaseDate) {
-        Movie movie = new Movie(title, pg, genre, releaseDate);
-        movieRepo.update(id, movie);
+        Movie movie = new Movie(id, title, pg, genre, releaseDate);
+        movieRepo.update(movie);
     }
 
     /**
@@ -154,12 +181,13 @@ public class CinemaService {
      * @param duration  the duration of the showtime in minutes
      */
     public void addShowtime(int screenId, int movieId, LocalDate date, LocalTime startTime, int duration) {
+        int id = showtimeRepo.generateNewId();
         Screen screen = getScreen(screenId);
         List<Seat> seatsCopy = new ArrayList<>();
         for (Seat seat : screen.getSeats()) {
-            seatsCopy.add(new Seat(seat.getSeatNr(), seat.getType()));
+            seatsCopy.add(new Seat(seat.getId(), seat.getSeatNr(), seat.getType()));
         }
-        Showtime showtime = new Showtime(screenId, movieId, date,startTime, duration, seatsCopy);
+        Showtime showtime = new Showtime(id, screenId, movieId, date,startTime, duration, seatsCopy);
         showtimeRepo.add(showtime);
     }
 
@@ -183,8 +211,8 @@ public class CinemaService {
      * @param seats     the list of seats for the showtime
      */
     public void updateShowtime(int id, int screenId, int movieId, LocalDate date, LocalTime startTime, int duration, List<Seat> seats) {
-        Showtime showtime = new Showtime(screenId, movieId, date, startTime, duration, seats);
-        showtimeRepo.update(id, showtime);
+        Showtime showtime = new Showtime(id, screenId, movieId, date, startTime, duration, seats);
+        showtimeRepo.update(showtime);
     }
 
     /**
@@ -202,18 +230,28 @@ public class CinemaService {
      * @param nrPremiumSeats  the number of premium seats in the screen
      */
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
-        Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
+        int id = screenRepo.generateNewId();
+        Screen screen = new Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
         screenRepo.add(screen);
 
+        List<Seat> seatsForThisScreen = new ArrayList<>();
         for (int i = 1; i <= nrStandardSeats; i++) {
-            seatRepo.add(new Seat(i, SeatType.standard));
+            Seat newSeat = new Seat(seatRepo.generateNewId(), i, SeatType.standard);
+            seatRepo.add(newSeat);
+            seatsForThisScreen.add(newSeat);
         }
         for (int i = 1 + nrStandardSeats; i <= nrVipSeats + nrStandardSeats; i++) {
-            seatRepo.add(new Seat(i, SeatType.vip));
+            Seat newSeat = new Seat(seatRepo.generateNewId(), i, SeatType.vip);
+            seatRepo.add(newSeat);
+            seatsForThisScreen.add(newSeat);
         }
         for(int i = 1 + nrStandardSeats + nrVipSeats; i <=nrPremiumSeats + nrVipSeats + nrStandardSeats; i++) {
-            seatRepo.add(new Seat(i, SeatType.premium));
+            Seat newSeat = new Seat(seatRepo.generateNewId(), i, SeatType.premium);
+            seatRepo.add(newSeat);
+            seatsForThisScreen.add(newSeat);
         }
+
+        screen.setSeats(seatsForThisScreen);
     }
 
     /**
@@ -233,8 +271,8 @@ public class CinemaService {
      * @param nrPremiumSeats  the new number of premium seats
      */
     public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
-        Screen screen = new Screen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
-        screenRepo.update(id, screen);
+        Screen screen = new Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
+        screenRepo.update(screen);
     }
 
     /**
@@ -243,16 +281,6 @@ public class CinemaService {
      */
     public void deleteScreen(int id){
         screenRepo.delete(id);
-    }
-
-    /**
-     * Adds a new seat with the specified seat number and type.
-     * @param seatNr the seat number
-     * @param type   the type of the seat
-     */
-    public void addSeat(int seatNr,  SeatType type) {
-        Seat seat = new Seat(seatNr,type);
-        seatRepo.add(seat);
     }
 
     /**
@@ -271,8 +299,8 @@ public class CinemaService {
      * @param type   the new type of the seat
      */
     public void updateSeat(int id, int seatNr,  SeatType type) {
-        Seat seat = new Seat(seatNr, type);
-        seatRepo.update(id, seat);
+        Seat seat = new Seat(id, seatNr, type);
+        seatRepo.update(seat);
     }
 
     /**
@@ -302,7 +330,8 @@ public class CinemaService {
      * @return the booking ID
      */
     public int addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
-        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers);
+        int id = bookingRepo.generateNewId();
+        Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers);
         return bookingRepo.add(booking);
     }
 
@@ -324,8 +353,8 @@ public class CinemaService {
      * @param nrOfCustomers the new number of customers
      */
     public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
-        Booking booking = new Booking(customerId, showtimeId, date, nrOfCustomers);
-        bookingRepo.update(id, booking);
+        Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers);
+        bookingRepo.update(booking);
     }
 
     /**
@@ -337,7 +366,8 @@ public class CinemaService {
      * @return the ticket ID
      */
     public int addTicket(int bookingId, int screenId, int seatId, double price) {
-        Ticket ticket = new Ticket(bookingId, screenId, seatId, price);
+        int id = ticketRepo.generateNewId();
+        Ticket ticket = new Ticket(id, bookingId, screenId, seatId, price);
         return ticketRepo.add(ticket);
     }
 
@@ -359,8 +389,8 @@ public class CinemaService {
      * @param price     the new price of the ticket
      */
     public void updateTicket(int id, int bookingId, int screenId, int seatId, double price) {
-        Ticket ticket = new Ticket(bookingId, screenId, seatId, price);
-        ticketRepo.update(id, ticket);
+        Ticket ticket = new Ticket(id, bookingId, screenId, seatId, price);
+        ticketRepo.update(ticket);
     }
 
     /**
@@ -371,11 +401,12 @@ public class CinemaService {
      * @return the BasicMembership object
      */
     public BasicMembership addBasicMembership(int customerId, LocalDate startDate, LocalDate endDate) {
-        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate);
+        int id = basicMembershipRepo.generateNewId();
+        BasicMembership basicMembership = new BasicMembership(id, customerId, startDate,endDate);
+        basicMembershipRepo.add(basicMembership);
         Customer customer = getCustomer(customerId);
-        customer.setMembershipId(basicMembershipRepo.add(basicMembership));
+        customer.setMembershipId(id);
         return basicMembership;
-
     }
 
     /**
@@ -395,8 +426,8 @@ public class CinemaService {
      * @param endDate    the new end date of the membership
      */
     public void updateBasicMembership(int id, int customerId, LocalDate startDate, LocalDate endDate) {
-        BasicMembership basicMembership = new BasicMembership(customerId, startDate,endDate);
-        basicMembershipRepo.update(id, basicMembership);
+        BasicMembership basicMembership = new BasicMembership(id, customerId, startDate,endDate);
+        basicMembershipRepo.update(basicMembership);
     }
 
     /**
@@ -415,9 +446,11 @@ public class CinemaService {
      * @return the PremiumMembership object
      */
     public PremiumMembership addPremiumMembership(int customerId, LocalDate startDate, LocalDate endDate) {
-        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate);
+        int id = premiumMembershipRepo.generateNewId();
+        PremiumMembership premiumMembership = new PremiumMembership(id, customerId, startDate,endDate);
+        premiumMembershipRepo.add(premiumMembership);
         Customer customer = getCustomer(customerId);
-        customer.setMembershipId(premiumMembershipRepo.add(premiumMembership));
+        customer.setMembershipId(id);
         return premiumMembership;
     }
 
@@ -438,8 +471,8 @@ public class CinemaService {
      * @param endDate the end date of the membership
      */
     public void updatePremiumMembership(int id, int customerId, LocalDate startDate, LocalDate endDate) {
-        PremiumMembership premiumMembership = new PremiumMembership(customerId, startDate,endDate);
-        premiumMembershipRepo.update(id, premiumMembership);
+        PremiumMembership premiumMembership = new PremiumMembership(id, customerId, startDate,endDate);
+        premiumMembershipRepo.update(premiumMembership);
     }
 
     /**
@@ -554,39 +587,6 @@ public class CinemaService {
         }
 
         return 0;
-    }
-
-    /**
-     * Gets the ID of the given booking.
-     * @param booking the booking to get the ID for
-     * @return the ID of the given booking, or 0 if the booking does not exist
-     */
-    public int getIdOfBooking(Booking booking) {
-        Map<Integer, Booking> bookings = bookingRepo.getAll();
-
-        for(Map.Entry<Integer, Booking> entry : bookings.entrySet()){
-            if(entry.getValue().equals(bookings))
-                return entry.getKey();
-        }
-
-        return 0;
-    }
-
-    /**
-     * Gets a list of tickets associated with a given booking ID.
-     * @param bookingId the ID of the booking for which to get tickets
-     * @return a list of tickets associated with the given booking ID
-     */
-    public List<Ticket> bookingTickets(int bookingId) {
-        Map<Integer, Ticket> tickets = ticketRepo.getAll();
-        List<Ticket> bookingTickets = new ArrayList<>();
-
-        for(Map.Entry<Integer, Ticket> entry : tickets.entrySet()){
-            if(entry.getValue().getBookingId() == bookingId)
-                bookingTickets.add(entry.getValue());
-        }
-
-        return bookingTickets;
     }
 
     /**
