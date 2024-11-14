@@ -12,169 +12,115 @@ import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleApp {
-    Controller ctrl;
+    Controller controller;
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
-    public ConsoleApp(Controller ctrl) {
-        this.ctrl = ctrl;
+    public ConsoleApp(Controller controller) {
+        this.controller = controller;
     }
 
     /**
      * Runs the application by receiving user input and calling the appropriate methods from the Controller Layer.
      */
     public void run() {
-        ctrl.add();
-        ctrl.terminateMemberships();
+        controller.add();
+        controller.terminateMemberships();
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
         DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("HH:mm");
         System.out.println("\n\u001B[1m" + "=======Welcome to the CinemApp!=======" + "\u001B[0m");
+        boolean continueLoop = true;
 
-        while (true) {
+        while (continueLoop) {
             System.out.println("======================================");
             System.out.println("Please choose an option:\n1. Customer\n2. Staff\n3. Exit\nEnter your choice: ");
+            String userType = sc.nextLine();
 
-            if(sc.hasNextInt()) {
-                int userType = sc.nextInt();
-                sc.nextLine();
+            switch (userType) {
+                case "1": {
+                    Customer loggedCustomer;
+                    boolean continueLoop2 = true;
 
-                switch (userType) {
-                    case 1: {
-                        System.out.println("\n======================================");
-                        System.out.println("\nPlease choose an option:\n1. Log in\n2. Sign up\n3. Back\nEnter your choice: ");
+                    while(continueLoop2) {
+                        System.out.println("""
+                                ======================================
+                                Please choose an option:
+                                1. Log in
+                                2. Sign up
+                                3. Back
+                                Enter your choice:
+                                """);
 
-                        int opt = sc.nextInt();
-                        while(opt > 4) {
-                            System.out.println("Invalid input. Please enter a number between 1-4.");
-                            opt = sc.nextInt();
-                        }
-                        sc.nextLine();
+                        String opt = sc.nextLine();
 
-                        if (opt == 3)
-                            break;
-                        if (opt == 2) {
-                            System.out.println("\n===============Sign up================");
-                            System.out.println("Please enter your first name: ");
-                            String firstName = sc.nextLine();
-                            System.out.println("Please enter your last name: ");
-                            String lastName = sc.nextLine();
-                            System.out.println("Please enter your email: ");
-                            String email = sc.nextLine();
-                            System.out.println("Please enter your birthday (dd-MM-yyyy): ");
-                            String date = sc.nextLine();
-
-                            try {
-                                LocalDate birthday = LocalDate.parse(date, fmt);
-                                ctrl.createCustomer(firstName, lastName, email, birthday);
-                                System.out.println("\nAccount created successfully!");
-                            } catch (DateTimeParseException e) {
-                                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        switch (opt) {
+                            case "1": {
+                                loggedCustomer = this.logInCustomer();
+                                break;
                             }
-                        }
-
-                        System.out.println("\n================Log in================");
-                        System.out.println("Please enter your email: ");
-                        String email = sc.next();
-                        Customer loggedCustomer = ctrl.logCustomer(email);
-                        int loggedCustomerId = ctrl.getIdOfCustomer(loggedCustomer);
-                        System.out.println("\nHello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully!");
-
-                        while(true) {
-                            ctrl.customerMenu();
-                            opt = sc.nextInt();
-                            sc.nextLine();
-                            switch (opt) {
-                                case 1: {
-                                    //display Showtimes
-                                    ctrl.displayShowtimes(loggedCustomer);
-                                    break;
-                                }
-                                case 2: {
-                                    //create Booking
-                                    ctrl.displayShowtimes(loggedCustomer);
-                                    System.out.println("\n======================================");
-
-                                    System.out.println("\nPlease choose the Showtime number: ");
-                                    int showtimeId = sc.nextInt();
-                                    sc.nextLine();
-
-                                    System.out.println("Number of tickets you want to buy: ");
-                                    int nrOfTickets = sc.nextInt();
-                                    sc.nextLine();
-
-                                    ctrl.displayAvailableSeats(showtimeId);
-                                    System.out.println("\nPlease choose your seats: ");
-                                    List<Integer> seats = new ArrayList<>();
-                                    for(int i = 0; i < nrOfTickets; i++) {
-                                        seats.add(sc.nextInt());
-                                        sc.nextLine();
-                                    }
-                                    ctrl.removeSeatsFromAvailable(showtimeId, seats);
-
-                                    int currentBookingId = ctrl.createBooking(loggedCustomerId, showtimeId, LocalDate.now(), nrOfTickets);
-                                    System.out.println("\nBooking created successfully!");
-
-                                    List<Integer> tickets = new ArrayList<>();
-                                    for(int i = 0; i < nrOfTickets; i++) {
-                                        tickets.add(ctrl.createTicket(currentBookingId, seats.get(i)));
-                                    }
-
-                                    Booking currentBooking = ctrl.getBooking(currentBookingId);
-                                    currentBooking.setTickets(tickets);
-
-                                    System.out.println("\nYour tickets: ");
-                                    for(int i = 0; i < nrOfTickets; i++) {
-                                        ctrl.displayTickets(loggedCustomer, currentBooking, tickets.get(i));
-                                    }
-
-                                    System.out.println("\n======================================");
-                                    System.out.println("\nYour total: ");
-                                    ctrl.calculateTotalPrice(loggedCustomerId, currentBookingId);
-
-                                    break;
-                                }
-                                case 3: {
-                                    //create Membership
-                                    System.out.println("\n======================================");
-                                    System.out.println("\nPlease choose the type of membership you want to purchase:\n1. Basic\n2. Premium\nEnter your choice: ");
-                                    int type = sc.nextInt();
-                                    LocalDate starDate = LocalDate.now();
-                                    LocalDate endDate = starDate.plusDays(30);
-
-                                    System.out.println("\nMembership created successfully! ");
-
-                                    if (type == 1) {
-                                        BasicMembership membership = ctrl.createBasicMembership(loggedCustomerId,starDate,endDate);
-                                        System.out.println("\nYour total is: " + membership.getPrice() );
-                                    } else if (type == 2) {
-                                        PremiumMembership membership = ctrl.createPremiumMembership(loggedCustomerId,starDate,endDate);
-                                        System.out.println("\nYour total is: " + membership.getPrice() );
-                                    }
-
-                                    break;
-                                }
-                                case 4: {
-                                    System.exit(0);
-                                }
+                            case "2": {
+                                signUpCustomer();
+                                loggedCustomer = this.logInCustomer();
+                                break;
+                            }
+                            case "3": {
+                                continueLoop2 = false;
+                                break;
+                            }
+                            default: {
+                                System.out.println("Invalid input. Please try again.");
+                                break;
                             }
                         }
                     }
-                    case 2: {
-                        System.out.println("\n======================================");
-                        System.out.println("\nPlease choose an option:\n1. Log in\n2. Sign up\n3. Back\nEnter your choice: ");
 
-                        int opt = sc.nextInt();
-                        while(opt > 4) {
-                            System.out.println("Invalid input. Please enter a number between 1-4.");
-                            opt = sc.nextInt();
+                    while(continueLoop2) {
+                        controller.customerMenu();
+                        String opt = sc.nextLine();
+
+                        switch (opt) {
+                            case "1": {
+                                //display Showtimes
+                                controller.displayShowtimes(loggedCustomer);
+                                break;
+                            }
+                            case "2": {
+                                //create Booking
+                                controller.displayShowtimes(loggedCustomer);
+                                this.createBooking(loggedCustomer);
+                                break;
+                            }
+                            case 3: {
+                                //create Membership
+                                this.createMembership(loggedCustomer);
+                                break;
+                            }
+                            case 4: {
+                                System.exit(0);
+                            }
+                            default : {
+                                System.out.println("Invalid input. Please try again.");
+                            }
                         }
-                        sc.nextLine();
+                    }                }
+                case 2: {
+                    System.out.println("\n======================================");
+                    System.out.println("\nPlease choose an option:\n1. Log in\n2. Sign up\n3. Back\nEnter your choice: ");
 
-                        if (opt == 3)
-                            break;
-                        if (opt == 2) {
-                            System.out.println("\n===============Sign up================");
-                            System.out.println("Please enter your first name: ");
-                            String firstName = sc.next();
+                    int opt = sc.nextInt();
+                    while(opt > 4) {
+                        System.out.println("Invalid input. Please enter a number between 1-4.");
+                        opt = sc.nextInt();
+                    }
+                    sc.nextLine();
+
+                    if (opt == 3)
+                        break;
+                    if (opt == 2) {
+                        System.out.println("\n===============Sign up================");
+                        System.out.println("Please enter your first name: ");
+                        String firstName = sc.next();
                             System.out.println("Please enter your last name: ");
                             String lastName = sc.next();
                             System.out.println("Please enter your email: ");
@@ -439,20 +385,129 @@ public class ConsoleApp {
                         }
                         break;
                     }
-                    case 3: {
-                        System.exit(0);
-                        break;
-                    }
-                    default: {
-                        System.out.println("Invalid input. Please enter a number between 1-3!");
-                        break;
-                    }
+                case 3: {
+                    System.exit(0);
+                    break;
                 }
-            }
-            else {
-                System.out.println("Invalid input. Please enter a number!");
-                sc.nextLine();
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
+
             }
         }
+    }
+
+    public Customer logInCustomer() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n================Log in================");
+
+        System.out.println("Please enter your email: ");
+        String email = sc.nextLine();
+
+        Customer loggedCustomer = controller.logCustomer(email);
+        System.out.println("\nHello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully!");
+
+        return loggedCustomer;
+    }
+
+    public void signUpCustomer() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n===============Sign up================");
+
+        System.out.println("Please enter your first name: ");
+        String firstName = sc.nextLine();
+
+        System.out.println("Please enter your last name: ");
+        String lastName = sc.nextLine();
+
+        System.out.println("Please enter your email: ");
+        String email = sc.nextLine();
+
+        System.out.println("Please enter your birthday (dd-MM-yyyy): ");
+        String date = sc.nextLine();
+
+        boolean invalidDate = true;
+        while(invalidDate) {
+            try {
+                LocalDate birthday = LocalDate.parse(date, dateFormatter);
+                controller.createCustomer(firstName, lastName, email, birthday);
+                System.out.println("\nAccount created successfully!");
+                invalidDate = false;
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+            }
+        }
+    }
+
+    public void createBooking(Customer loggedCustomer) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n======================================");
+
+        System.out.println("\nPlease choose the Showtime number: ");
+        int showtimeId = sc.nextInt();
+        sc.nextLine();
+
+        System.out.println("Number of tickets you want to buy: ");
+        int nrOfTickets = sc.nextInt();
+        sc.nextLine();
+
+        controller.displayAvailableSeats(showtimeId);
+        System.out.println("\nPlease choose your seats: ");
+        List<Integer> seats = new ArrayList<>();
+        for(int i = 0; i < nrOfTickets; i++) {
+            seats.add(sc.nextInt());
+            sc.nextLine();
+        }
+        controller.removeSeatsFromAvailable(showtimeId, seats);
+
+        int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), nrOfTickets);
+        System.out.println("\nBooking created successfully!");
+
+        List<Integer> tickets = new ArrayList<>();
+        for (int i = 0; i < nrOfTickets; i++) {
+            tickets.add(controller.createTicket(currentBookingId, seats.get(i)));
+        }
+
+        Booking currentBooking = controller.getBooking(currentBookingId);
+        currentBooking.setTickets(tickets);
+
+        System.out.println("\nYour tickets: ");
+        for (int i = 0; i < nrOfTickets; i++) {
+            controller.displayTickets(loggedCustomer, currentBooking, tickets.get(i));
+        }
+
+        System.out.println("\n======================================");
+        System.out.println("\nYour total: ");
+        controller.calculateTotalPrice(loggedCustomer.getId(), currentBookingId);
+    }
+
+    public void createMembership(Customer loggedCustomer) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n======================================");
+        System.out.println("""
+                Please choose the type of membership you want to purchase:
+                1. Basic
+                2. Premium
+                Enter your choice:
+                """);
+        String type = sc.nextLine();
+        LocalDate starDate = LocalDate.now();
+        LocalDate endDate = starDate.plusDays(30);
+
+        switch (type) {
+            case "1": {
+                BasicMembership membership = controller.createBasicMembership(loggedCustomer.getId(), starDate, endDate);
+                System.out.println("\nYour total is: " + membership.getPrice());
+                break;
+            }
+            case "2": {
+                PremiumMembership membership = controller.createPremiumMembership(loggedCustomer.getId(), starDate, endDate);
+                System.out.println("\nYour total is: " + membership.getPrice());
+                break;
+            }
+        }
+
+        System.out.println("\nMembership created successfully! ");
     }
 }
