@@ -1,5 +1,7 @@
 package Repository;
 
+import Model.HasId;
+
 import java.util.Map;
 
 /**
@@ -7,7 +9,7 @@ import java.util.Map;
  * Defines methods for adding, reading, deleting, updating, and retrieving all objects.
  * @param <T> the type of objects managed by the repository
  */
-public interface IRepository<T> {
+public interface IRepository<T extends HasId> {
     /**
      * Generates a new unique ID for an object.
      * The ID is one greater than the last entry's ID, or 1 if the repository is empty.
@@ -18,9 +20,8 @@ public interface IRepository<T> {
     /**
      * Adds an object to the repository.
      * @param obj the object to be added to the repository
-     * @return the unique ID assigned to the added object
      */
-    int add(T obj);
+    void add(T obj);
 
     /**
      * Reads or retrieves an object from the repository by its ID.

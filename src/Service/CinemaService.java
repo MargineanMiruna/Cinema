@@ -332,7 +332,8 @@ public class CinemaService {
     public int addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
         int id = bookingRepo.generateNewId();
         Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers);
-        return bookingRepo.add(booking);
+        bookingRepo.add(booking);
+        return booking.getId();
     }
 
     /**
@@ -368,7 +369,8 @@ public class CinemaService {
     public int addTicket(int bookingId, int screenId, int seatId, double price) {
         int id = ticketRepo.generateNewId();
         Ticket ticket = new Ticket(id, bookingId, screenId, seatId, price);
-        return ticketRepo.add(ticket);
+        ticketRepo.add(ticket);
+        return ticket.getId();
     }
 
     /**

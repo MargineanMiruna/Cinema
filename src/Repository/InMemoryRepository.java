@@ -33,12 +33,10 @@ public class InMemoryRepository<T extends HasId> implements IRepository<T> {
     /**
      * Adds an object to the repository, assigning it a new unique ID.
      * @param obj the object to be added to the repository
-     * @return the unique ID assigned to the added object
      */
     @Override
-    public int add(T obj) {
+    public void add(T obj) {
         objects.put(obj.getId(), obj);
-        return obj.getId();
     }
 
     /**
@@ -62,7 +60,6 @@ public class InMemoryRepository<T extends HasId> implements IRepository<T> {
 
     /**
      * Updates an object in the repository with a new object using the specified ID.
-     * @param id  the unique identifier of the object to update
      * @param obj the new object with which to update the existing object
      */
     @Override
