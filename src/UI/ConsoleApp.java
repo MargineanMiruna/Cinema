@@ -539,7 +539,7 @@ public class ConsoleApp {
                             startTime = LocalTime.parse(time, timeFormatter);
                             invalidDate = false;
                         } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            System.out.println("Invalid date format. Please use HH:mm.");
                         }
                     }
 
@@ -593,7 +593,7 @@ public class ConsoleApp {
                             newStartTime = LocalTime.parse(time, timeFormatter);
                             invalidDate = false;
                         } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            System.out.println("Invalid date format. Please use HH:mm.");
                         }
                     }
 
