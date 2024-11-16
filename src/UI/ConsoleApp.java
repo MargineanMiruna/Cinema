@@ -34,15 +34,21 @@ public class ConsoleApp {
 
         while (continueLoop) {
             System.out.println("======================================");
-            System.out.println("Please choose an option:\n1. Customer\n2. Staff\n3. Exit\nEnter your choice: ");
+            System.out.println("""
+                    Please choose an option:
+                    1. Customer
+                    2. Staff
+                    3. Exit
+                    Enter your choice:
+                    """);
             String userType = sc.nextLine();
 
             switch (userType) {
                 case "1": {
                     Customer loggedCustomer;
-                    boolean continueLoop2 = true;
 
-                    while(continueLoop2) {
+                    boolean continueLoop2 = true;
+                    while (continueLoop2) {
                         System.out.println("""
                                 ======================================
                                 Please choose an option:
@@ -51,17 +57,18 @@ public class ConsoleApp {
                                 3. Back
                                 Enter your choice:
                                 """);
-
                         String opt = sc.nextLine();
 
                         switch (opt) {
                             case "1": {
                                 loggedCustomer = this.logInCustomer();
+                                this.customerMenu(loggedCustomer);
                                 break;
                             }
                             case "2": {
                                 signUpCustomer();
                                 loggedCustomer = this.logInCustomer();
+                                this.customerMenu(loggedCustomer);
                                 break;
                             }
                             case "3": {
@@ -74,328 +81,60 @@ public class ConsoleApp {
                             }
                         }
                     }
+                    break;
+                }
+                case "2": {
+                    Staff loggedStaff;
 
-                    while(continueLoop2) {
-                        controller.customerMenu();
+                    boolean continueLoop3 = true;
+                    while (continueLoop3) {
+                        System.out.println("""
+                                ======================================
+                                Please choose an option:
+                                1. Log in
+                                2. Sign up
+                                3. Back
+                                Enter your choice:
+                                """);
                         String opt = sc.nextLine();
 
                         switch (opt) {
                             case "1": {
-                                //display Showtimes
-                                controller.displayShowtimes(loggedCustomer);
+                                loggedStaff = this.logInStaff();
+                                this.staffMenu(loggedStaff);
                                 break;
                             }
                             case "2": {
-                                //create Booking
-                                controller.displayShowtimes(loggedCustomer);
-                                this.createBooking(loggedCustomer);
+                                this.signUpStaff();
+                                loggedStaff = this.logInStaff();
+                                this.staffMenu(loggedStaff);
                                 break;
                             }
-                            case 3: {
-                                //create Membership
-                                this.createMembership(loggedCustomer);
+                            case "3": {
+                                continueLoop3 = false;
                                 break;
                             }
-                            case 4: {
-                                System.exit(0);
-                            }
-                            default : {
+                            default: {
                                 System.out.println("Invalid input. Please try again.");
+                                break;
                             }
                         }
-                    }                }
-                case 2: {
-                    System.out.println("\n======================================");
-                    System.out.println("\nPlease choose an option:\n1. Log in\n2. Sign up\n3. Back\nEnter your choice: ");
-
-                    int opt = sc.nextInt();
-                    while(opt > 4) {
-                        System.out.println("Invalid input. Please enter a number between 1-4.");
-                        opt = sc.nextInt();
                     }
-                    sc.nextLine();
 
-                    if (opt == 3)
-                        break;
-                    if (opt == 2) {
-                        System.out.println("\n===============Sign up================");
-                        System.out.println("Please enter your first name: ");
-                        String firstName = sc.next();
-                            System.out.println("Please enter your last name: ");
-                            String lastName = sc.next();
-                            System.out.println("Please enter your email: ");
-                            String email = sc.next();
-
-                            ctrl.createStaff(firstName, lastName, email);
-                            System.out.println("\nAccount created successfully!");
-                        }
-
-                        System.out.println("\n================Log in================");
-                        System.out.println("Please enter your email: ");
-                        String email = sc.next();
-                        Staff loggedStaff = ctrl.logStaff(email);
-                        System.out.println("\nHello, " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + ", you logged in successfully!");
-                        boolean action = true;
-
-                        while(action) {
-                            ctrl.staffMenu();
-                            opt = sc.nextInt();
-                            sc.nextLine();
-
-                            switch (opt) {
-                                case 1: {
-                                    //modify movie
-                                    ctrl.staffMenu2();
-                                    int opt2 = sc.nextInt();
-                                    sc.nextLine();
-
-                                    System.out.println("\n======================================");
-                                    switch (opt2) {
-                                        case 1: {
-                                            //add movie
-
-                                            System.out.println("\nPlease enter movie title: ");
-                                            String title = sc.nextLine();
-
-                                            System.out.println("Please enter movie PG (true/false): ");
-                                            boolean pg = sc.nextBoolean();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter movie genre: ");
-                                            String genre = sc.nextLine();
-
-                                            System.out.println("Please enter movie release date: ");
-                                            String date = sc.nextLine();
-                                            LocalDate releaseDate = LocalDate.parse(date, fmt);
-
-                                            ctrl.addMovie(title, pg, genre, releaseDate);
-                                            System.out.println("\nMovie added successfully!");
-
-                                            break;
-                                        }
-                                        case 2: {
-                                            //update movie
-                                            ctrl.displayMoviesStaff();
-                                            System.out.println("\nPlease enter title of the movie you want to update: ");
-                                            String title = sc.nextLine();
-
-                                            System.out.println("Please enter new PG (true/false): ");
-                                            boolean newpg = sc.nextBoolean();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter new genre: ");
-                                            String newgenre = sc.nextLine();
-
-                                            System.out.println("Please enter new release date: ");
-                                            String date = sc.nextLine();
-                                            LocalDate newreleaseDate = LocalDate.parse(date, fmt);
-
-                                            ctrl.updateMovie(title, newpg, newgenre, newreleaseDate);
-                                            System.out.println("\nMovie updated successfully!");
-
-                                            break;
-                                        }
-                                        case 3: {
-                                            //delete movie
-                                            ctrl.displayMoviesStaff();
-                                            System.out.println("\nPlease enter title of the movie you want to delete: ");
-                                            String title = sc.nextLine();
-
-                                            ctrl.deleteMovie(title);
-                                            System.out.println("\nMovie deleted successfully!");
-
-                                            break;
-                                        }
-                                        default: {
-                                            System.out.println("Invalid input. Please enter a number between 1-3.");
-                                            break;
-                                        }
-                                    }
-
-                                    break;
-                                }
-                                case 2: {
-                                    //modify showtime
-                                    ctrl.staffMenu2();
-                                    int opt2 = sc.nextInt();
-                                    sc.nextLine();
-
-                                    System.out.println("\n======================================");
-                                    switch (opt2) {
-                                        case 1: {
-                                            // add showtime
-                                            System.out.println("\nPlease enter screen ID: ");
-                                            int screenId = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter movie title: ");
-                                            String title = sc.nextLine();
-
-                                            int movieId = ctrl.findMovieIdByTitle(title);
-
-                                            System.out.println("Please enter a date: ");
-                                            String strDate = sc.nextLine();
-                                            LocalDate date = LocalDate.parse(strDate, fmt);
-
-                                            System.out.println("Please enter a starting time: ");
-                                            String time = sc.nextLine();
-                                            LocalTime startTime = LocalTime.parse(time, fmt2);
-
-                                            System.out.println("Please enter duration: ");
-                                            int duration = sc.nextInt();
-                                            sc.nextLine();
-
-                                            ctrl.addShowtime(screenId, movieId, date, startTime, duration);
-                                            System.out.println("\nShowtime added successfully!");
-
-                                            break;
-                                        }
-                                        case 2: {
-                                            // update showtime
-                                            ctrl.displayShowtimesStaff();
-                                            System.out.println("\nPlease enter the ID of the showtime you want to update: ");
-                                            int id = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter new screen ID: ");
-                                            int newScreenId = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter new movie title: ");
-                                            String title = sc.nextLine();
-
-                                            int newMovieId = ctrl.findMovieIdByTitle(title);
-
-                                            System.out.println("Please enter a date: ");
-                                            String strDate = sc.nextLine();
-                                            LocalDate newDate = LocalDate.parse(strDate, fmt);
-
-                                            System.out.println("Please enter a starting time: ");
-                                            String time = sc.nextLine();
-                                            LocalTime newStartTime = LocalTime.parse(time, fmt2);
-
-                                            System.out.println("Please enter duration: ");
-                                            int newDuration = sc.nextInt();
-                                            sc.nextLine();
-
-                                            ctrl.updateShowtime(id, newScreenId, newMovieId, newDate, newStartTime, newDuration);
-                                            System.out.println("\nShowtime updated successfully!");
-
-                                            break;
-                                        }
-                                        case 3: {
-                                            //delete showtime
-                                            ctrl.displayShowtimesStaff();
-                                            System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
-                                            int id = sc.nextInt();
-                                            sc.nextLine();
-
-                                            ctrl.deleteShowtime(id);
-                                            System.out.println("\nShowtime deleted successfully!");
-
-                                            break;
-                                        }
-                                        default: {
-                                            System.out.println("Invalid input. Please enter a number between 1-3.");
-                                        }
-                                    }
-
-                                    break;
-                                }
-                                case 3: {
-                                    // Modify screen
-                                    ctrl.staffMenu2();
-                                    int opt2 = sc.nextInt();
-                                    sc.nextLine();
-
-                                    System.out.println("\n======================================");
-                                    switch (opt2) {
-                                        case 1: {
-                                            // add screen
-                                            System.out.println("\nPlease enter the number of standard seats: ");
-                                            int nrStandardSeats = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter the number of VIP seats: ");
-                                            int nrVipSeats = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter the number of premium seats: ");
-                                            int nrPremiumSeats = sc.nextInt();
-                                            sc.nextLine();
-
-                                            ctrl.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
-                                            System.out.println("\nScreen added successfully!");
-
-                                            break;
-                                        }
-                                        case 2: {
-                                            // update screen
-                                            ctrl.displayScreensStaff();
-                                            System.out.println("\nPlease enter the ID of the screen you want to update: ");
-                                            int id = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter new number of standard seats: ");
-                                            int newNrStandardSeats = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter new number of VIP seats: ");
-                                            int newNrVipSeats = sc.nextInt();
-                                            sc.nextLine();
-
-                                            System.out.println("Please enter new number of premium seats: ");
-                                            int newNrPremiumSeats = sc.nextInt();
-                                            sc.nextLine();
-
-                                            ctrl.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats);
-                                            System.out.println("\nScreen updated successfully!");
-
-                                            break;
-                                        }
-                                        case 3: {
-                                            //delete screen
-                                            ctrl.displayScreensStaff();
-                                            System.out.println("\nPlease enter the ID of the screen you want to delete: ");
-                                            int id = sc.nextInt();
-                                            sc.nextLine();
-
-                                            ctrl.deleteScreen(id);
-                                            System.out.println("\nScreen deleted successfully!");
-
-                                            break;
-                                        }
-                                        default: {
-                                            System.out.println("Invalid input. Please enter a number between 1-3.");
-                                            break;
-                                        }
-                                    }
-
-                                    break;
-                                }
-                                case 4: {
-                                    action = false;
-                                    break;
-                                }
-                                default: {
-                                    System.out.println("Invalid input. Please enter a number between 1-4.");
-                                    break;
-                                }
-                            }
-                        }
-                        break;
-                    }
-                case 3: {
-                    System.exit(0);
+                    break;
+                }
+                case "3": {
+                    continueLoop = false;
                     break;
                 }
                 default: {
                     System.out.println("Invalid input. Please enter a number between 1-3!");
                     break;
                 }
-
             }
         }
+
+        System.out.println("Thank you for using CinemApp!");
     }
 
     public Customer logInCustomer() {
@@ -424,11 +163,11 @@ public class ConsoleApp {
         System.out.println("Please enter your email: ");
         String email = sc.nextLine();
 
-        System.out.println("Please enter your birthday (dd-MM-yyyy): ");
-        String date = sc.nextLine();
-
         boolean invalidDate = true;
         while(invalidDate) {
+            System.out.println("Please enter your birthday (dd-MM-yyyy): ");
+            String date = sc.nextLine();
+
             try {
                 LocalDate birthday = LocalDate.parse(date, dateFormatter);
                 controller.createCustomer(firstName, lastName, email, birthday);
@@ -484,30 +223,445 @@ public class ConsoleApp {
 
     public void createMembership(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("\n======================================");
-        System.out.println("""
+
+        boolean invalidOption = true;
+        while(invalidOption) {
+            System.out.println("\n======================================");
+            System.out.println("""
                 Please choose the type of membership you want to purchase:
                 1. Basic
                 2. Premium
                 Enter your choice:
                 """);
-        String type = sc.nextLine();
-        LocalDate starDate = LocalDate.now();
-        LocalDate endDate = starDate.plusDays(30);
+            String type = sc.nextLine();
 
-        switch (type) {
-            case "1": {
-                BasicMembership membership = controller.createBasicMembership(loggedCustomer.getId(), starDate, endDate);
-                System.out.println("\nYour total is: " + membership.getPrice());
-                break;
-            }
-            case "2": {
-                PremiumMembership membership = controller.createPremiumMembership(loggedCustomer.getId(), starDate, endDate);
-                System.out.println("\nYour total is: " + membership.getPrice());
-                break;
+            switch (type) {
+                case "1": {
+                    BasicMembership membership = controller.createBasicMembership(loggedCustomer.getId(), LocalDate.now(), LocalDate.now().plusDays(30));
+                    System.out.println("\nYour total is: " + membership.getPrice());
+                    invalidOption = false;
+                    break;
+                }
+                case "2": {
+                    PremiumMembership membership = controller.createPremiumMembership(loggedCustomer.getId(), LocalDate.now(), LocalDate.now().plusDays(30));
+                    System.out.println("\nYour total is: " + membership.getPrice());
+                    invalidOption = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
             }
         }
 
         System.out.println("\nMembership created successfully! ");
+    }
+
+    public void customerMenu(Customer loggedCustomer) {
+        Scanner sc = new Scanner(System.in);
+
+        boolean continueLoop = true;
+        while(continueLoop) {
+            controller.customerMenu();
+            String option = sc.nextLine();
+
+            switch (option) {
+                case "1": {
+                    //display Showtimes
+                    controller.displayShowtimes(loggedCustomer);
+                    break;
+                }
+                case "2": {
+                    //create Booking
+                    controller.displayShowtimes(loggedCustomer);
+                    this.createBooking(loggedCustomer);
+                    break;
+                }
+                case "3": {
+                    //create Membership
+                    this.createMembership(loggedCustomer);
+                    break;
+                }
+                case "4": {
+                    //back
+                    continueLoop = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
+            }
+        }
+    }
+
+    public Staff logInStaff() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n================Log in================");
+
+        System.out.println("Please enter your email: ");
+        String email = sc.nextLine();
+
+        Staff loggedStaff = controller.logStaff(email);
+        System.out.println("\nHello, " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + ", you logged in successfully!");
+
+        return loggedStaff;
+    }
+
+    public void signUpStaff() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n===============Sign up================");
+
+        System.out.println("Please enter your first name: ");
+        String firstName = sc.next();
+
+        System.out.println("Please enter your last name: ");
+        String lastName = sc.next();
+
+        System.out.println("Please enter your email: ");
+        String email = sc.next();
+
+        controller.createStaff(firstName, lastName, email);
+        System.out.println("\nAccount created successfully!");
+    }
+
+    public void modifyMovie(Staff loggedStaff) {
+        Scanner sc = new Scanner(System.in);
+
+        boolean invalidOption = true;
+        while(invalidOption) {
+            controller.staffMenu2();
+            String option = sc.nextLine();
+            System.out.println("\n======================================");
+
+
+            switch (option) {
+                case "1": {
+                    //add Movie
+                    System.out.println("\nPlease enter movie title: ");
+                    String title = sc.nextLine();
+
+                    System.out.println("Please enter movie PG (true/false): ");
+                    boolean pg = sc.nextBoolean();
+                    sc.nextLine();
+
+                    System.out.println("Please enter movie genre: ");
+                    String genre = sc.nextLine();
+
+                    boolean invalidTime = true;
+                    while(invalidTime) {
+                        System.out.println("Please enter movie release date: ");
+                        String date = sc.nextLine();
+
+                        try {
+                            LocalDate releaseDate = LocalDate.parse(date, timeFormatter);
+                            controller.addMovie(title, pg, genre, releaseDate);
+                            System.out.println("\nMovie added successfully!");
+                            invalidTime = false;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use HH:mm.");
+                        }
+                    }
+
+                    invalidOption = false;
+                    break;
+                }
+                case "2": {
+                    //update Movie
+                    controller.displayMoviesStaff();
+                    System.out.println("\nPlease enter title of the movie you want to update: ");
+                    String title = sc.nextLine();
+
+                    System.out.println("Please enter new PG (true/false): ");
+                    boolean newPg = sc.nextBoolean();
+                    sc.nextLine();
+
+                    System.out.println("Please enter new genre: ");
+                    String newGenre = sc.nextLine();
+
+                    boolean invalidTime = true;
+                    while(invalidTime) {
+                        System.out.println("Please enter new release date: ");
+                        String date = sc.nextLine();
+
+                        try {
+                            LocalDate newReleaseDate = LocalDate.parse(date, timeFormatter);
+                            controller.updateMovie(title, newPg, newGenre, newReleaseDate);
+                            System.out.println("\nMovie updated successfully!");
+                            invalidTime = false;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use HH:mm.");
+                        }
+                    }
+
+                    invalidOption = false;
+                    break;
+                }
+                case "3": {
+                    //delete Movie
+                    controller.displayMoviesStaff();
+                    System.out.println("\nPlease enter title of the movie you want to delete: ");
+                    String title = sc.nextLine();
+
+                    controller.deleteMovie(title);
+                    System.out.println("\nMovie deleted successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
+            }
+        }
+    }
+
+    public void modifyScreen(Staff loggedStaff) {
+        Scanner sc = new Scanner(System.in);
+
+        boolean invalidOption = true;
+        while(invalidOption) {
+            controller.staffMenu2();
+            String option = sc.nextLine();
+            System.out.println("\n======================================");
+
+            switch (option) {
+                case "1": {
+                    //add Screen
+                    System.out.println("\nPlease enter the number of standard seats: ");
+                    int nrStandardSeats = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter the number of VIP seats: ");
+                    int nrVipSeats = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter the number of premium seats: ");
+                    int nrPremiumSeats = sc.nextInt();
+                    sc.nextLine();
+
+                    controller.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
+                    System.out.println("\nScreen added successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                case "2": {
+                    //update Screen
+                    controller.displayScreensStaff();
+                    System.out.println("\nPlease enter the ID of the screen you want to update: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter new number of standard seats: ");
+                    int newNrStandardSeats = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter new number of VIP seats: ");
+                    int newNrVipSeats = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter new number of premium seats: ");
+                    int newNrPremiumSeats = sc.nextInt();
+                    sc.nextLine();
+
+                    controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats);
+                    System.out.println("\nScreen updated successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                case "3": {
+                    //delete Screen
+                    controller.displayScreensStaff();
+                    System.out.println("\nPlease enter the ID of the screen you want to delete: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+
+                    controller.deleteScreen(id);
+                    System.out.println("\nScreen deleted successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
+            }
+        }
+    }
+
+    public void modifyShowtime(Staff loggedStaff) {
+        Scanner sc = new Scanner(System.in);
+
+        boolean invalidOption = true;
+        while(invalidOption) {
+            controller.staffMenu2();
+            String option = sc.nextLine();
+            System.out.println("\n=====================================");
+
+            switch (option) {
+                case "1": {
+                    //add Showtime
+                    System.out.println("\nPlease enter screen ID: ");
+                    int screenId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter movie title: ");
+                    String title = sc.nextLine();
+
+                    int movieId = controller.findMovieIdByTitle(title);
+
+                    LocalDate showtimeDate = LocalDate.now();
+                    boolean invalidDate = true;
+                    while(invalidDate) {
+                        System.out.println("Please enter a date: ");
+                        String date = sc.nextLine();
+
+                        try {
+                            showtimeDate = LocalDate.parse(date, dateFormatter);
+                            invalidDate = false;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        }
+                    }
+
+                    LocalTime startTime = LocalTime.now();
+                    invalidDate = true;
+                    while(invalidDate) {
+                        System.out.println("Please enter a starting time: ");
+                        String time = sc.nextLine();
+
+                        try {
+                            startTime = LocalTime.parse(time, timeFormatter);
+                            invalidDate = false;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        }
+                    }
+
+                    System.out.println("Please enter duration: ");
+                    int duration = sc.nextInt();
+                    sc.nextLine();
+
+                    controller.addShowtime(screenId, movieId, showtimeDate, startTime, duration);
+                    System.out.println("\nShowtime added successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                case "2": {
+                    //update Showtime
+                    controller.displayShowtimesStaff();
+                    System.out.println("\nPlease enter the ID of the showtime you want to update: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter new screen ID: ");
+                    int newScreenId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.println("Please enter new movie title: ");
+                    String title = sc.nextLine();
+
+                    int newMovieId = controller.findMovieIdByTitle(title);
+
+                    LocalDate newShowtimeDate = LocalDate.now();
+                    boolean invalidDate = true;
+                    while(invalidDate) {
+                        System.out.println("Please enter a date: ");
+                        String date = sc.nextLine();
+
+                        try {
+                            newShowtimeDate = LocalDate.parse(date, dateFormatter);
+                            invalidDate = false;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        }
+                    }
+
+                    LocalTime newStartTime = LocalTime.now();
+                    invalidDate = true;
+                    while(invalidDate) {
+                        System.out.println("Please enter a starting time: ");
+                        String time = sc.nextLine();
+
+                        try {
+                            newStartTime = LocalTime.parse(time, timeFormatter);
+                            invalidDate = false;
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        }
+                    }
+
+                    System.out.println("Please enter duration: ");
+                    int newDuration = sc.nextInt();
+                    sc.nextLine();
+
+                    controller.updateShowtime(id, newScreenId, newMovieId, newShowtimeDate, newStartTime, newDuration);
+                    System.out.println("\nShowtime updated successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                case "3": {
+                    //delete Showtime
+                    controller.displayShowtimesStaff();
+                    System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
+                    int id = sc.nextInt();
+                    sc.nextLine();
+
+                    controller.deleteShowtime(id);
+                    System.out.println("\nShowtime deleted successfully!");
+
+                    invalidOption = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
+            }
+        }
+    }
+
+    public void staffMenu(Staff loggedStaff) {
+        Scanner sc = new Scanner(System.in);
+
+        boolean continueLoop = true;
+        while(continueLoop) {
+            controller.staffMenu();
+            String option = sc.nextLine();
+
+            switch (option) {
+                case "1": {
+                    //modify Movie
+                    this.modifyMovie(loggedStaff);
+                    break;
+                }
+                case "2": {
+                    //modify Showtime
+                    this.modifyShowtime(loggedStaff);
+                    break;
+                }
+                case "3": {
+                    //modify Screen
+                    this.modifyScreen(loggedStaff);
+                    break;
+                }
+                case "4": {
+                    //back
+                    continueLoop = false;
+                    break;
+                }
+                default: {
+                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    break;
+                }
+            }
+        }
     }
 }

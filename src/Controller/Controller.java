@@ -133,8 +133,13 @@ public class Controller {
      * Displays the customer menu options.
      */
     public void customerMenu() {
-        System.out.println("\n=================Menu=================");
-        System.out.println("1. View showtimes\n2. Create a booking\n3. Create a membership\n4. Exit\nEnter your choice: ");
+        System.out.println("""
+                =================Menu=================
+                1. View showtimes
+                2. Create a booking
+                3. Create a membership
+                4. Back
+                Enter your choice:""");
     }
 
     /**
@@ -262,8 +267,13 @@ public class Controller {
      * Displays the staff menu options.
      */
     public void staffMenu() {
-        System.out.println("\n=================Menu=================");
-        System.out.println("1. Modify movie\n2. Modify showtime\n3. Modify screen\n4. Back\nEnter your choice: ");
+        System.out.println("""
+                =================Menu=================
+                1. Modify movie
+                2. Modify showtime
+                3. Modify screen
+                4. Back
+                Enter your choice:""");
     }
 
     /**
