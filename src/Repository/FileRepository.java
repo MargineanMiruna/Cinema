@@ -30,7 +30,7 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
     /**
      * Writes the data to the file.
      *
-     * @param data The data to write to the file.
+     * @param objects The data to write to the file.
      */
     private void writeDataToFile(Map<Integer, T> objects) {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
