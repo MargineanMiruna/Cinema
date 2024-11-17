@@ -7,6 +7,7 @@ import Service.CinemaService;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +27,9 @@ public class Controller {
      * default entry point to initialize sample data for testing
      */
     public void add(){
-        cinemaService.addCustomer("Miruna", "Marginean", "miruna", false);
-        cinemaService.addCustomer("Tea", "Nicola", "tea", false);
-        cinemaService.addCustomer("Bence", "Molnar", "bence", true);
+        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
+        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
+        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
 
         cinemaService.addStaff("Alexandra","Olah","alexandra");
         cinemaService.addStaff("Klara","Orban","klara");
@@ -48,16 +49,6 @@ public class Controller {
     }
 
     /**
-     * Calculates the age of a customer based on their birthdate.
-     * @param birthday The birth date of the customer.
-     * @return The age in years.
-     */
-    int getAge(LocalDate birthday) {
-        LocalDate today = LocalDate.now();
-        return Period.between(birthday, today).getYears();
-    }
-
-    /**
      * Creates a new customer based on provided details.
      * Sets customer as underaged if their age is under 18.
      * @param firstname The first name of the customer.
@@ -66,8 +57,7 @@ public class Controller {
      * @param birthday  The birth date of the customer.
      */
     public void createCustomer(String firstname, String lastname, String email, LocalDate birthday) {
-        boolean underaged = getAge(birthday) < 18;
-        cinemaService.addCustomer(firstname, lastname, email, underaged);
+        cinemaService.addCustomer(firstname, lastname, email, birthday);
     }
 
     /**
@@ -88,15 +78,6 @@ public class Controller {
             System.out.println("An error occurred: ");
             return null;
         }
-    }
-
-    /**
-     * Retrieves the ID of a specific customer.
-     * @param customer The Customer object.
-     * @return The ID of the customer.
-     */
-    public int getIdOfCustomer(Customer customer) {
-        return cinemaService.getIdOfCustomer(customer);
     }
 
     /**
@@ -178,12 +159,7 @@ public class Controller {
      * @param seats The list of seat numbers to be booked.
      */
     public void removeSeatsFromAvailable(int showtimeId, List<Integer> seats) {
-        Showtime showtime = cinemaService.getShowtime(showtimeId);
-        List<Seat> seatsAvailable = showtime.getSeats();
-
-        seatsAvailable.removeIf(seat -> seats.contains(seat.getSeatNr()));
-
-        showtime.setSeats(seatsAvailable);
+        cinemaService.removeSeatsFromAvailable(showtimeId, seats);
     }
 
     /**
@@ -208,59 +184,47 @@ public class Controller {
     }
 
     /**
-     * Creates a ticket for a specific seat in a booking.
+     * Creates the tickets for all seats in a booking and adds them to the booking.
      * @param bookingId The ID of the booking.
-     * @param seatNr The seat number.
-     * @return The ID of the created ticket.
+     * @param seats The list of seat numbers booked.
      */
-    public int createTicket(int bookingId, int seatNr) {
-        Showtime showtime = cinemaService.getShowtime(cinemaService.getBooking(bookingId).getShowtimeId());
-        Seat seat = cinemaService.findSeatBySeatNr(showtime.getScreenId(), seatNr);
-        return cinemaService.addTicket(bookingId, showtime.getScreenId(), seatNr, seat.getPrice());
+    public void createTickets(int bookingId, List<Integer> seats) {
+        List<Integer> tickets = new ArrayList<>();
+        for(int i = 0; i < seats.size(); i++) {
+            Showtime showtime = cinemaService.getShowtime(cinemaService.getBooking(bookingId).getShowtimeId());
+            Seat seat = cinemaService.findSeatBySeatNr(showtime.getScreenId(), seats.get(i));
+            tickets.add(cinemaService.addTicket(bookingId, showtime.getScreenId(), seats.get(i), seat.getPrice()));
+        }
+
+        Booking currentBooking = this.getBooking(bookingId);
+        currentBooking.setTickets(tickets);
     }
 
     /**
-     * Displays ticket details for a booking.
+     * Displays tickets details for a booking.
      * @param customer The customer who made the booking.
      * @param booking The booking containing the tickets.
-     * @param ticketId The ID of the ticket to display.
      */
-    public void displayTickets(Customer customer, Booking booking, int ticketId) {
-        System.out.println("\n======================================");
-        String ticketInfo = "\nBooking made by " + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + "\n";
-        ticketInfo += "Movie " + cinemaService.getMovie(cinemaService.getShowtime(booking.getShowtimeId()).getMovieId()).getTitle() + "\n";
-        ticketInfo += "Room " + cinemaService.getTicket(ticketId).getScreenId() + " seat number " + cinemaService.getTicket(ticketId).getSeatNr() + " type " + cinemaService.findSeatBySeatNr(cinemaService.getTicket(ticketId).getScreenId(), cinemaService.getTicket(ticketId).getSeatNr()).getType() + "\n";
-        ticketInfo += "Price " + cinemaService.getTicket(ticketId).getPrice();
-        System.out.println(ticketInfo);
+    public void displayTickets(Customer customer, Booking booking) {
+        System.out.println("\nYour tickets: ");
+        for(int i = 0; i < booking.getTickets().size(); i++) {
+            System.out.println("\n======================================");
+            String ticketInfo = "\nBooking made by " + customer.getFirstName() + " " + customer.getLastName() + " on " + booking.getDate().toString() + "\n";
+            ticketInfo += "Movie " + cinemaService.getMovie(cinemaService.getShowtime(booking.getShowtimeId()).getMovieId()).getTitle() + "\n";
+            ticketInfo += "Room " + cinemaService.getTicket(booking.getTickets().get(i)).getScreenId() + " seat number " + cinemaService.getTicket(booking.getTickets().get(i)).getSeatNr() + " type " + cinemaService.findSeatBySeatNr(cinemaService.getTicket(booking.getTickets().get(i)).getScreenId(), cinemaService.getTicket(booking.getTickets().get(i)).getSeatNr()).getType() + "\n";
+            ticketInfo += "Price " + cinemaService.getTicket(booking.getTickets().get(i)).getPrice();
+            System.out.println(ticketInfo);
+        }
     }
 
-    /**
-     * Calculates the total price for a booking, applying membership discount if applicable.
-     * @param loggedCustomerId The ID of the customer.
-     * @param currentBookingId The ID of the current booking.
-     */
+
     public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
-        int type = cinemaService.getMembershipType(loggedCustomerId);
-        Membership membership = null;
-        double discountedPrice = 0;
-        if(type == 1)
-            membership = cinemaService.getBasicMembership(cinemaService.getCustomer(loggedCustomerId).getMembershipId());
-        else if(type == 2)
-            membership = cinemaService.getPremiumMembership(cinemaService.getCustomer(loggedCustomerId).getMembershipId());
+        double totalPrice = cinemaService.calculateTotalPrice(currentBookingId);
+        double discountedPrice = cinemaService.calculateDiscountedPrice(loggedCustomerId, currentBookingId);
 
-        List<Integer> tickets = cinemaService.getBooking(currentBookingId).getTickets();
-
-        double totalPrice = 0;
-        for(Integer ticket : tickets) {
-            totalPrice += cinemaService.getTicket(ticket).getPrice();
-        }
-
-        if(type != 0) {
-            discountedPrice = cinemaService.calculateDiscountedPrice(totalPrice, membership);
-            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei");
-        }
-        else
-            System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + discountedPrice + " lei\nTotal to pay " + totalPrice + " lei");
+        System.out.println("\n======================================");
+        System.out.println("\nYour total: ");
+        System.out.println("Price of tickets " + totalPrice + " lei\nDiscount " + (totalPrice - discountedPrice) + " lei\nTotal to pay " + discountedPrice + " lei");
     }
 
     /**

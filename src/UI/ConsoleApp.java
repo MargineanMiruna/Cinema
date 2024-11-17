@@ -203,21 +203,8 @@ public class ConsoleApp {
         int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), nrOfTickets);
         System.out.println("\nBooking created successfully!");
 
-        List<Integer> tickets = new ArrayList<>();
-        for (int i = 0; i < nrOfTickets; i++) {
-            tickets.add(controller.createTicket(currentBookingId, seats.get(i)));
-        }
-
-        Booking currentBooking = controller.getBooking(currentBookingId);
-        currentBooking.setTickets(tickets);
-
-        System.out.println("\nYour tickets: ");
-        for (int i = 0; i < nrOfTickets; i++) {
-            controller.displayTickets(loggedCustomer, currentBooking, tickets.get(i));
-        }
-
-        System.out.println("\n======================================");
-        System.out.println("\nYour total: ");
+        controller.createTickets(currentBookingId, seats);
+        controller.displayTickets(loggedCustomer, controller.getBooking(currentBookingId));
         controller.calculateTotalPrice(loggedCustomer.getId(), currentBookingId);
     }
 

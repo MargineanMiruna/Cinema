@@ -5,6 +5,7 @@ import Repository.IRepository;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -57,15 +58,26 @@ public class CinemaService {
     }
 
     /**
+     * Calculates the age of a customer based on their birthdate.
+     * @param birthday The birth date of the customer.
+     * @return The age in years.
+     */
+    private int getAge(LocalDate birthday) {
+        LocalDate today = LocalDate.now();
+        return Period.between(birthday, today).getYears();
+    }
+
+    /**
      * Adds a new customer.
      * @param firstName the first name of the customer
      * @param lastName  the last name of the customer
      * @param email     the customer's email
-     * @param underage  indicates if the customer is underage
+     * @param birthday indicates the birthday of the customer
      */
-    public void addCustomer(String firstName, String lastName, String email, boolean underage) {
+    public void addCustomer(String firstName, String lastName, String email, LocalDate birthday) {
         int id = customerRepo.generateNewId();
-        Customer customer = new Customer(id, firstName, lastName, email, underage);
+        boolean underaged = getAge(birthday) < 18;
+        Customer customer = new Customer(id, firstName, lastName, email, underaged);
         customerRepo.add(customer);
     }
 
@@ -576,19 +588,17 @@ public class CinemaService {
     }
 
     /**
-     * Gets the ID of the given customer.
-     * @param customer the customer to get the ID for
-     * @return the ID of the given customer, or 0 if the customer does not exist
+     * Removes booked seats from the list of available seats for a showtime.
+     * @param showtimeId The ID of the showtime.
+     * @param seats The list of seat numbers to be booked.
      */
-    public int getIdOfCustomer(Customer customer){
-        Map<Integer, Customer> customers = customerRepo.getAll();
+    public void removeSeatsFromAvailable(int showtimeId, List<Integer> seats) {
+        Showtime showtime = this.getShowtime(showtimeId);
+        List<Seat> seatsAvailable = showtime.getSeats();
 
-        for(Map.Entry<Integer, Customer> entry : customers.entrySet()){
-            if(entry.getValue().equals(customer))
-                return entry.getKey();
-        }
+        seatsAvailable.removeIf(seat -> seats.contains(seat.getSeatNr()));
 
-        return 0;
+        showtime.setSeats(seatsAvailable);
     }
 
     /**
@@ -646,15 +656,38 @@ public class CinemaService {
         }
     }
 
+    public double calculateTotalPrice(int currentBookingId) {
+        List<Integer> tickets = this.getBooking(currentBookingId).getTickets();
+
+        double totalPrice = 0;
+        for (Integer ticket : tickets) {
+            totalPrice += this.getTicket(ticket).getPrice();
+        }
+
+        return totalPrice;
+    }
 
     /**
-     * Calculates the discounted price for a given membership type.
-     * @param price the original price to calculate the discounted price for
-     * @param membership the membership providing the discount
-     * @return the discounted price based on the membership's offer
+     * Calculates the total price for a booking, applying membership discount if applicable.
+     * @param loggedCustomerId The ID of the customer.
+     * @param currentBookingId The ID of the current booking.
      */
-    public double calculateDiscountedPrice(double price, Membership membership) {
-        return membership.offerDiscount(price);
+    public double calculateDiscountedPrice(int loggedCustomerId, int currentBookingId) {
+        int type = this.getMembershipType(loggedCustomerId);
+        Membership membership = null;
+        double discountedPrice = 0;
+        if (type == 1)
+            membership = this.getBasicMembership(this.getCustomer(loggedCustomerId).getMembershipId());
+        else if (type == 2)
+            membership = this.getPremiumMembership(this.getCustomer(loggedCustomerId).getMembershipId());
+
+        double totalPrice = this.calculateTotalPrice(currentBookingId);
+
+        if (type != 0) {
+            discountedPrice = membership.offerDiscount(totalPrice);
+            return discountedPrice;
+        }
+        return totalPrice;
     }
 
     /**
