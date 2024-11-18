@@ -252,7 +252,7 @@ public class ConsoleApp {
     public void displayShowtimes(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n=====================================");
-        System.out.println("Display 1. all showtimes/ 2. Showtimes filtered by Date ");
+        System.out.println("Display \n 1. all showtimes \n 2. Showtimes filtered by date \n 3. Showtimes filtered by movie \n 4. Showtimes sorted by duration \n 5. Showtimes sorted by date");
 
         Integer showtimesId = sc.nextInt();
         sc.nextLine();
@@ -272,7 +272,25 @@ public class ConsoleApp {
                 } catch (DateTimeParseException e) {
                     System.out.println("Invalid date format. Please use dd-MM-yyyy.");
                 }
-
+                break;
+            }
+            case 3:{
+                System.out.println("Please enter the movie title: ");
+                String movieTitle = sc.nextLine();
+                controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle);
+                break;
+            }
+            case 4:{
+                controller.displaySortedShowtimesByDuration(loggedCustomer);
+                break;
+            }
+            case 5:{
+                controller.displaySortedShowtimesByDateAsc(loggedCustomer);
+                break;
+            }
+            default: {
+                System.out.println("Invalid option. Please choose 1, 2, 3, 4 or 5.");
+                break;
             }
 
         }

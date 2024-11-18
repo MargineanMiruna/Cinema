@@ -462,7 +462,7 @@ public class Controller {
      *
      * @param customer The customer whose showtimes are displayed.
      */
-    public void displaySortshowtimesByDateAsc(Customer customer){
+    public void displaySortedShowtimesByDateAsc(Customer customer){
         Map<Integer, Showtime> sortedShowtimes = cinemaService.sortShowtimesByDateAsc(customer);
 
         for(Map.Entry<Integer, Showtime> entry : sortedShowtimes.entrySet()) {
@@ -515,6 +515,8 @@ public class Controller {
             System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
         }
     }
+
+
 
 
 

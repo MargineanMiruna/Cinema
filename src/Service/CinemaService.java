@@ -3,6 +3,7 @@ package Service;
 import Model.*;
 import Repository.IRepository;
 
+import java.awt.print.Book;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
@@ -178,7 +179,7 @@ public class CinemaService {
                 return entry.getKey();
             }
         }
-        return null;
+        return -1;
     }
 
     /**
@@ -793,6 +794,8 @@ public class CinemaService {
         Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
         Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
 
+
+
         for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
             if (entry.getValue().getMovieId() == movieId) {
                 filteredShowtimes.put(entry.getKey(), entry.getValue());
@@ -826,5 +829,23 @@ public class CinemaService {
         return sortedShowtimes;
 
     }
+    // sa mai adaug o clasa (booking , customer)
+    public Map<Integer, Booking> getBookingsByCustomer(Customer customer) {
+        Map<Integer, Booking> allBookings = bookingRepo.getAll();
+        Map<Integer, Booking> customerBookings = new HashMap<>();
+
+        for (Map.Entry<Integer, Booking> entry : allBookings.entrySet()) {
+            Booking booking = entry.getValue();
+
+            // Comparăm ID-ul clientului pentru a filtra rezervările
+            if (booking.getCustomerId() == customer.getId()) {
+                customerBookings.put(entry.getKey(), booking);
+            }
+        }
+
+        return customerBookings;
+    }
+
+
 
 }
