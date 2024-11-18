@@ -80,8 +80,7 @@ public class Ticket implements HasId {
     /**
      * Creates a Ticket object from a CSV line.
      */
-    @Override
-    public Ticket fromCSV(String csvLine) {
+    public static Ticket fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new Ticket(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Double.parseDouble(parts[4]));
     }

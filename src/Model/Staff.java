@@ -35,8 +35,7 @@ public class Staff extends User {
     /**
      * Creates a Staff object from a CSV line.
      */
-    @Override
-    public Staff fromCSV(String csvLine) {
+    public static Staff fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new Staff(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3]);
     }

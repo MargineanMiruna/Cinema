@@ -111,8 +111,7 @@ public class Booking implements HasId {
     /**
      * Create a Booking object from a CSV line.
      */
-    @Override
-    public Booking fromCSV(String csvLine) {
+    public static Booking fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         List<Integer> tickets = null;
         if(parts.length > 5 && !parts[5].isEmpty())

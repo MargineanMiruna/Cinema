@@ -454,4 +454,68 @@ public class Controller {
         }
 
     }
+
+    /**
+     * Displays showtimes for a specific customer, sorted by date in ascending order.
+     * For each showtime, details of the associated movie (title, genre, release date) and showtime
+     * (date, screen, start time, duration) are printed.
+     *
+     * @param customer The customer whose showtimes are displayed.
+     */
+    public void displaySortshowtimesByDateAsc(Customer customer){
+        Map<Integer, Showtime> sortedShowtimes = cinemaService.sortShowtimesByDateAsc(customer);
+
+        for(Map.Entry<Integer, Showtime> entry : sortedShowtimes.entrySet()) {
+            Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
+            System.out.println("\n======================================");
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+        }
+
+    }
+
+    /**
+     * Displays showtimes for a specific customer that match the given movie title.
+     * The method filters the showtimes by movie title and displays details of the matching
+     * showtimes, including movie information (title, genre, release date) and showtime
+     * details (date, screen, start time, duration). If no showtimes are found, a message
+     * indicating this is displayed.
+     *
+     * @param customer   The customer whose showtimes are filtered and displayed.
+     * @param movieTitle The title of the movie used to filter the showtimes.
+     */
+    public void displayFilteredShowtimesByMovie(Customer customer, String movieTitle){
+        Map<Integer, Showtime> filteredShowtimes = cinemaService.filterShowtimesByMovie(customer,movieTitle);
+
+        if (filteredShowtimes.isEmpty()) {
+            System.out.println("\nNo showtimes found for the movie \"" + movieTitle + "\".");
+            return;
+        }
+
+        for(Map.Entry<Integer, Showtime> entry : filteredShowtimes.entrySet()) {
+            Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
+            System.out.println("\n======================================");
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+        }
+
+    }
+
+    /**
+     * Displays the showtimes for a specific customer, sorted in ascending order by their duration.
+     * For each showtime, the method fetches and displays details about the associated movie, including:
+     * title, genre, release date, and showtime details such as date, room, start time, and duration.
+     *
+     * @param customer The customer whose showtimes are to be sorted and displayed.
+     */
+    public void displaySortedShowtimesByDuration(Customer customer){
+        Map<Integer, Showtime> sortedShowtimes = cinemaService.sortShowtimesByDuration(customer);
+
+        for(Map.Entry<Integer, Showtime> entry : sortedShowtimes.entrySet()) {
+            Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
+            System.out.println("\n======================================");
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+        }
+    }
+
+
+
 }

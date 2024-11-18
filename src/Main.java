@@ -10,7 +10,8 @@ import java.awt.print.Book;
 
 class Main {
     public static void main(String[] args) {
-        IRepository<Customer> customerRepo = new FileRepository<>("D:\\Facultate\\Semestrul3\\MAP\\Cinema-Management-Project\\src\\Files\\customers.csv");
+        //IRepository<Customer> customerRepo = new FileRepository<>("D:\\Facultate\\Semestrul3\\MAP\\Cinema-Management-Project\\src\\Files\\customers.csv");
+        IRepository<Customer> customerRepo = new InMemoryRepository<>();
         IRepository<Staff> staffRepo = new InMemoryRepository<>();
         IRepository<Booking> bookingRepo = new InMemoryRepository<>();
         IRepository<Showtime> showtimeRepo = new InMemoryRepository<>();

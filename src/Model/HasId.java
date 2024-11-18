@@ -5,7 +5,6 @@ import java.io.Serializable;
 /**
  * A functional interface that represents an onject with a unique identifier
  */
-@FunctionalInterface
 public interface HasId extends Serializable {
     /**
      * Gets the unique identifier of the object.
@@ -14,5 +13,7 @@ public interface HasId extends Serializable {
     public int getId();
     public String[] getHeader();
     public String toCSV();
-    public static HasId fromCSV(String csvLine);
+    public static <T> T fromCSV(String csvLine) {
+        return null;
+    }
 }

@@ -6,10 +6,7 @@ import Repository.IRepository;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Service layer for cinema operations, handling the business logic for managing customers, staff, movies, showtimes,
@@ -754,13 +751,80 @@ public class CinemaService {
             }
         }
 
-
         return filteredShowtimes;
 
     }
 
+    /**
+     * Sorts the showtimes for a specific customer in ascending order based on the date of the showtime.
+     * The method retrieves all showtimes related to the provided customer, sorts them by their date in ascending order,
+     * and returns a map containing the sorted showtimes, where the key is the showtime ID and the value is the Showtime object.
+     *
+     * @param customer The customer whose showtimes are to be sorted. This parameter is used to filter the relevant showtimes.
+     * @return A map of showtimes, sorted by the date in ascending order. The map keys are the showtime IDs (Integer),
+     *         and the values are the corresponding Showtime objects.
+     *         If no showtimes are found for the customer, an empty map is returned.
+     */
+    public Map<Integer,Showtime> sortShowtimesByDateAsc(Customer customer){
+        Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
+        List<Map.Entry<Integer, Showtime>> list = new ArrayList<>(allShowtimes.entrySet());
+        list.sort(Comparator.comparing(entry -> entry.getValue().getDate()));
+        Map<Integer, Showtime> sortedShowtimes = new LinkedHashMap<>();
 
+        for (Map.Entry<Integer, Showtime> entry : list) {
+            sortedShowtimes.put(entry.getKey(), entry.getValue());
+        }
 
+        return sortedShowtimes;
 
+    }
+
+    /**
+     * Filters the showtimes for a specific customer based on the provided movie title.
+     * The method retrieves all showtimes for the customer, finds the movie ID by title,
+     * and filters the showtimes that match the movie ID.
+     *
+     * @param customer The customer whose showtimes are to be filtered.
+     * @param movieTitle The title of the movie whose showtimes should be filtered.
+     * @return A map of showtimes for the specified movie. If no showtimes are found, returns an empty map.
+     */
+    public Map<Integer, Showtime> filterShowtimesByMovie(Customer customer, String movieTitle) {
+        int movieId = findMovieIdByTitle(movieTitle);
+        Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
+        Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
+
+        for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
+            if (entry.getValue().getMovieId() == movieId) {
+                filteredShowtimes.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return filteredShowtimes;
+    }
+
+    /**
+     * Sorts the showtimes for a specific customer in ascending order based on their duration.
+     * The method retrieves all showtimes related to the provided customer, sorts them by
+     * duration, and returns a map of the sorted showtimes.
+     *
+     * @param customer The customer whose showtimes are to be sorted.
+     * @return A map of showtimes sorted by duration in ascending order. The map keys are
+     *         the showtime IDs (Integer), and the values are the corresponding Showtime objects.
+     *         If no showtimes are found for the customer, an empty map is returned.
+     */
+    public Map<Integer,Showtime> sortShowtimesByDuration(Customer customer)
+    {
+        Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
+        List<Map.Entry<Integer, Showtime>> list = new ArrayList<>(allShowtimes.entrySet());
+        list.sort(Comparator.comparing(entry -> entry.getValue().getDuration()));
+        Map<Integer, Showtime> sortedShowtimes = new LinkedHashMap<>();
+
+        for (Map.Entry<Integer, Showtime> entry : list) {
+            sortedShowtimes.put(entry.getKey(), entry.getValue());
+        }
+
+        return sortedShowtimes;
+
+    }
 
 }

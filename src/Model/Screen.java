@@ -104,8 +104,7 @@ public class Screen implements HasId {
      * Creates a Screen object from a CSV line.
      * Assumes the seats are serialized as a semicolon-separated list of seat CSV strings.
      */
-    @Override
-    public Screen fromCSV(String csvLine) {
+    public static Screen fromCSV(String csvLine) {
         String[] parts = csvLine.split(",", 5);
 
         List<Seat> seats = new ArrayList<>();

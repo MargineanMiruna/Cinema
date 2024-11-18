@@ -50,8 +50,7 @@ public class BasicMembership extends Membership {
         return new String[]{"id", "customerId", "startDate", "endDate"};
     }
 
-    @Override
-    public BasicMembership fromCSV(String csvLine) {
+    public static BasicMembership fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new BasicMembership(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), LocalDate.parse(parts[2]), LocalDate.parse(parts[3]));
     }

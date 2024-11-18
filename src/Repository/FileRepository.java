@@ -30,7 +30,8 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
                 T obj = T.fromCSV(line);
                 objects.put(obj.getId(), obj);
             }
-        } catch (IOException | ClassNotFoundException e) {
+            return objects;
+        } catch (IOException e) {
             return new HashMap<>();
         }
     }

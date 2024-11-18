@@ -73,8 +73,7 @@ public class Seat implements HasId{
     /**
      * Creates a Seat object from a CSV line.
      */
-    @Override
-    public Seat fromCSV(String csvLine) {
+    public static Seat fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new Seat(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), SeatType.valueOf(parts[2]));
     }

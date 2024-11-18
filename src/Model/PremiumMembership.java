@@ -52,8 +52,7 @@ public class PremiumMembership extends Membership {
         return new String[]{"id", "customerId", "startDate", "endDate"};
     }
 
-    @Override
-    public PremiumMembership fromCSV(String csvLine) {
+    public static PremiumMembership fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new PremiumMembership(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), LocalDate.parse(parts[2]), LocalDate.parse(parts[3]));
     }

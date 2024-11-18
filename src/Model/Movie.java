@@ -89,8 +89,7 @@ public class Movie implements HasId {
     /**
      * Creates a Movie object from a CSV line.
      */
-    @Override
-    public Movie fromCSV(String csvLine) {
+    public static Movie fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new Movie(Integer.parseInt(parts[0]), parts[1], Boolean.parseBoolean(parts[2]), parts[3], LocalDate.parse(parts[4]));
     }

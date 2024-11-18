@@ -68,8 +68,7 @@ public class Customer extends User {
     /**
      * Creates a Customer object from a CSV line.
      */
-    @Override
-    public Customer fromCSV(String csvLine) {
+    public static Customer fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         Customer customer = new Customer(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3], Boolean.parseBoolean(parts[4]));
         customer.setMembershipId(Integer.parseInt(parts[5]));

@@ -131,8 +131,7 @@ public class Showtime implements HasId {
      * Creates a Showtime object from a CSV line.
      * Assumes the seats are serialized as a semicolon-separated list of seat CSV strings.
      */
-    @Override
-    public Showtime fromCSV(String csvLine) {
+    public static Showtime fromCSV(String csvLine) {
         String[] parts = csvLine.split(",", 7);
 
         List<Seat> seats = new ArrayList<>();
