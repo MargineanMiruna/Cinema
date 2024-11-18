@@ -191,7 +191,11 @@ public class ConsoleApp {
         int nrOfTickets = sc.nextInt();
         sc.nextLine();
 
-        controller.displayAvailableSeats(showtimeId);
+        System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei ");
+        int typeOfTickets = sc.nextInt();
+        sc.nextLine();
+
+        controller.displayAvailableSeats(showtimeId, typeOfTickets);
         System.out.println("\nPlease choose your seats: ");
         List<Integer> seats = new ArrayList<>();
         for(int i = 0; i < nrOfTickets; i++) {
@@ -245,6 +249,36 @@ public class ConsoleApp {
         System.out.println("\nMembership created successfully! ");
     }
 
+    public void displayShowtimes(Customer loggedCustomer) {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("\n=====================================");
+        System.out.println("Display 1. all showtimes/ 2. Showtimes filtered by Date ");
+
+        Integer showtimesId = sc.nextInt();
+        sc.nextLine();
+        switch(showtimesId) {
+            case 1: {
+                controller.displayShowtimesFilteredByPg(loggedCustomer);
+                break;
+            }
+            case 2: {
+                System.out.println("Please enter a date (dd-MM-yyyy): ");
+                String date = sc.nextLine();
+
+                try {
+                    LocalDate date1 = LocalDate.parse(date, dateFormatter);
+                    controller.displayShowtimesFilteredByDate(loggedCustomer,date1);
+
+                } catch (DateTimeParseException e) {
+                    System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                }
+
+            }
+
+        }
+
+    }
+
     public void customerMenu(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
 
@@ -256,12 +290,12 @@ public class ConsoleApp {
             switch (option) {
                 case "1": {
                     //display Showtimes
-                    controller.displayShowtimesFilteredByPg(loggedCustomer);
+                    this.displayShowtimes(loggedCustomer);
                     break;
                 }
                 case "2": {
                     //create Booking
-                    controller.displayShowtimesFilteredByPg(loggedCustomer);
+                    this.displayShowtimes(loggedCustomer);
                     this.createBooking(loggedCustomer);
                     break;
                 }

@@ -138,17 +138,20 @@ public class Controller {
     }
 
     /**
-     * Displays available seats for a given showtime.
-     * @param showtimeId The ID of the showtime.
+     * Displays the available seats for a specific showtime and ticket type.
+     * This method retrieves the showtime associated with the given `showtimeId` and
+     * filters the available seats based on the specified `typeOfTickets`. It then prints
+     * the available seats on the same line, with spaces between each seat.
+     *
+     * @param showtimeId The identifier of the showtime for which available seats will be displayed.
+     * @param typeOfTickets The type of tickets for which seats are being filtered ( standard, premium, etc.).
      */
-    public void displayAvailableSeats(int showtimeId) {
-        Showtime showtime= cinemaService.getShowtime(showtimeId);
-        List<Seat> seats = showtime.getSeats();
+    public void displayAvailableSeats(int showtimeId,int typeOfTickets) {
+        List<Integer> seats = cinemaService.filterSeatsByType(showtimeId, typeOfTickets );
 
         System.out.println("\n======================================");
-        System.out.printf("%-5s %-13s %-10s%n", "No", "Type", "Price");
-        for(Seat seat : seats) {
-            System.out.printf("%-5d %-13s %-10s%n", seat.getSeatNr(), seat.getType(), seat.getPrice() + " lei");
+        for (Integer seat : seats) {
+            System.out.print(seat + " ");
         }
         System.out.println("\n======================================");
     }
@@ -428,4 +431,27 @@ public class Controller {
         }
     }
 
+    /**
+     * Displays the showtimes filtered by the specified date.
+     * This method filters the showtimes based on the provided date and retrieves the corresponding movie details
+     * for each filtered showtime. It then displays information about each showtime, including the movie title, genre,
+     * release date, showtime date, screen ID, start time, and duration.
+     *
+     * @param date The date by which the showtimes will be filtered.
+     */
+    public void displayShowtimesFilteredByDate (Customer customer, LocalDate date){
+        Map<Integer,Showtime> filteredShowtimes = cinemaService.filerShowtimesByDate(customer, date);
+
+        if (filteredShowtimes.isEmpty()) {
+            System.out.println("No showtimes available for the selected date.");
+            return;
+        }
+
+        for(Map.Entry<Integer, Showtime> entry : filteredShowtimes.entrySet()) {
+            Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
+            System.out.println("\n======================================");
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+        }
+
+    }
 }

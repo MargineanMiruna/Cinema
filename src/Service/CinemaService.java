@@ -744,8 +744,8 @@ public class CinemaService {
      *         and the value is the @code Showtime object, filtered to include only those occurring
      *         on the specified date. If no showtimes match, the map will be empty.
      */
-    public Map<Integer,Showtime> filerShowtimesByDate(LocalDate date){
-        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+    public Map<Integer,Showtime> filerShowtimesByDate(Customer customer, LocalDate date){
+        Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
         Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
 
         for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
@@ -754,9 +754,12 @@ public class CinemaService {
             }
         }
 
+
         return filteredShowtimes;
 
     }
+
+
 
 
 
