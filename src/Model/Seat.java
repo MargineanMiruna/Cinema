@@ -52,6 +52,30 @@ public class Seat implements HasId{
      */
     public SeatType getType() {
        return type;
+    }
 
+    /**
+     * Converts the seat to a CSV format string.
+     */
+    @Override
+    public String toCSV() {
+        return String.join(",", String.valueOf(id), String.valueOf(seatNr), String.valueOf(type));
+    }
+
+    /**
+     * Returns the header for the CSV file representing seats.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "seatNr", "type"};
+    }
+
+    /**
+     * Creates a Seat object from a CSV line.
+     */
+    @Override
+    public Seat fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        return new Seat(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), SeatType.valueOf(parts[2]));
     }
 }

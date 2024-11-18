@@ -1,11 +1,13 @@
 package Repository;
 
+import Model.BasicMembership;
 import Model.HasId;
 
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class FileRepository<T extends HasId> implements IRepository<T> {
     private String filePath;
@@ -20,8 +22,14 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
      * @return The data stored in the file, or an empty map if the file is empty or does not exist.
      */
     private Map<Integer, T> readDataFromFile() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(filePath))) {
-            return (Map<Integer, T>) ois.readObject();
+        Map<Integer, T> objects = new HashMap<>();
+
+        try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
+            String line = reader.readLine();
+            while ((line = reader.readLine()) != null) {
+                T obj = T.fromCSV(line);
+                objects.put(obj.getId(), obj);
+            }
         } catch (IOException | ClassNotFoundException e) {
             return new HashMap<>();
         }
@@ -33,10 +41,16 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
      * @param objects The data to write to the file.
      */
     private void writeDataToFile(Map<Integer, T> objects) {
-        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
-            oos.writeObject(objects);
+        if(objects.isEmpty()) return;
+
+        try (FileWriter writer = new FileWriter(filePath)) {
+            writer.write(String.join(",", objects.get(1).getHeader()) + "\n");
+
+            for(Map.Entry<Integer, T> entry : objects.entrySet()){
+                writer.write(entry.getValue().toCSV() + "\n");
+            }
         } catch (IOException e) {
-            e.printStackTrace();
+            System.err.println("Error while writing to file: " + e.getMessage());
         }
     }
 

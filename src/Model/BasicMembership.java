@@ -1,6 +1,7 @@
 package Model;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  * The basic membership class represents a basic membership with a fixed price and discount rate.
@@ -37,5 +38,21 @@ public class BasicMembership extends Membership {
     @Override
     public double offerDiscount(double price) {
         return price - price * (discount / 100);
+    }
+
+    @Override
+    public String toCSV() {
+        return String.join(",", String.valueOf(id), String.valueOf(customerId), String.valueOf(startDate), String.valueOf(endDate));
+    }
+
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "customerId", "startDate", "endDate"};
+    }
+
+    @Override
+    public BasicMembership fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        return new BasicMembership(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), LocalDate.parse(parts[2]), LocalDate.parse(parts[3]));
     }
 }

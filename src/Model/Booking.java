@@ -2,6 +2,8 @@ package Model;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.Arrays;
 
 /**
  * The booking class represents a reservation made by a customer for a specific showtime.
@@ -83,5 +85,41 @@ public class Booking implements HasId {
      */
     public void setTickets(List<Integer> tickets) {
         this.tickets = tickets;
+    }
+
+    /**
+     * Convert the booking to a CSV format string.
+     * The tickets list is serialized as a semicolon-separated string.
+     */
+    @Override
+    public String toCSV() {
+        String ticketsCSV = "";
+        if(tickets != null)
+             ticketsCSV = tickets.stream().map(String::valueOf).collect(Collectors.joining(";"));
+
+        return String.join(",", String.valueOf(id), String.valueOf(customerId), String.valueOf(showtimeId), String.valueOf(date), String.valueOf(nrOfCustomers), ticketsCSV);
+    }
+
+    /**
+     * Return the header for a CSV file representing bookings.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "customerId", "showtimeId", "date", "nrOfCustomers", "tickets"};
+    }
+
+    /**
+     * Create a Booking object from a CSV line.
+     */
+    @Override
+    public Booking fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        List<Integer> tickets = null;
+        if(parts.length > 5 && !parts[5].isEmpty())
+            tickets = Arrays.stream(parts[5].split(";")).map(Integer::parseInt).collect(Collectors.toList());
+
+        Booking booking = new Booking(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), LocalDate.parse(parts[3]), Integer.parseInt(parts[4]));
+        booking.setTickets(tickets);
+        return booking;
     }
 }

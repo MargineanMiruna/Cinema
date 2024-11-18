@@ -69,4 +69,29 @@ public class Movie implements HasId {
     public LocalDate getReleaseDate() {
         return releaseDate;
     }
+
+    /**
+     * Converts the movie to a CSV format string.
+     */
+    @Override
+    public String toCSV() {
+        return String.join(",", String.valueOf(id), title, String.valueOf(pg), genre, String.valueOf(releaseDate));
+    }
+
+    /**
+     * Returns the header for a CSV file representing movies.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "title", "pg", "genre", "releaseDate"};
+    }
+
+    /**
+     * Creates a Movie object from a CSV line.
+     */
+    @Override
+    public Movie fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        return new Movie(Integer.parseInt(parts[0]), parts[1], Boolean.parseBoolean(parts[2]), parts[3], LocalDate.parse(parts[4]));
+    }
 }

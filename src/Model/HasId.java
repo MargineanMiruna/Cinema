@@ -12,4 +12,7 @@ public interface HasId extends Serializable {
      * @return The unique identifier.
      */
     public int getId();
+    public String[] getHeader();
+    public String toCSV();
+    public static HasId fromCSV(String csvLine);
 }

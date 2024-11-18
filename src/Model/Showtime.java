@@ -2,7 +2,9 @@ package Model;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The showtime class represents a showtime for a specific movie.
@@ -105,5 +107,42 @@ public class Showtime implements HasId {
      */
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
+    }
+
+    /**
+     * Converts the showtime to a CSV format string.
+     * The seats are serialized as a semicolon-separated list of seat CSV strings.
+     */
+    @Override
+    public String toCSV() {
+        String seatsCSV = seats.stream().map(Seat::toCSV).collect(Collectors.joining(";")); // Combine with semicolon separator
+        return String.join(",", String.valueOf(id), String.valueOf(screenId), String.valueOf(movieId), date.toString(), startTime.toString(), String.valueOf(duration), seatsCSV);
+    }
+
+    /**
+     * Returns the header for a CSV file representing showtimes.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "screenId", "movieId", "date", "startTime", "duration", "seats"};
+    }
+
+    /**
+     * Creates a Showtime object from a CSV line.
+     * Assumes the seats are serialized as a semicolon-separated list of seat CSV strings.
+     */
+    @Override
+    public Showtime fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",", 7);
+
+        List<Seat> seats = new ArrayList<>();
+        if (!parts[6].isEmpty()) {
+            String[] seatParts = parts[6].split(";");
+            for (String seatCSV : seatParts) {
+                seats.add(Seat.fromCSV(seatCSV));
+            }
+        }
+
+        return new Showtime(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), LocalDate.parse(parts[3]), LocalTime.parse(parts[4]), Integer.parseInt(parts[5]), seats);
     }
 }

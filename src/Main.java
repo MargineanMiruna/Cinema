@@ -1,5 +1,6 @@
 import Controller.Controller;
 import Model.*;
+import Repository.FileRepository;
 import Repository.IRepository;
 import Repository.InMemoryRepository;
 import Service.CinemaService;
@@ -9,7 +10,7 @@ import java.awt.print.Book;
 
 class Main {
     public static void main(String[] args) {
-        IRepository<Customer> customerRepo = new InMemoryRepository<>();
+        IRepository<Customer> customerRepo = new FileRepository<>("D:\\Facultate\\Semestrul3\\MAP\\Cinema-Management-Project\\src\\Files\\customers.csv");
         IRepository<Staff> staffRepo = new InMemoryRepository<>();
         IRepository<Booking> bookingRepo = new InMemoryRepository<>();
         IRepository<Showtime> showtimeRepo = new InMemoryRepository<>();

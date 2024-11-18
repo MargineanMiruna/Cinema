@@ -2,6 +2,7 @@ package Model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * The screen class represents a screen in a cinema, including a specified number of standard, VIP, and premium seats.
@@ -79,5 +80,44 @@ public class Screen implements HasId {
      */
     public void setSeats(List<Seat> seats) {
         this.seats = seats;
+    }
+
+    /**
+     * Converts the screen to a CSV format string.
+     * The seats are serialized as a semicolon-separated list of seat IDs.
+     */
+    @Override
+    public String toCSV() {
+        String seatsCSV = seats.stream().map(Seat::toCSV).collect(Collectors.joining(";"));
+        return String.join(",", String.valueOf(id), String.valueOf(nrStandardSeats), String.valueOf(nrVipSeats), String.valueOf(nrPremiumSeats), seatsCSV);
+    }
+
+    /**
+     * Returns the header for a CSV file representing screens.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "nrStandardSeats", "nrVipSeats", "nrPremiumSeats", "seats"};
+    }
+
+    /**
+     * Creates a Screen object from a CSV line.
+     * Assumes the seats are serialized as a semicolon-separated list of seat CSV strings.
+     */
+    @Override
+    public Screen fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",", 5);
+
+        List<Seat> seats = new ArrayList<>();
+        if (!parts[4].isEmpty()) {
+            String[] seatParts = parts[4].split(";");
+            for (String seatCSV : seatParts) {
+                seats.add(Seat.fromCSV(seatCSV));
+            }
+        }
+
+        Screen screen = new Screen(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
+        screen.setSeats(seats);
+        return screen;
     }
 }

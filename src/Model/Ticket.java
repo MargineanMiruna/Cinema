@@ -60,5 +60,30 @@ public class Ticket implements HasId {
     public double getPrice() {
         return price;
     }
+
+    /**
+     * Converts the Ticket object to a CSV format string.
+     */
+    @Override
+    public String toCSV() {
+        return String.join(",", String.valueOf(getId()), String.valueOf(getBookingId()), String.valueOf(getScreenId()), String.valueOf(getSeatNr()), String.valueOf(getPrice()));
+    }
+
+    /**
+     * Returns the header for the CSV file representing tickets.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "bookingId", "screenId", "seatNr", "price"};
+    }
+
+    /**
+     * Creates a Ticket object from a CSV line.
+     */
+    @Override
+    public Ticket fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        return new Ticket(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), Double.parseDouble(parts[4]));
+    }
 }
 

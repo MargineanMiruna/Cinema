@@ -41,4 +41,20 @@ public class PremiumMembership extends Membership {
     public double offerDiscount(double price) {
         return price - price * (discount / 100);
     }
+
+    @Override
+    public String toCSV() {
+        return String.join(",", String.valueOf(id), String.valueOf(customerId), String.valueOf(startDate), String.valueOf(endDate));
+    }
+
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "customerId", "startDate", "endDate"};
+    }
+
+    @Override
+    public PremiumMembership fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        return new PremiumMembership(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), LocalDate.parse(parts[2]), LocalDate.parse(parts[3]));
+    }
 }

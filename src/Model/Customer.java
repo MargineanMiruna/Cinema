@@ -48,4 +48,31 @@ public class Customer extends User {
     public void setMembershipId(int membershipId) {
         this.membershipId = membershipId;
     }
+
+    /**
+     * Converts the customer to a CSV format string.
+     */
+    @Override
+    public String toCSV() {
+        return String.join(",", String.valueOf(id), firstName, lastName, email, String.valueOf(underaged), String.valueOf(membershipId));
+    }
+
+    /**
+     * Returns the header for a CSV file representing customers.
+     */
+    @Override
+    public String[] getHeader() {
+        return new String[]{"id", "firstName", "lastName", "email", "underaged", "membershipId"};
+    }
+
+    /**
+     * Creates a Customer object from a CSV line.
+     */
+    @Override
+    public Customer fromCSV(String csvLine) {
+        String[] parts = csvLine.split(",");
+        Customer customer = new Customer(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3], Boolean.parseBoolean(parts[4]));
+        customer.setMembershipId(Integer.parseInt(parts[5]));
+        return customer;
+    }
 }
