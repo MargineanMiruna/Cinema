@@ -13,7 +13,5 @@ public interface HasId extends Serializable {
     public int getId();
     public String[] getHeader();
     public String toCSV();
-    public static <T> T fromCSV(String csvLine) {
-        return null;
-    }
+    //public static <T> T fromCSV(String csvLine);
 }

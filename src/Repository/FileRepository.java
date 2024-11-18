@@ -1,6 +1,6 @@
 package Repository;
 
-import Model.BasicMembership;
+import Model.*;
 import Model.HasId;
 
 import java.io.*;
@@ -11,9 +11,11 @@ import java.util.function.Function;
 
 public class FileRepository<T extends HasId> implements IRepository<T> {
     private String filePath;
+    private Function<String, T> fromCSV;
 
-    public FileRepository(String filePath) {
+    public FileRepository(String filePath, Function<String,T> fromCSV) {
         this.filePath = filePath;
+        this.fromCSV = fromCSV;
     }
 
     /**
@@ -27,7 +29,7 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
         try (BufferedReader reader = new BufferedReader(new FileReader(filePath))) {
             String line = reader.readLine();
             while ((line = reader.readLine()) != null) {
-                T obj = T.fromCSV(line);
+                T obj = fromCSV.apply(line);
                 objects.put(obj.getId(), obj);
             }
             return objects;
