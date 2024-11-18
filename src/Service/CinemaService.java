@@ -528,7 +528,7 @@ public class CinemaService {
      * @param customer the customer whose showtimes to display
      * @return a map of showtimes available for the customer
      */
-    public Map<Integer, Showtime> displayShowtimes(Customer customer) {
+    public Map<Integer, Showtime> filterShowtimesByPg(Customer customer) {
         Map<Integer, Showtime> unfilteredShowtimes = showtimeRepo.getAll();
 
         if(customer.getUnderaged()) {
@@ -712,5 +712,52 @@ public class CinemaService {
             }
         }
     }
+
+    /**
+     * Filters and retrieves a list of seat numbers based on the specified seat type for a given showtime.
+     *
+     * @param showtimeId The ID of the showtime for which seats need to be filtered.
+     * @param type The type of seats to filter, represented as an integer corresponding to the ordinal
+     *             value of the SeatType enum ( 0 for standard, 1 for vip, 2 for premium).
+     * @return A list of seat numbers List<Integer> that match the specified seat type.
+     *         If no seats match the criteria, the list will be empty.
+     */
+    public List<Integer> filterSeatsByType(int showtimeId, int type) {
+        List<Integer> filteredSeats = new ArrayList<>();
+        Showtime showtime= getShowtime(showtimeId);
+        List<Seat> seats = showtime.getSeats();
+
+        SeatType seatType = SeatType.values()[type];
+
+        for(Seat seat : seats){
+            if( seat.getType() == seatType )
+                filteredSeats.add(seat.getSeatNr());
+        }
+        return filteredSeats;
+    }
+
+    /**
+     * Filters and retrieves a map of showtimes that occur on the specified date.
+     *
+     * @param date The date to filter showtimes by.
+     * @return A map of showtimes Map<Integer, Showtime> where the key is the showtime ID
+     *         and the value is the @code Showtime object, filtered to include only those occurring
+     *         on the specified date. If no showtimes match, the map will be empty.
+     */
+    public Map<Integer,Showtime> filerShowtimesByDate(LocalDate date){
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
+
+        for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
+            if (entry.getValue().getDate().equals(date)) {
+                filteredShowtimes.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return filteredShowtimes;
+
+    }
+
+
 
 }

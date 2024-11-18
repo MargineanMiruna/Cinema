@@ -127,8 +127,8 @@ public class Controller {
      * Displays showtimes for a given customer.
      * @param customer The customer viewing the showtimes.
      */
-    public void displayShowtimes(Customer customer) {
-        Map<Integer, Showtime> showtimes = cinemaService.displayShowtimes(customer);
+    public void displayShowtimesFilteredByPg(Customer customer) {
+        Map<Integer, Showtime> showtimes = cinemaService.filterShowtimesByPg(customer);
 
         for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
             Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());

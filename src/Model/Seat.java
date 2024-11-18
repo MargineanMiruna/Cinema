@@ -51,6 +51,7 @@ public class Seat implements HasId{
      * @return the {@code SeatType} of the seat.
      */
     public SeatType getType() {
-        return type;
+       return type;
+
     }
 }

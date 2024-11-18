@@ -256,12 +256,12 @@ public class ConsoleApp {
             switch (option) {
                 case "1": {
                     //display Showtimes
-                    controller.displayShowtimes(loggedCustomer);
+                    controller.displayShowtimesFilteredByPg(loggedCustomer);
                     break;
                 }
                 case "2": {
                     //create Booking
-                    controller.displayShowtimes(loggedCustomer);
+                    controller.displayShowtimesFilteredByPg(loggedCustomer);
                     this.createBooking(loggedCustomer);
                     break;
                 }
