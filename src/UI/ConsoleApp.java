@@ -322,13 +322,18 @@ public class ConsoleApp {
                     this.createMembership(loggedCustomer);
                     break;
                 }
-                case "4": {
+                case "4":{
+                    //view Booking history
+                    controller.displayBookingsWithShowtimes(loggedCustomer);
+                    break;
+                }
+                case "5": {
                     //back
                     continueLoop = false;
                     break;
                 }
                 default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
+                    System.out.println("Invalid input. Please enter a number between 1-4!");
                     break;
                 }
             }

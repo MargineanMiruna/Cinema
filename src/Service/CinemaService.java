@@ -829,22 +829,33 @@ public class CinemaService {
         return sortedShowtimes;
 
     }
-    // sa mai adaug o clasa (booking , customer)
-    public Map<Integer, Booking> getBookingsByCustomer(Customer customer) {
+
+
+    /**
+     * Retrieves all bookings made by a specific customer, including associated showtime details.
+     *
+     * @param customer The customer whose bookings are to be retrieved.
+     * @return A map where the key is the booking ID, and the value is a Map.Entry containing
+     *         the Booking object and its associated Showtime object. If the customer has no bookings,
+     *         the map will be empty.
+     */
+    public Map<Integer, Map.Entry<Booking, Showtime>> getBookingsByCustomer(Customer customer) {
         Map<Integer, Booking> allBookings = bookingRepo.getAll();
-        Map<Integer, Booking> customerBookings = new HashMap<>();
+        Map<Integer, Map.Entry<Booking, Showtime>> customerBookings = new HashMap<>();
 
         for (Map.Entry<Integer, Booking> entry : allBookings.entrySet()) {
             Booking booking = entry.getValue();
-
-            // Comparăm ID-ul clientului pentru a filtra rezervările
             if (booking.getCustomerId() == customer.getId()) {
-                customerBookings.put(entry.getKey(), booking);
+                Showtime showtime = getShowtime(booking.getShowtimeId());
+                if (showtime != null) {
+                    customerBookings.put(entry.getKey(), Map.entry(booking, showtime));
+                }
             }
         }
 
         return customerBookings;
     }
+
 
 
 

@@ -119,7 +119,8 @@ public class Controller {
                 1. View showtimes
                 2. Create a booking
                 3. Create a membership
-                4. Back
+                4. View booking history
+                5. Back
                 Enter your choice:""");
     }
 
@@ -516,8 +517,33 @@ public class Controller {
         }
     }
 
+    /**
+     * Displays all bookings made by a customer, including associated showtime details.
+     *
+     * @param customer The customer whose bookings are to be displayed.
+     *                 This parameter is used to retrieve the relevant bookings.
+     * If no bookings are found for the customer, a message will be printed indicating this.
+     */
+    public void displayBookingsWithShowtimes(Customer customer) {
+        Map<Integer, Map.Entry<Booking, Showtime>> customerBookings = cinemaService.getBookingsByCustomer(customer);
 
+        if (customerBookings.isEmpty()) {
+            System.out.println("No bookings found for customer: " + customer.getFirstName() + " " + customer.getLastName());
+            return;
+        }
 
+        for (Map.Entry<Integer, Map.Entry<Booking, Showtime>> entry : customerBookings.entrySet()) {
+            Booking booking = entry.getValue().getKey();
+            Showtime showtime = entry.getValue().getValue();
 
+            System.out.println("\nBooking ID: " + entry.getKey());
+            System.out.println("\tShowtime ID: " + showtime.getId());
+            System.out.println("\tMovie : " + cinemaService.getMovie(showtime.getMovieId()).getTitle());
+            System.out.println("\tDate: " + showtime.getDate());
+            System.out.println("\tStart Time: " + showtime.getStartTime());
+            System.out.println("\tDuration: " + showtime.getDuration() + " minutes");
+            System.out.println("\tNumber of Customers: " + booking.getNrOfCustomers());
+        }
+    }
 
 }
