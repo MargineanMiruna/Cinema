@@ -67,7 +67,7 @@ public class Seat implements HasId{
      */
     @Override
     public String[] getHeader() {
-        return new String[]{"id", "seatNr", "type"};
+        return new String[] {"id", "seatNr", "type"};
     }
 
     /**

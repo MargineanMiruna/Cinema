@@ -75,7 +75,7 @@ public class CinemaService {
     public void addCustomer(String firstName, String lastName, String email, LocalDate birthday) {
         int id = customerRepo.generateNewId();
         boolean underaged = getAge(birthday) < 18;
-        Customer customer = new Customer(id, firstName, lastName, email, underaged);
+        Customer customer = new Customer(id, firstName, lastName, email, underaged, -1);
         customerRepo.add(customer);
     }
 
@@ -96,8 +96,8 @@ public class CinemaService {
      * @param email     the new email of the customer
      * @param underage  indicates if the customer is underage (true if underage, false otherwise)
      */
-    public void updateCustomer(int id, String firstName, String lastName,String email, boolean underage) {
-        Customer customer = new Customer(id, firstName, lastName, email, underage);
+    public void updateCustomer(int id, String firstName, String lastName,String email, boolean underage, int membershipId) {
+        Customer customer = new Customer(id, firstName, lastName, email, underage, membershipId);
         customerRepo.update(customer);
     }
 
@@ -241,8 +241,6 @@ public class CinemaService {
      */
     public void addScreen(int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
         int id = screenRepo.generateNewId();
-        Screen screen = new Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
-        screenRepo.add(screen);
 
         List<Seat> seatsForThisScreen = new ArrayList<>();
         for (int i = 1; i <= nrStandardSeats; i++) {
@@ -261,7 +259,8 @@ public class CinemaService {
             seatsForThisScreen.add(newSeat);
         }
 
-        screen.setSeats(seatsForThisScreen);
+        Screen screen = new Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats, seatsForThisScreen);
+        screenRepo.add(screen);
     }
 
     /**
@@ -279,9 +278,51 @@ public class CinemaService {
      * @param nrStandardSeats the new number of standard seats
      * @param nrVipSeats      the new number of VIP seats
      * @param nrPremiumSeats  the new number of premium seats
+     * @param seats an empty list that will contain the seats of the updated screen
      */
-    public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
-        Screen screen = new Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
+    public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats, List<Seat> seats) {
+        Screen oldScreen = screenRepo.read(id);
+
+        for (int i = 0; i < nrStandardSeats && i < oldScreen.getSeats().size() ; i++) {
+            Seat updatedSeat = new Seat(oldScreen.getSeats().get(i).getId(), i + 1, SeatType.standard);
+            seatRepo.update(updatedSeat);
+            seats.add(updatedSeat);
+        }
+        for (int i = nrStandardSeats; i < nrVipSeats + nrStandardSeats && i < oldScreen.getSeats().size(); i++) {
+            Seat updatedSeat = new Seat(oldScreen.getSeats().get(i).getId(), i + 1, SeatType.vip);
+            seatRepo.update(updatedSeat);
+            seats.add(updatedSeat);
+        }
+        for(int i = nrStandardSeats + nrVipSeats; i < nrPremiumSeats + nrVipSeats + nrStandardSeats && i < oldScreen.getSeats().size(); i++) {
+            Seat updatedSeat = new Seat(oldScreen.getSeats().get(i).getId(), i + 1, SeatType.premium);
+            seatRepo.update(updatedSeat);
+            seats.add(updatedSeat);
+        }
+        for(int i = nrPremiumSeats + nrVipSeats + nrStandardSeats; i < oldScreen.getNrPremiumSeats() + oldScreen.getNrStandardSeats() + oldScreen.getNrVipSeats(); i++) {
+            seatRepo.delete(oldScreen.getSeats().get(i).getId());
+        }
+        if(1 + oldScreen.getSeats().size() <= nrPremiumSeats + nrVipSeats + nrStandardSeats) {
+            int newCounter = 0;
+            for (int j = 1 + oldScreen.getSeats().size(); j <= nrStandardSeats; j++) {
+                Seat newSeat = new Seat(seatRepo.generateNewId(), j, SeatType.standard);
+                seatRepo.add(newSeat);
+                seats.add(newSeat);
+                newCounter++;
+            }
+            for (int j = 1 + oldScreen.getSeats().size() + newCounter; j <= nrVipSeats + nrStandardSeats; j++) {
+                Seat newSeat = new Seat(seatRepo.generateNewId(), j, SeatType.vip);
+                seatRepo.add(newSeat);
+                seats.add(newSeat);
+                newCounter++;
+            }
+            for(int j = 1 + oldScreen.getSeats().size() + newCounter; j <= nrPremiumSeats + nrVipSeats + nrStandardSeats; j++) {
+                Seat newSeat = new Seat(seatRepo.generateNewId(), j, SeatType.premium);
+                seatRepo.add(newSeat);
+                seats.add(newSeat);
+            }
+        }
+
+        Screen screen = new Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats, seats);
         screenRepo.update(screen);
     }
 
@@ -337,11 +378,20 @@ public class CinemaService {
      * @param showtimeId    the ID of the showtime for the booking
      * @param date          the date of the booking
      * @param nrOfCustomers the number of customers in the booking
+     * @param seats The list of seat numbers booked.
      * @return the booking ID
      */
-    public int addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
+    public int addBooking(int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Integer> seats) {
         int id = bookingRepo.generateNewId();
-        Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers);
+        Showtime showtime = this.getShowtime(showtimeId);
+
+        List<Integer> tickets = new ArrayList<>();
+        for(int i = 0; i < seats.size(); i++) {
+            Seat seat = this.findSeatBySeatNr(showtime.getScreenId(), seats.get(i));
+            tickets.add(this.addTicket(id, showtime.getScreenId(), seats.get(i), seat.getPrice()));
+        }
+
+        Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers, tickets);
         bookingRepo.add(booking);
         return booking.getId();
     }
@@ -363,8 +413,8 @@ public class CinemaService {
      * @param date          the new booking date
      * @param nrOfCustomers the new number of customers
      */
-    public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
-        Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers);
+    public void updateBooking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Integer> tickets) {
+        Booking booking = new Booking(id, customerId, showtimeId, date, nrOfCustomers, tickets);
         bookingRepo.update(booking);
     }
 
@@ -417,7 +467,7 @@ public class CinemaService {
         BasicMembership basicMembership = new BasicMembership(id, customerId, startDate,endDate);
         basicMembershipRepo.add(basicMembership);
         Customer customer = getCustomer(customerId);
-        customer.setMembershipId(id);
+        this.updateCustomer(customerId, customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getUnderaged(), basicMembership.getId());
         return basicMembership;
     }
 
@@ -462,7 +512,7 @@ public class CinemaService {
         PremiumMembership premiumMembership = new PremiumMembership(id, customerId, startDate,endDate);
         premiumMembershipRepo.add(premiumMembership);
         Customer customer = getCustomer(customerId);
-        customer.setMembershipId(id);
+        this.updateCustomer(customerId, customer.getFirstName(), customer.getLastName(), customer.getEmail(), customer.getUnderaged(), premiumMembership.getId());
         return premiumMembership;
     }
 
@@ -596,7 +646,9 @@ public class CinemaService {
 
         seatsAvailable.removeIf(seat -> seats.contains(seat.getSeatNr()));
 
+        Showtime updatedShowtime = new Showtime(showtimeId, showtime.getScreenId(), showtime.getMovieId(), showtime.getDate(), showtime.getStartTime(), showtime.getDuration(), seatsAvailable);
         showtime.setSeats(seatsAvailable);
+        showtimeRepo.update(updatedShowtime);
     }
 
     /**
@@ -721,17 +773,12 @@ public class CinemaService {
      *         If no seats match the criteria, the list will be empty.
      */
     public List<Integer> filterSeatsByType(int showtimeId, int type) {
-        List<Integer> filteredSeats = new ArrayList<>();
-        Showtime showtime= getShowtime(showtimeId);
+        Showtime showtime = this.getShowtime(showtimeId);
         List<Seat> seats = showtime.getSeats();
 
-        SeatType seatType = SeatType.values()[type];
+        SeatType seatType = SeatType.values()[type - 1];
 
-        for(Seat seat : seats){
-            if( seat.getType() == seatType )
-                filteredSeats.add(seat.getSeatNr());
-        }
-        return filteredSeats;
+        return seats.stream().filter(seat -> seat.getType() == seatType).map(Seat::getSeatNr).toList();
     }
 
     /**
@@ -829,7 +876,6 @@ public class CinemaService {
         return sortedShowtimes;
 
     }
-
 
     /**
      * Retrieves all bookings made by a specific customer, including associated showtime details.

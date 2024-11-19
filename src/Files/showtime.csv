@@ -1,4 +1,4 @@
 id,screenId,movieId,date,startTime,duration,seats
-1,1,2,2025-01-05,12:45,120,
-2,2,3,2024-12-24,20:30,210,
-3,3,1,2024-12-14,16:20,190,
+1,1,2,2025-01-05,12:45,120,1,1,standard;2,2,standard;3,3,standard;4,4,standard;5,5,standard;6,6,standard;7,7,vip;8,8,vip;9,9,vip;10,10,vip;11,11,vip;12,12,vip;13,13,vip;14,14,vip;15,15,vip;16,16,vip;17,17,premium;18,18,premium;19,19,premium;20,20,premium;21,21,premium;22,22,premium;23,23,premium
+2,2,3,2024-12-24,20:30,210,24,1,standard;25,2,standard;26,3,standard;27,4,standard;28,5,standard;29,6,standard;30,7,standard;31,8,standard;32,9,standard;33,10,standard;34,11,standard;35,12,standard;36,13,vip;37,14,vip;38,15,vip;39,16,vip;40,17,premium;41,18,premium;42,19,premium;43,20,premium;44,21,premium;45,22,premium;46,23,premium;47,24,premium
+3,3,1,2024-12-14,16:20,190,48,1,standard;49,2,standard;50,3,standard;51,4,standard;52,5,standard;53,6,standard;54,7,standard;55,8,standard;56,9,standard;57,10,standard;58,11,vip;59,12,vip;60,13,vip;61,14,vip;62,15,vip;63,16,premium;64,17,premium

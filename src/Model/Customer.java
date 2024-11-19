@@ -16,10 +16,10 @@ public class Customer extends User {
      * @param email The email address of the customer
      * @param underaged true if the customer is underaged, false otherwise
      */
-    public Customer(int id, String firstName, String lastName, String email, boolean underaged) {
+    public Customer(int id, String firstName, String lastName, String email, boolean underaged, int membershipId) {
         super(id, firstName, lastName, email);
         this.underaged = underaged;
-        this.membershipId = -1;
+        this.membershipId = membershipId;
     }
 
     /**
@@ -70,8 +70,7 @@ public class Customer extends User {
      */
     public static Customer fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
-        Customer customer = new Customer(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3], Boolean.parseBoolean(parts[4]));
-        customer.setMembershipId(Integer.parseInt(parts[5]));
+        Customer customer = new Customer(Integer.parseInt(parts[0]), parts[1], parts[2], parts[3], Boolean.parseBoolean(parts[4]), Integer.parseInt(parts[5]));
         return customer;
     }
 }

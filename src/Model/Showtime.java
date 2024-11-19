@@ -115,7 +115,7 @@ public class Showtime implements HasId {
      */
     @Override
     public String toCSV() {
-        String seatsCSV = seats.stream().map(Seat::toCSV).collect(Collectors.joining(";")); // Combine with semicolon separator
+        String seatsCSV = seats.stream().map(Seat::toCSV).collect(Collectors.joining(";"));
         return String.join(",", String.valueOf(id), String.valueOf(screenId), String.valueOf(movieId), date.toString(), startTime.toString(), String.valueOf(duration), seatsCSV);
     }
 

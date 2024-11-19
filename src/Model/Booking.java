@@ -25,12 +25,13 @@ public class Booking implements HasId {
      * @param date The date of the booking
      * @param nrOfCustomers The number of customers included in the booking
      */
-    public Booking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers) {
+    public Booking(int id, int customerId, int showtimeId, LocalDate date, int nrOfCustomers, List<Integer> tickets) {
         this.id = id;
         this.customerId = customerId;
         this.showtimeId = showtimeId;
         this.date = date;
         this.nrOfCustomers = nrOfCustomers;
+        this.tickets = tickets;
     }
 
     /**
@@ -117,8 +118,7 @@ public class Booking implements HasId {
         if(parts.length > 5 && !parts[5].isEmpty())
             tickets = Arrays.stream(parts[5].split(";")).map(Integer::parseInt).collect(Collectors.toList());
 
-        Booking booking = new Booking(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), LocalDate.parse(parts[3]), Integer.parseInt(parts[4]));
-        booking.setTickets(tickets);
-        return booking;
+        return new Booking(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), LocalDate.parse(parts[3]), Integer.parseInt(parts[4]), tickets);
+
     }
 }

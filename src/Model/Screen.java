@@ -23,12 +23,12 @@ public class Screen implements HasId {
      * @param nrVipSeats The number of VIP seats
      * @param nrPremiumSeats The number of premium seats
      */
-    public Screen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
+    public Screen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats, List<Seat> seats) {
         this.id = id;
         this.nrStandardSeats = nrStandardSeats;
         this.nrVipSeats = nrVipSeats;
         this.nrPremiumSeats = nrPremiumSeats;
-        this.seats = new ArrayList<>();
+        this.seats = seats;
     }
 
     /**
@@ -115,8 +115,7 @@ public class Screen implements HasId {
             }
         }
 
-        Screen screen = new Screen(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]));
-        screen.setSeats(seats);
+        Screen screen = new Screen(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), Integer.parseInt(parts[2]), Integer.parseInt(parts[3]), seats);
         return screen;
     }
 }

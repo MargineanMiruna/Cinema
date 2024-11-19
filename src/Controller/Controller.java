@@ -27,9 +27,9 @@ public class Controller {
      * default entry point to initialize sample data for testing
      */
     public void add(){
-        //cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
-        //cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
-        //cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
+        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
+        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
+        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
 
         cinemaService.addStaff("Alexandra","Olah","alexandra");
         cinemaService.addStaff("Klara","Orban","klara");
@@ -148,7 +148,7 @@ public class Controller {
      * @param typeOfTickets The type of tickets for which seats are being filtered ( standard, premium, etc.).
      */
     public void displayAvailableSeats(int showtimeId,int typeOfTickets) {
-        List<Integer> seats = cinemaService.filterSeatsByType(showtimeId, typeOfTickets );
+        List<Integer> seats = cinemaService.filterSeatsByType(showtimeId, typeOfTickets);
 
         System.out.println("\n======================================");
         for (Integer seat : seats) {
@@ -174,8 +174,8 @@ public class Controller {
      * @param nrOfSeats The number of seats booked.
      * @return The ID of the created booking.
      */
-    public int createBooking(int loggedCustomerId, int showtimeId, LocalDate date, int nrOfSeats) {
-        return cinemaService.addBooking(loggedCustomerId, showtimeId, date, nrOfSeats);
+    public int createBooking(int loggedCustomerId, int showtimeId, LocalDate date, int nrOfSeats, List<Integer> seats) {
+        return cinemaService.addBooking(loggedCustomerId, showtimeId, date, nrOfSeats, seats);
     }
 
     /**
@@ -185,23 +185,6 @@ public class Controller {
      */
     public Booking getBooking(int bookingId) {
         return cinemaService.getBooking(bookingId);
-    }
-
-    /**
-     * Creates the tickets for all seats in a booking and adds them to the booking.
-     * @param bookingId The ID of the booking.
-     * @param seats The list of seat numbers booked.
-     */
-    public void createTickets(int bookingId, List<Integer> seats) {
-        List<Integer> tickets = new ArrayList<>();
-        for(int i = 0; i < seats.size(); i++) {
-            Showtime showtime = cinemaService.getShowtime(cinemaService.getBooking(bookingId).getShowtimeId());
-            Seat seat = cinemaService.findSeatBySeatNr(showtime.getScreenId(), seats.get(i));
-            tickets.add(cinemaService.addTicket(bookingId, showtime.getScreenId(), seats.get(i), seat.getPrice()));
-        }
-
-        Booking currentBooking = this.getBooking(bookingId);
-        currentBooking.setTickets(tickets);
     }
 
     /**
@@ -353,8 +336,8 @@ public class Controller {
      * @param nrVipSeats The number of VIP seats.
      * @param nrPremiumSeats The number of premium seats.
      */
-    public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats) {
-        cinemaService.updateScreen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats);
+    public void updateScreen(int id, int nrStandardSeats, int nrVipSeats, int nrPremiumSeats, List<Seat> seats) {
+        cinemaService.updateScreen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats, seats);
     }
 
     /**

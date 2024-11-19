@@ -24,7 +24,7 @@ public class ConsoleApp {
      * Runs the application by receiving user input and calling the appropriate methods from the Controller Layer.
      */
     public void run() {
-        //controller.add();
+        controller.add();
         controller.terminateMemberships();
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -204,10 +204,9 @@ public class ConsoleApp {
         }
         controller.removeSeatsFromAvailable(showtimeId, seats);
 
-        int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), nrOfTickets);
+        int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), nrOfTickets, seats);
         System.out.println("\nBooking created successfully!");
 
-        controller.createTickets(currentBookingId, seats);
         controller.displayTickets(loggedCustomer, controller.getBooking(currentBookingId));
         controller.calculateTotalPrice(loggedCustomer.getId(), currentBookingId);
     }
@@ -511,7 +510,8 @@ public class ConsoleApp {
                     int newNrPremiumSeats = sc.nextInt();
                     sc.nextLine();
 
-                    controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats);
+                    List<Seat> seats = new ArrayList<>();
+                    controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats, seats);
                     System.out.println("\nScreen updated successfully!");
 
                     invalidOption = false;
