@@ -289,7 +289,7 @@ public class ConsoleApp {
     public void displayShowtimes(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n=====================================");
-        System.out.println("Display \n 1. all showtimes \n 2. Showtimes filtered by date \n 3. Showtimes filtered by movie \n 4. Showtimes sorted by duration \n 5. Showtimes sorted by date");
+        System.out.println("Display \n 1. all showtimes \n 2. showtimes filtered by date \n 3. showtimes filtered by movie \n 4. showtimes sorted by duration \n 5. showtimes sorted by date");
 
         Integer showtimesId = sc.nextInt();
         sc.nextLine();
