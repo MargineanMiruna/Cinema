@@ -11,11 +11,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * The ConsoleApp class provides a command-line interface for managing a cinema booking system.
+ * It interacts with the Controller to handle various operations, such as customer and staff
+ * management, booking creation, membership handling, and showtime display.
+ */
 public class ConsoleApp {
     Controller controller;
     DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
     DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
 
+    /**
+     * Constructs a new ConsoleApp instance with the specified controller.
+     *
+     * @param controller the controller used to handle application logic
+     */
     public ConsoleApp(Controller controller) {
         this.controller = controller;
     }
@@ -137,6 +147,12 @@ public class ConsoleApp {
         System.out.println("Thank you for using CinemApp!");
     }
 
+    /**
+     * Prompts the customer to log in by entering their email address and retrieves the customer
+     * details from the controller.
+     *
+     * @return the logged-in Customer instance
+     */
     public Customer logInCustomer() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n================Log in================");
@@ -150,6 +166,10 @@ public class ConsoleApp {
         return loggedCustomer;
     }
 
+    /**
+     * Prompts a new customer to sign up by entering their details, such as name, email, and birthday,
+     * and creates a customer account using the controller.
+     */
     public void signUpCustomer() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n===============Sign up================");
@@ -179,6 +199,12 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Allows a logged-in customer to create a new booking by selecting a showtime, choosing tickets,
+     * and selecting seats. Finalizes the booking and displays ticket details.
+     *
+     * @param loggedCustomer the currently logged-in customer
+     */
     public void createBooking(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n======================================");
@@ -211,6 +237,12 @@ public class ConsoleApp {
         controller.calculateTotalPrice(loggedCustomer.getId(), currentBookingId);
     }
 
+    /**
+     * Allows a logged-in customer to purchase a membership. Provides options for Basic or Premium
+     * memberships and calculates the total price.
+     *
+     * @param loggedCustomer the currently logged-in customer
+     */
     public void createMembership(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
 
@@ -248,6 +280,12 @@ public class ConsoleApp {
         System.out.println("\nMembership created successfully! ");
     }
 
+    /**
+     * Displays showtimes based on user-selected filters or sorting criteria, such as date, movie title,
+     * or duration.
+     *
+     * @param loggedCustomer the currently logged-in customer
+     */
     public void displayShowtimes(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n=====================================");
@@ -296,6 +334,12 @@ public class ConsoleApp {
 
     }
 
+    /**
+     * Presents the customer menu, allowing the logged-in customer to perform actions such as
+     * viewing showtimes, creating bookings, managing memberships, and viewing booking history.
+     *
+     * @param loggedCustomer the currently logged-in customer
+     */
     public void customerMenu(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
 
@@ -339,6 +383,11 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Logs in a staff member by prompting for their email and retrieves their information.
+     *
+     * @return the logged-in Staff instance
+     */
     public Staff logInStaff() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n================Log in================");
@@ -352,6 +401,10 @@ public class ConsoleApp {
         return loggedStaff;
     }
 
+    /**
+     * Signs up a new staff member by collecting their details and creating an account.
+     * Prompts the user to enter their information.
+     */
     public void signUpStaff() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n===============Sign up================");
@@ -369,6 +422,12 @@ public class ConsoleApp {
         System.out.println("\nAccount created successfully!");
     }
 
+    /**
+     * Allows a logged-in staff member to modify movie details, including adding, updating, or deleting movies.
+     * Provides options to perform each of these actions and handles input validation.
+     *
+     * @param loggedStaff the currently logged-in staff member
+     */
     public void modifyMovie(Staff loggedStaff) {
         Scanner sc = new Scanner(System.in);
 
@@ -461,6 +520,12 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Allows a logged-in staff member to modify screen details, including adding, updating, or deleting screens.
+     * Provides options to perform each of these actions and handles input validation.
+     *
+     * @param loggedStaff the currently logged-in staff member
+     */
     public void modifyScreen(Staff loggedStaff) {
         Scanner sc = new Scanner(System.in);
 
@@ -538,6 +603,12 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Allows a logged-in staff member to modify showtime details, including adding, updating, or deleting showtimes.
+     * Provides options to perform each of these actions and handles input validation.
+     *
+     * @param loggedStaff the currently logged-in staff member
+     */
     public void modifyShowtime(Staff loggedStaff) {
         Scanner sc = new Scanner(System.in);
 
@@ -672,6 +743,12 @@ public class ConsoleApp {
         }
     }
 
+    /**
+     * Presents the staff menu, allowing the logged-in staff member to perform actions such as
+     * modifying movies, showtimes, and screens, or going back to the previous menu.
+     *
+     * @param loggedStaff the currently logged-in staff member
+     */
     public void staffMenu(Staff loggedStaff) {
         Scanner sc = new Scanner(System.in);
 

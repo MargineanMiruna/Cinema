@@ -40,16 +40,25 @@ public class BasicMembership extends Membership {
         return price - price * (discount / 100);
     }
 
+    /**
+     * Convert the basic membership to a CSV format string.
+     */
     @Override
     public String toCSV() {
         return String.join(",", String.valueOf(id), String.valueOf(customerId), String.valueOf(startDate), String.valueOf(endDate));
     }
 
+    /**
+     * Return the header for a CSV file representing basic membership.
+     */
     @Override
     public String[] getHeader() {
         return new String[]{"id", "customerId", "startDate", "endDate"};
     }
 
+    /**
+     * Create a Basic Membership object from a CSV line.
+     */
     public static BasicMembership fromCSV(String csvLine) {
         String[] parts = csvLine.split(",");
         return new BasicMembership(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), LocalDate.parse(parts[2]), LocalDate.parse(parts[3]));
