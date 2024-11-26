@@ -529,4 +529,25 @@ public class Controller {
         }
     }
 
+    /**
+     * Checks if a Showtime with the given ID exists.
+     *
+     * @param showtimeId The ID of the Showtime to check.
+     * @return true if the Showtime exists, false otherwise.
+     */
+    public boolean isShowtimeAvailable(int showtimeId) {
+         return cinemaService.isShowtimeAvailable(showtimeId);
+    }
+
+
+    /**
+     * Checks if a specific seat is available for a given showtime by delegating the check to the cinema service.
+     *
+     * @param showtimeId the ID of the showtime
+     * @param seat the seat number to check
+     * @return true if the seat is available, false otherwise
+     */
+    public boolean isSeatAvailable(int showtimeId, int seat) {
+        return cinemaService.isSeatAvailable(showtimeId, seat);
+    }
 }

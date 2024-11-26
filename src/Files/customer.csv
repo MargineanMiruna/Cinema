@@ -2,3 +2,4 @@ id,firstName,lastName,email,underaged,membershipId
 1,Miruna,Marginean,miruna,false,-1
 2,Tea,Nicola,tea,false,-1
 3,Bence,Molnar,bence,true,-1
+

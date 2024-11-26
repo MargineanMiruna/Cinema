@@ -902,7 +902,38 @@ public class CinemaService {
         return customerBookings;
     }
 
+    /**
+     * Checks if a Showtime with the given ID exists.
+     *
+     * @param showtimeId The ID of the Showtime to check.
+     * @return true if the Showtime exists, false otherwise.
+     */
+    public boolean isShowtimeAvailable(int showtimeId) {
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        return allShowtimes.containsKey(showtimeId);
 
+    }
 
+    /**
+     * Checks if a specific seat is available for a given showtime.
+     *
+     * @param showtimeId the ID of the showtime
+     * @param seat the seat number to check
+     * @return true if the seat is available (exists in the showtime's seat list), false otherwise
+     */
+    public boolean isSeatAvailable(int showtimeId, int seat) {
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
 
+        if (allShowtimes.containsKey(showtimeId)) {
+            Showtime showtime = allShowtimes.get(showtimeId);
+            List<Seat> seats = showtime.getSeats();
+            for (Seat seat1 : seats) {
+                if (seat1.getSeatNr() == seat) {
+                    return true;  // the seat is available if it is the list
+                }
+            }
+
+        }
+      return false;
+    }
 }

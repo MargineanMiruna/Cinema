@@ -34,7 +34,7 @@ public class ConsoleApp {
      * Runs the application by receiving user input and calling the appropriate methods from the Controller Layer.
      */
     public void run() {
-        controller.add();
+        //controller.add();
         controller.terminateMemberships();
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
@@ -157,10 +157,27 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n================Log in================");
 
-        System.out.println("Please enter your email: ");
-        String email = sc.nextLine();
+        String email = null;
+        boolean isValid = false;
+
+        while (!isValid) {
+            System.out.println("Please enter your email: ");
+            email = sc.nextLine();
+
+            if (email.isEmpty()) {
+                System.out.println("Email cannot be empty. Please try again.");
+            } else {
+                isValid = true;
+            }
+        }
 
         Customer loggedCustomer = controller.logCustomer(email);
+
+        if (loggedCustomer == null) {
+                System.out.println("No customer found with the provided email.");
+                return null;
+            }
+
         System.out.println("\nHello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully!");
 
         return loggedCustomer;
@@ -174,25 +191,45 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n===============Sign up================");
 
-        System.out.println("Please enter your first name: ");
-        String firstName = sc.nextLine();
+        String firstName = null;
+        while (true) {
+            System.out.println("Please enter your first name: ");
+            firstName = sc.nextLine();
+            if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
+                System.out.println("First name must contain only letters and cannot be empty. Please try again.");
+            } else {
+                break;
+            }
+        }
 
-        System.out.println("Please enter your last name: ");
-        String lastName = sc.nextLine();
+        String lastName = null;
+        while (true) {
+            System.out.println("Please enter your last name: ");
+            lastName = sc.nextLine();
+            if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
+                System.out.println("Last name must contain only letters and cannot be empty. Please try again.");
+            } else {
+                break;
+            }
+        }
 
         System.out.println("Please enter your email: ");
         String email = sc.nextLine();
 
         boolean invalidDate = true;
-        while(invalidDate) {
+        while (invalidDate) {
             System.out.println("Please enter your birthday (dd-MM-yyyy): ");
             String date = sc.nextLine();
 
             try {
-                LocalDate birthday = LocalDate.parse(date, dateFormatter);
-                controller.createCustomer(firstName, lastName, email, birthday);
-                System.out.println("\nAccount created successfully!");
-                invalidDate = false;
+                LocalDate birthday = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                if (birthday.isAfter(LocalDate.now())) {
+                    System.out.println("Birthdate cannot be in the future. Please try again.");
+                } else {
+                    controller.createCustomer(firstName, lastName, email, birthday);
+                    System.out.println("\nAccount created successfully!");
+                    invalidDate = false;
+                }
             } catch (DateTimeParseException e) {
                 System.out.println("Invalid date format. Please use dd-MM-yyyy.");
             }
@@ -209,25 +246,84 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n======================================");
 
-        System.out.println("\nPlease choose the Showtime number: ");
-        int showtimeId = sc.nextInt();
-        sc.nextLine();
+        int showtimeId = -1;
+        while (true) {
+            System.out.println("\nPlease choose the Showtime number: ");
+            if (sc.hasNextInt()) {
+                showtimeId = sc.nextInt();
+                sc.nextLine();
+                if (controller.isShowtimeAvailable(showtimeId)) {
+                    break;
+                } else {
+                    System.out.println("Invalid Showtime number. Please try again.");
+                }
+            } else {
+                System.out.println("Please enter a valid number for Showtime.");
+                sc.nextLine();
+            }
+        }
 
-        System.out.println("Number of tickets you want to buy: ");
-        int nrOfTickets = sc.nextInt();
-        sc.nextLine();
+        int nrOfTickets = -1;
+        while (true) {
+            System.out.println("Number of tickets you want to buy: ");
+            if (sc.hasNextInt()) {
+                nrOfTickets = sc.nextInt();
+                sc.nextLine();
+                if (nrOfTickets > 0) {
+                    break;
+                } else {
+                    System.out.println("Please enter a valid number of tickets (greater than 0).");
+                }
+            } else {
+                System.out.println("Please enter a valid number for tickets.");
+                sc.nextLine();
+            }
+        }
 
-        System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei ");
-        int typeOfTickets = sc.nextInt();
-        sc.nextLine();
+        int typeOfTickets = -1;
+        while (true) {
+            System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei ");
+            if (sc.hasNextInt()) {
+                typeOfTickets = sc.nextInt();
+                sc.nextLine();
+                if (typeOfTickets >= 1 && typeOfTickets <= 3) {
+                    break;
+                } else {
+                    System.out.println("Invalid ticket type. Please choose 1, 2, or 3.");
+                }
+            } else {
+                System.out.println("Please enter a valid number for ticket type.");
+                sc.nextLine();
+            }
+        }
 
         controller.displayAvailableSeats(showtimeId, typeOfTickets);
-        System.out.println("\nPlease choose your seats: ");
+
         List<Integer> seats = new ArrayList<>();
-        for(int i = 0; i < nrOfTickets; i++) {
-            seats.add(sc.nextInt());
-            sc.nextLine();
+        System.out.println("\nPlease choose your seats: ");
+        for (int i = 0; i < nrOfTickets; i++) {
+            int seat = -1;
+            while (true) {
+                if (sc.hasNextInt()) {
+                    seat = sc.nextInt();
+                    sc.nextLine();
+                    if (controller.isSeatAvailable(showtimeId, seat)) {
+                        if (!seats.contains(seat)) {
+                            seats.add(seat);
+                            break;
+                        } else {
+                            System.out.println("Seat " + seat + " has already been selected. Please choose another one.");
+                        }
+                    } else {
+                        System.out.println("Seat " + seat + " is not available. Please choose a different one.");
+                    }
+                } else {
+                    System.out.println("Please enter a valid seat number.");
+                    sc.nextLine();
+                }
+            }
         }
+
         controller.removeSeatsFromAvailable(showtimeId, seats);
 
         int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), nrOfTickets, seats);
