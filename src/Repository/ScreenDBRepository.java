@@ -1,28 +1,28 @@
 package Repository;
 
 import Model.Customer;
-import Model.Staff;
+import Model.Screen;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * A repository class for managing Staff data in the database.
- * Extends the generic DataBaseRepository for Staff entities.
- */
-public class StaffDBRepository extends DataBaseRepository<Staff> {
-    public StaffDBRepository() {
+import Model.Staff;
+import org.sqlite.SQLiteDataSource;
+
+public class ScreenDBRepository extends DataBaseRepository<Screen> {
+    public ScreenDBRepository() {
         super();
         createTable();
 
     }
+
     /**
-     * Creates the "Staff" table in the database if it does not already exist.
+     * Creates the "Screen" table in the database if it does not already exist.
      *
      */
-     private void createTable() {
-        String createSQL = "CREATE TABLE IF NOT EXISTS Staff (id INT, firstName VARCHAR(100), lastName VARCHAR(100), email VARCHAR(100), PRIMARY KEY(id));";
+    private void createTable() {
+        String createSQL = "CREATE TABLE IF NOT EXISTS Screen (id INT, nrStandardSeats INT, nrVipSeats INT, nrPremiumSeats INT, PRIMARY KEY(id));";
         try {
             Statement createStatement = connection.createStatement();
             createStatement.executeUpdate(createSQL);
@@ -30,6 +30,7 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
             throw new RuntimeException(e);
         }
     }
+
 
     /**
      * Generates a new unique ID for an object.
@@ -39,7 +40,7 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      */
     @Override
     public int generateNewId() {
-        String lastEntrySQL = "SELECT id FROM Staff ORDER BY id DESC LIMIT 1;";
+        String lastEntrySQL = "SELECT id FROM Screen ORDER BY id DESC LIMIT 1;";
         int lastId = 0;
         try {
             Statement readStatement = connection.createStatement();
@@ -57,8 +58,8 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      * @param obj the object to be added to the repository
      */
     @Override
-    public void add(Staff obj) {
-        String addSQL = "INSERT INTO TABLE Staff (id, firstName, lastName, email) VALUES (" + obj.getId() + ", " + obj.getFirstName() + ", " + obj.getLastName() + ", " + obj.getEmail() + ");";
+    public void add(Screen obj) {
+        String addSQL = "INSERT INTO TABLE Screen(id,nrStandardSeats,nrVipSeats, nrPremiumSeats) VALUES (" + obj.getId() + ", " + obj.getNrStandardSeats() + ", " + obj.getNrVipSeats() + ", " + obj.getNrPremiumSeats()  + ");";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeQuery(addSQL);
@@ -74,12 +75,12 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      * @return the object associated with the specified ID, or {@code null} if no such object exists
      */
     @Override
-    public Staff read(int id) {
-        String readSQL = "SELECT * FROM Staff WHERE id = " + id + ";";
+    public Screen read(int id) {
+        String readSQL = "SELECT * FROM Screen WHERE id = " + id + ";";
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
-            Staff obj = new Staff(resultSet.getInt("id"), resultSet.getString("firstName"), resultSet.getString("lastName"), resultSet.getString("email"));
+            Screen obj = new Screen(resultSet.getInt("id"), resultSet.getInt("nrStandardSeats"), resultSet.getInt("nrVipSeats"), resultSet.getInt("nrPremiumSeats"));
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -93,13 +94,14 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Staff WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM TABLE Screen WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeQuery(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     /**
@@ -108,15 +110,14 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      * @param obj the new object with which to update the existing object
      */
     @Override
-    public void update(Staff obj) {
-        String updateSQL = "UPDATE TABLE Staff SET firstName = " + obj.getFirstName() + ", lastName = " + obj.getLastName() + ", email = " + obj.getEmail() + " WHERE id = " + obj.getId() + " ;";
+    public void update(Screen obj) {
+        String updateSQL = "UPDATE TABLE Screen SET nrStandardSeats = " + obj.getNrStandardSeats() + ", nrVipSeats = " + obj.getNrVipSeats()+ ", nrPremiumSeats = " + obj.getNrPremiumSeats() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeQuery(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
@@ -126,15 +127,15 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      * with their IDs as keys and the objects as values
      */
     @Override
-    public Map<Integer, Staff> getAll() {
-        Map<Integer, Staff> objects = new HashMap<>();
+    public Map<Integer, Screen> getAll() {
+        Map<Integer, Screen> objects = new HashMap<>();
 
-        String readSQL = "SELECT * FROM Staff";
+        String readSQL = "SELECT * FROM Screen";
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
-                Staff obj = new Staff(resultSet.getInt("id"), resultSet.getString("firstName"), resultSet.getString("lastName"), resultSet.getString("email"));
+                Screen obj = new Screen(resultSet.getInt("id"), resultSet.getInt("nrStandardSeats"), resultSet.getInt("nrVipSeats"), resultSet.getInt("nrPremiumSeats") );
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {
@@ -143,4 +144,5 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
 
         return objects;
     }
+
 }
