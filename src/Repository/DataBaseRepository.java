@@ -8,17 +8,23 @@ import java.sql.SQLException;
 
 public abstract class DataBaseRepository<T extends HasId> implements IRepository<T>, AutoCloseable {
     protected  Connection connection;
+    private String DB_URL = "jdbc:sqlite:src/cinemaDB.db";
 
-    public DataBaseRepository(String dbUrl, String dbUser, String dbPassword) {
+    public DataBaseRepository() {
         try {
-            connection = DriverManager.getConnection(dbUrl, dbUser, dbPassword);
+            connection = DriverManager.getConnection(DB_URL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
     @Override
     public void close() throws Exception {
-        connection.close();
+        if (connection != null)
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                System.out.println(e.getMessage());
+            }
     }
 
 }
