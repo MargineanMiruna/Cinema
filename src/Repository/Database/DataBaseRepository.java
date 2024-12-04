@@ -1,6 +1,7 @@
-package Repository;
+package Repository.Database;
 
 import Model.HasId;
+import Repository.IRepository;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

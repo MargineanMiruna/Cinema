@@ -1,12 +1,10 @@
-package Repository;
+package Repository.Database;
 
 import Model.Ticket;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import org.sqlite.SQLiteDataSource;
 
 /**
  * A repository class for managing Ticket data in the database.

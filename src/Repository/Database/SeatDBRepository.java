@@ -1,28 +1,35 @@
-package Repository;
+package Repository.Database;
 
-import Model.Customer;
-import Model.Staff;
+import Model.Seat;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
+import Model.SeatType;
+
 /**
- * A repository class for managing Staff data in the database.
- * Extends the generic DataBaseRepository for Staff entities.
+ * A repository class for managing Seat data in the database.
+ * Extends the generic DataBaseRepository for Seat entities.
  */
-public class StaffDBRepository extends DataBaseRepository<Staff> {
-    public StaffDBRepository() {
+public class SeatDBRepository extends DataBaseRepository<Seat> {
+    private Connection connection;
+
+    /**
+     * Default constructor for SeatDBRepository.
+     * Calls the superclass constructor and ensures the necessary table for storing Seat data is created.
+     */
+    public SeatDBRepository() {
         super();
         createTable();
-
     }
+
     /**
-     * Creates the "Staff" table in the database if it does not already exist.
+     * Creates the "Seat" table in the database if it does not already exist.
      *
      */
-     private void createTable() {
-        String createSQL = "CREATE TABLE IF NOT EXISTS Staff (id INT, firstName VARCHAR(100), lastName VARCHAR(100), email VARCHAR(100), PRIMARY KEY(id));";
+    private void createTable() {
+        String createSQL = "CREATE TABLE IF NOT EXISTS Seat (id INT, seatNr INT, seatType VARCHAR(10));";
         try {
             Statement createStatement = connection.createStatement();
             createStatement.executeUpdate(createSQL);
@@ -32,14 +39,14 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
     }
 
     /**
-     * Generates a new unique ID for an object.
+     * Generates a new unique ID for a seat.
      * The ID is one greater than the last entry's ID, or 1 if the repository is empty.
      *
      * @return a unique integer ID for a new object
      */
     @Override
     public int generateNewId() {
-        String lastEntrySQL = "SELECT id FROM Staff ORDER BY id DESC LIMIT 1;";
+        String lastEntrySQL = "SELECT id FROM Seat ORDER BY id DESC LIMIT 1;";
         int lastId = 0;
         try {
             Statement readStatement = connection.createStatement();
@@ -52,13 +59,12 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
     }
 
     /**
-     * Adds an object to the repository.
-     *
-     * @param obj the object to be added to the repository
+     * Adds seat to database
+     * @param obj the object to be added to the database
      */
     @Override
-    public void add(Staff obj) {
-        String addSQL = "INSERT INTO TABLE Staff (id, firstName, lastName, email) VALUES (" + obj.getId() + ", " + obj.getFirstName() + ", " + obj.getLastName() + ", " + obj.getEmail() + ");";
+    public void add(Seat obj) {
+        String addSQL = "INSERT INTO TABLE Seat (id, seatNr, seatType) VALUES (" + obj.getId() + ", " + obj.getSeatNr() + ", " + obj.getType() + ");";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeQuery(addSQL);
@@ -68,18 +74,18 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
     }
 
     /**
-     * Reads or retrieves an object from the repository by its ID.
+     * Reads or retrieves a seat from the database by its ID.
      *
      * @param id the unique identifier of the object to retrieve
-     * @return the object associated with the specified ID, or {@code null} if no such object exists
+     * @return the object associated with the specified ID, or throws exception if no such object exists
      */
     @Override
-    public Staff read(int id) {
-        String readSQL = "SELECT * FROM Staff WHERE id = " + id + ";";
+    public Seat read(int id) {
+        String readSQL = "SELECT * FROM Seat WHERE id = " + id + ";";
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
-            Staff obj = new Staff(resultSet.getInt("id"), resultSet.getString("firstName"), resultSet.getString("lastName"), resultSet.getString("email"));
+            Seat obj = new Seat(resultSet.getInt("id"), resultSet.getInt("seatNr"), SeatType.valueOf(resultSet.getString("seatType")));
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -87,13 +93,13 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
     }
 
     /**
-     * Deletes an object from the repository by its ID.
+     * Deletes a seat from the repository by its ID.
      *
      * @param id the unique identifier of the object to be deleted
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Staff WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM TABLE Seat WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeQuery(deleteSQL);
@@ -103,38 +109,37 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
     }
 
     /**
-     * Updates an object in the repository with a new object using the specified ID.
+     * Updates a seat in the database with a new object using the specified ID.
      *
      * @param obj the new object with which to update the existing object
      */
     @Override
-    public void update(Staff obj) {
-        String updateSQL = "UPDATE TABLE Staff SET firstName = " + obj.getFirstName() + ", lastName = " + obj.getLastName() + ", email = " + obj.getEmail() + " WHERE id = " + obj.getId() + " ;";
+    public void update(Seat obj) {
+        String updateSQL = "UPDATE TABLE Seat SET seatNr = " + obj.getSeatNr() + ", seatType = " + obj.getType() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeQuery(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-
     }
 
     /**
-     * Retrieves all objects in the repository as a map.
+     * Retrieves all objects in the seat table as a map.
      *
-     * @return a map containing all objects in the repository,
+     * @return a map containing all objects in the cusromer table,
      * with their IDs as keys and the objects as values
      */
     @Override
-    public Map<Integer, Staff> getAll() {
-        Map<Integer, Staff> objects = new HashMap<>();
+    public Map<Integer, Seat> getAll() {
+        Map<Integer, Seat> objects = new HashMap<>();
 
-        String readSQL = "SELECT * FROM Staff";
+        String readSQL = "SELECT * FROM Seat";
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
-                Staff obj = new Staff(resultSet.getInt("id"), resultSet.getString("firstName"), resultSet.getString("lastName"), resultSet.getString("email"));
+                Seat obj = new Seat(resultSet.getInt("id"), resultSet.getInt("seatNr"), SeatType.valueOf(resultSet.getString("seatType")));
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {

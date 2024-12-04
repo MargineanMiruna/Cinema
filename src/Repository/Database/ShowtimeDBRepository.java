@@ -1,10 +1,8 @@
-package Repository;
+package Repository.Database;
 import Model.Showtime;
 import Model.Seat;
 
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -16,6 +14,7 @@ import java.util.Map;
  */
 public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
     private Connection connection;
+    AvailableSeatsDBRepository AvailableSeats;
 
     /**
      * Default constructor for ShowtimeDBRepository.
@@ -24,6 +23,7 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
     public ShowtimeDBRepository() {
         super();
         createTable();
+        AvailableSeats = new AvailableSeatsDBRepository(connection);
     }
     /**
      * Creates the "Showtime" table in the database if it does not already exist.
@@ -38,7 +38,9 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
                 "movieId INT, " +
                 "date DATE, " +
                 "startTime TIME, " +
-                "duration INT, ";
+                "duration INT ," +
+                " FOREIGN KEY (screenId) REFERENCES Screen(id), " +
+                "FOREIGN KEY (movieId) REFERENCES Movie(id))";
         try {
             Statement createStatement = connection.createStatement();
             createStatement.executeUpdate(createSQL);
@@ -85,6 +87,8 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeQuery(addSQL);
+            for(Seat seat : obj.getSeats())
+                AvailableSeats.add(obj, seat);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,8 +104,10 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
     @Override
     public Showtime read(int id) {
         String readSQL = "SELECT * FROM Showtime WHERE id = " + id + ";";
+        List<Seat> seatList= new ArrayList<Seat>();
         try {
             Statement readStatement = connection.createStatement();
+            seatList = AvailableSeats.getSeatsForShowtime(id);
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             Showtime obj = new Showtime(
                     resultSet.getInt("id"),
@@ -109,7 +115,8 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
                     resultSet.getInt("movieId"),
                     resultSet.getDate("date").toLocalDate(),
                     resultSet.getTime("startTime").toLocalTime(),
-                    resultSet.getInt("duration")
+                    resultSet.getInt("duration"),
+                    seatList
             );
             return obj;
         } catch (SQLException e) {
@@ -128,6 +135,7 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
+            AvailableSeats.removeAllSeatsFromShowtime(id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -151,6 +159,10 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
+            AvailableSeats.removeAllSeatsFromShowtime(obj.getId());
+            for(Seat seat : obj.getSeats())
+                AvailableSeats.add(obj, seat);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -168,17 +180,20 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
         Map<Integer, Showtime> objects = new HashMap<>();
 
         String readSQL = "SELECT * FROM Showtime";
+
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
+                List<Seat> seats = AvailableSeats.getSeatsForShowtime(resultSet.getInt("id"));
                 Showtime obj = new Showtime(resultSet.getInt("id"),
                         resultSet.getInt("screenId"),
                         resultSet.getInt("movieId"),
                         resultSet.getDate("date").toLocalDate(),
                         resultSet.getTime("startTime").toLocalTime(),
                         resultSet.getInt("duration"),
-                        //new ArrayList<>());
+                        seats
+                        );
 
                 objects.put(obj.getId(), obj);
             }

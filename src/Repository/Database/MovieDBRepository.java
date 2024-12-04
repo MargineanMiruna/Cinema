@@ -1,36 +1,33 @@
-package Repository;
+package Repository.Database;
 
-import Model.Seat;
+import Model.Movie;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
 
-import Model.SeatType;
-import org.sqlite.SQLiteDataSource;
-
 /**
- * A repository class for managing Seat data in the database.
- * Extends the generic DataBaseRepository for Seat entities.
+ * A repository class for managing Movie data in the database.
+ * Extends the generic DataBaseRepository for Movie entities.
  */
-public class SeatDBRepository extends DataBaseRepository<Seat> {
+public class MovieDBRepository extends DataBaseRepository<Movie> {
     private Connection connection;
 
     /**
-     * Default constructor for SeatDBRepository.
-     * Calls the superclass constructor and ensures the necessary table for storing Seat data is created.
+     * Default constructor for MovieDBRepository.
+     * Calls the superclass constructor and ensures the necessary table for storing Movie data is created.
      */
-    public SeatDBRepository() {
+    public MovieDBRepository() {
         super();
         createTable();
     }
 
     /**
-     * Creates the "Seat" table in the database if it does not already exist.
+     * Creates the "Movie" table in the database if it does not already exist.
      *
      */
     private void createTable() {
-        String createSQL = "CREATE TABLE IF NOT EXISTS Seat (id INT, seatNr INT, seatType VARCHAR(10));";
+        String createSQL = "CREATE TABLE IF NOT EXISTS Movie (id INT, title VARCHAR(100), pg INT, genre VARCHAR(100), releaseDate DATE, PRIMARY KEY(id));";
         try {
             Statement createStatement = connection.createStatement();
             createStatement.executeUpdate(createSQL);
@@ -40,14 +37,14 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
     }
 
     /**
-     * Generates a new unique ID for a seat.
+     * Generates a new unique ID for a movie.
      * The ID is one greater than the last entry's ID, or 1 if the repository is empty.
      *
      * @return a unique integer ID for a new object
      */
     @Override
     public int generateNewId() {
-        String lastEntrySQL = "SELECT id FROM Seat ORDER BY id DESC LIMIT 1;";
+        String lastEntrySQL = "SELECT id FROM Movie ORDER BY id DESC LIMIT 1;";
         int lastId = 0;
         try {
             Statement readStatement = connection.createStatement();
@@ -60,12 +57,12 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
     }
 
     /**
-     * Adds seat to database
+     * Adds movie to database
      * @param obj the object to be added to the database
      */
     @Override
-    public void add(Seat obj) {
-        String addSQL = "INSERT INTO TABLE Seat (id, seatNr, seatType) VALUES (" + obj.getId() + ", " + obj.getSeatNr() + ", " + obj.getType() + ");";
+    public void add(Movie obj) {
+        String addSQL = "INSERT INTO TABLE Movie (id, title, pg, genre, releaseDate) VALUES (" + obj.getId() + ", " + obj.getTitle() + ", " + obj.getPg() + ", " + obj.getGenre() + ", " + obj.getReleaseDate() + ");";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeQuery(addSQL);
@@ -75,18 +72,18 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
     }
 
     /**
-     * Reads or retrieves a seat from the database by its ID.
+     * Reads or retrieves a movie from the database by its ID.
      *
      * @param id the unique identifier of the object to retrieve
      * @return the object associated with the specified ID, or throws exception if no such object exists
      */
     @Override
-    public Seat read(int id) {
-        String readSQL = "SELECT * FROM Seat WHERE id = " + id + ";";
+    public Movie read(int id) {
+        String readSQL = "SELECT * FROM Movie WHERE id = " + id + ";";
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
-            Seat obj = new Seat(resultSet.getInt("id"), resultSet.getInt("seatNr"), SeatType.valueOf(resultSet.getString("seatType")));
+            Movie obj = new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getBoolean("pg"), resultSet.getString("genre"), resultSet.getDate("releaseDate").toLocalDate());
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -94,13 +91,13 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
     }
 
     /**
-     * Deletes a seat from the repository by its ID.
+     * Deletes a movie from the repository by its ID.
      *
      * @param id the unique identifier of the object to be deleted
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Seat WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM TABLE Movie WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeQuery(deleteSQL);
@@ -110,13 +107,13 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
     }
 
     /**
-     * Updates a seat in the database with a new object using the specified ID.
+     * Updates a movie in the database with a new object using the specified ID.
      *
      * @param obj the new object with which to update the existing object
      */
     @Override
-    public void update(Seat obj) {
-        String updateSQL = "UPDATE TABLE Seat SET seatNr = " + obj.getSeatNr() + ", seatType = " + obj.getType() + " WHERE id = " + obj.getId() + " ;";
+    public void update(Movie obj) {
+        String updateSQL = "UPDATE TABLE Movie SET title = " + obj.getTitle() + ", pg = " + obj.getPg() + ", genre = " + obj.getGenre() + ", releaseDate = " + obj.getReleaseDate() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeQuery(updateSQL);
@@ -126,21 +123,21 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
     }
 
     /**
-     * Retrieves all objects in the seat table as a map.
+     * Retrieves all objects in the movie table as a map.
      *
      * @return a map containing all objects in the cusromer table,
      * with their IDs as keys and the objects as values
      */
     @Override
-    public Map<Integer, Seat> getAll() {
-        Map<Integer, Seat> objects = new HashMap<>();
+    public Map<Integer, Movie> getAll() {
+        Map<Integer, Movie> objects = new HashMap<>();
 
-        String readSQL = "SELECT * FROM Seat";
+        String readSQL = "SELECT * FROM Movie";
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
-                Seat obj = new Seat(resultSet.getInt("id"), resultSet.getInt("seatNr"), SeatType.valueOf(resultSet.getString("seatType")));
+                Movie obj = new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getBoolean("pg"), resultSet.getString("genre"), resultSet.getDate("releaseDate").toLocalDate());
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {

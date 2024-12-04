@@ -1,13 +1,10 @@
-package Repository;
+package Repository.Database;
 
 import Model.PremiumMembership;
 
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
-
-import Model.Membership;
-import org.sqlite.SQLiteDataSource;
 
 /**
  * A repository class for managing premium Membership data in the database.
