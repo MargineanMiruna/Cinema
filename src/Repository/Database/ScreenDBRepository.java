@@ -11,7 +11,6 @@ import java.util.Map;
 import Model.Seat;
 
 public class ScreenDBRepository extends DataBaseRepository<Screen> {
-    Connection connection;
     SeatLocationDBRepository SeatLocation;
 
     public ScreenDBRepository() {
@@ -62,10 +61,10 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
      */
     @Override
     public void add(Screen obj) {
-        String addSQL = "INSERT INTO TABLE Screen(id,nrStandardSeats,nrVipSeats, nrPremiumSeats) VALUES (" + obj.getId() + ", " + obj.getNrStandardSeats() + ", " + obj.getNrVipSeats() + ", " + obj.getNrPremiumSeats()  + ");";
+        String addSQL = "INSERT INTO Screen(id, nrStandardSeats, nrVipSeats, nrPremiumSeats) VALUES (" + obj.getId() + ", " + obj.getNrStandardSeats() + ", " + obj.getNrVipSeats() + ", " + obj.getNrPremiumSeats()  + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
             for(Seat seat : obj.getSeats())
                 SeatLocation.add(obj, seat);
         } catch (SQLException e) {
@@ -104,7 +103,7 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
         String deleteSQL = "DELETE FROM TABLE Screen WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
             SeatLocation.removeAllSeatsFromScreen(id);
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -122,7 +121,7 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
         String updateSQL = "UPDATE TABLE Screen SET nrStandardSeats = " + obj.getNrStandardSeats() + ", nrVipSeats = " + obj.getNrVipSeats()+ ", nrPremiumSeats = " + obj.getNrPremiumSeats() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
             SeatLocation.removeAllSeatsFromScreen(obj.getId());
             for(Seat seat : obj.getSeats())
                 SeatLocation.add(obj, seat);

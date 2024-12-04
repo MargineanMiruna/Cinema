@@ -72,13 +72,15 @@ public class ConsoleApp {
                         switch (opt) {
                             case "1": {
                                 loggedCustomer = this.logInCustomer();
-                                this.customerMenu(loggedCustomer);
+                                if(loggedCustomer != null)
+                                    this.customerMenu(loggedCustomer);
                                 break;
                             }
                             case "2": {
                                 signUpCustomer();
                                 loggedCustomer = this.logInCustomer();
-                                this.customerMenu(loggedCustomer);
+                                if(loggedCustomer != null)
+                                    this.customerMenu(loggedCustomer);
                                 break;
                             }
                             case "3": {
@@ -157,7 +159,7 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n================Log in================");
 
-        String email = null;
+        String email = "";
         boolean isValid = false;
 
         while (!isValid) {
@@ -191,7 +193,7 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n===============Sign up================");
 
-        String firstName = null;
+        String firstName = "";
         while (true) {
             System.out.println("Please enter your first name: ");
             firstName = sc.nextLine();
@@ -202,7 +204,7 @@ public class ConsoleApp {
             }
         }
 
-        String lastName = null;
+        String lastName = "";
         while (true) {
             System.out.println("Please enter your last name: ");
             lastName = sc.nextLine();

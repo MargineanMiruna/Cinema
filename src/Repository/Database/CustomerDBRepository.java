@@ -11,8 +11,6 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Customer entities.
  */
 public class CustomerDBRepository extends DataBaseRepository<Customer> {
-    private Connection connection;
-
     /**
      * Default constructor for CustomerDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Customer data is created.
@@ -62,10 +60,10 @@ public class CustomerDBRepository extends DataBaseRepository<Customer> {
      */
     @Override
     public void add(Customer obj) {
-        String addSQL = "INSERT INTO TABLE Customer (id, firstName, lastName, email, underage, membershipId) VALUES (" + obj.getId() + ", " + obj.getFirstName() + ", " + obj.getLastName() + ", " + obj.getEmail() + ", " + obj.getUnderaged() + ", " + obj.getMembershipId() + ");";
+        String addSQL = "INSERT INTO Customer (id, firstName, lastName, email, underage, membershipId) VALUES (" + obj.getId() + ", '" + obj.getFirstName() + "', '" + obj.getLastName() + "', '" + obj.getEmail() + "', " + obj.getUnderaged() + ", " + obj.getMembershipId() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +98,7 @@ public class CustomerDBRepository extends DataBaseRepository<Customer> {
         String deleteSQL = "DELETE FROM TABLE Customer WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +114,7 @@ public class CustomerDBRepository extends DataBaseRepository<Customer> {
         String updateSQL = "UPDATE TABLE Customer SET firstName = " + obj.getFirstName() + ", lastName = " + obj.getLastName() + ", email = " + obj.getEmail() + ", underage = " + obj.getUnderaged() + ", membershipId = " + obj.getMembershipId() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

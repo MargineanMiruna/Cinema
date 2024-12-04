@@ -11,8 +11,6 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for PremiumMembership entities.
  */
 public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMembership> {
-    private Connection connection;
-
     /**
      * Default constructor for PremiumMembershipDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing PremiumMembership data is created.
@@ -62,10 +60,10 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
      */
     @Override
     public void add(PremiumMembership obj) {
-        String addSQL = "INSERT INTO TABLE PremiumMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getStartDate() + ", " + obj.getEndDate() + ");";
+        String addSQL = "INSERT INTO PremiumMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getStartDate() + ", " + obj.getEndDate() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +98,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
         String deleteSQL = "DELETE FROM TABLE PremiumMembership WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +114,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
         String updateSQL = "UPDATE TABLE PremiumMembership SET customerId = " + obj.getCustomerId() + ", startDate = " + obj.getStartDate() + ", endDate = " + obj.getEndDate() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

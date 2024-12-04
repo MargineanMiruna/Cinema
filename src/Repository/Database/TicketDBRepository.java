@@ -11,8 +11,6 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Ticket entities.
  */
 public class TicketDBRepository extends DataBaseRepository<Ticket> {
-    private Connection connection;
-
     /**
      * Default constructor for TicketDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Ticket data is created.
@@ -62,10 +60,10 @@ public class TicketDBRepository extends DataBaseRepository<Ticket> {
      */
     @Override
     public void add(Ticket obj) {
-        String addSQL = "INSERT INTO TABLE Ticket (id, bookingId, screenId, seatNr, price) VALUES (" + obj.getId() + ", " + obj.getBookingId() + ", " + obj.getScreenId() + ", " + obj.getSeatNr() + ", " + obj.getPrice() + ");";
+        String addSQL = "INSERT INTO Ticket (id, bookingId, screenId, seatNr, price) VALUES (" + obj.getId() + ", " + obj.getBookingId() + ", " + obj.getScreenId() + ", " + obj.getSeatNr() + ", " + obj.getPrice() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +98,7 @@ public class TicketDBRepository extends DataBaseRepository<Ticket> {
         String deleteSQL = "DELETE FROM TABLE Ticket WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +114,7 @@ public class TicketDBRepository extends DataBaseRepository<Ticket> {
         String updateSQL = "UPDATE TABLE Ticket SET bookingId = " + obj.getBookingId() + ", screenId = " + obj.getScreenId() + ", seatNr = " + obj.getSeatNr() + ", price = " + obj.getPrice() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

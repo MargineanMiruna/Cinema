@@ -11,8 +11,6 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for BasicMembership entities.
  */
 public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembership> {
-    private Connection connection;
-
     /**
      * Default constructor for BasicMembershipDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing BasicMembership data is created.
@@ -62,10 +60,10 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
      */
     @Override
     public void add(BasicMembership obj) {
-        String addSQL = "INSERT INTO TABLE BasicMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getStartDate() + ", " + obj.getEndDate() + ");";
+        String addSQL = "INSERT INTO BasicMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getStartDate() + ", " + obj.getEndDate() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +98,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
         String deleteSQL = "DELETE FROM TABLE BasicMembership WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +114,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
         String updateSQL = "UPDATE TABLE BasicMembership SET customerId = " + obj.getCustomerId() + ", startDate = " + obj.getStartDate() + ", endDate = " + obj.getEndDate() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

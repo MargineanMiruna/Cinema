@@ -13,8 +13,6 @@ import Model.SeatType;
  * Extends the generic DataBaseRepository for Seat entities.
  */
 public class SeatDBRepository extends DataBaseRepository<Seat> {
-    private Connection connection;
-
     /**
      * Default constructor for SeatDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Seat data is created.
@@ -64,10 +62,10 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
      */
     @Override
     public void add(Seat obj) {
-        String addSQL = "INSERT INTO TABLE Seat (id, seatNr, seatType) VALUES (" + obj.getId() + ", " + obj.getSeatNr() + ", " + obj.getType() + ");";
+        String addSQL = "INSERT INTO Seat (id, seatNr, seatType) VALUES (" + obj.getId() + ", " + obj.getSeatNr() + ", '" + obj.getType() + "');";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -102,7 +100,7 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
         String deleteSQL = "DELETE FROM TABLE Seat WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -118,7 +116,7 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
         String updateSQL = "UPDATE TABLE Seat SET seatNr = " + obj.getSeatNr() + ", seatType = " + obj.getType() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

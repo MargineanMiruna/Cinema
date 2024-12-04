@@ -51,20 +51,10 @@ public class AvailableSeatsDBRepository {
      * @param seat   the seat object to associate with the screen.
      */
     public void add(Showtime showtime, Seat seat) {
-        String addSQL = "INSERT INTO TABLE AvailableSeats (showtimeId, seatId) VALUES (" + showtime.getId() + ", " + seat.getId() + ");";
+        String addSQL = "INSERT INTO AvailableSeats (showtimeId, seatId) VALUES (" + showtime.getId() + ", " + seat.getId() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public void removeSeatFromAvailableSeats( Showtime showtime, Seat seat) {
-        String deleteSQL = "DELETE FROM TABLE AvailableSeats WHERE showtimeId = " + showtime.getId() + " AND seatId = " + seat.getId() + ";";
-        try {
-            Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -79,7 +69,7 @@ public class AvailableSeatsDBRepository {
         String deleteSQL = "DELETE FROM TABLE SeatLocation WHERE showtimeId = " + showtimeId + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,7 +85,7 @@ public class AvailableSeatsDBRepository {
         List<Seat> seats = new ArrayList<>();
         String readSQL = "SELECT ST.seatId, ST.seatNr, ST.seatType FROM Seat ST " +
                 "JOIN AvailableSeats A ON A.seatId = ST.id" +
-                " WHERE showtimeId = " + showtimeId+ ";";
+                " WHERE A.showtimeId = " + showtimeId+ ";";
 
         try {
             Statement readStatement = connection.createStatement();

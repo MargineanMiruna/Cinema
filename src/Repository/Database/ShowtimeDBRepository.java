@@ -13,7 +13,6 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Showtime entities.
  */
 public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
-    private Connection connection;
     AvailableSeatsDBRepository AvailableSeats;
 
     /**
@@ -83,10 +82,10 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
                 + obj.getMovieId() + ", '"
                 + obj.getDate() + "', '"
                 + obj.getStartTime() + "', "
-                + obj.getDuration() + "');";
+                + obj.getDuration() + ";";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
             for(Seat seat : obj.getSeats())
                 AvailableSeats.add(obj, seat);
         } catch (SQLException e) {
@@ -104,7 +103,7 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
     @Override
     public Showtime read(int id) {
         String readSQL = "SELECT * FROM Showtime WHERE id = " + id + ";";
-        List<Seat> seatList= new ArrayList<Seat>();
+        List<Seat> seatList;
         try {
             Statement readStatement = connection.createStatement();
             seatList = AvailableSeats.getSeatsForShowtime(id);

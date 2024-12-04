@@ -4,4 +4,4 @@ id,firstName,lastName,email,underaged,membershipId
 3,Bence,Molnar,bence,true,-1
 4,Alana,fdfnj,email,false,-1
 5,Miruna,Mrtela,mmartela,true,-1
-
+6,Raluca,Badulescu,rbad@gmail.com,true,-1

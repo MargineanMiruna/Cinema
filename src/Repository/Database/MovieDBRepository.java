@@ -11,8 +11,6 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Movie entities.
  */
 public class MovieDBRepository extends DataBaseRepository<Movie> {
-    private Connection connection;
-
     /**
      * Default constructor for MovieDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Movie data is created.
@@ -62,10 +60,10 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
      */
     @Override
     public void add(Movie obj) {
-        String addSQL = "INSERT INTO TABLE Movie (id, title, pg, genre, releaseDate) VALUES (" + obj.getId() + ", " + obj.getTitle() + ", " + obj.getPg() + ", " + obj.getGenre() + ", " + obj.getReleaseDate() + ");";
+        String addSQL = "INSERT INTO Movie (id, title, pg, genre, releaseDate) VALUES (" + obj.getId() + ", '" + obj.getTitle() + "', " + obj.getPg() + ", '" + obj.getGenre() + "', " + obj.getReleaseDate() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -100,7 +98,7 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
         String deleteSQL = "DELETE FROM TABLE Movie WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -116,7 +114,7 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
         String updateSQL = "UPDATE TABLE Movie SET title = " + obj.getTitle() + ", pg = " + obj.getPg() + ", genre = " + obj.getGenre() + ", releaseDate = " + obj.getReleaseDate() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

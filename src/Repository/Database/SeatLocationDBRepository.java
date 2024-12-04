@@ -51,10 +51,10 @@ public class SeatLocationDBRepository {
      * @param seat   the seat object to associate with the screen.
      */
     public void add(Screen screen, Seat seat) {
-        String addSQL = "INSERT INTO TABLE SeatLocation (screenId, seatId) VALUES (" + screen.getId() + ", " + seat.getId() + ");";
+        String addSQL = "INSERT INTO SeatLocation (screenId, seatId) VALUES (" + screen.getId() + ", " + seat.getId() + ");";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -69,7 +69,7 @@ public class SeatLocationDBRepository {
         String deleteSQL = "DELETE FROM TABLE SeatLocation WHERE screenId = " + screenId + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

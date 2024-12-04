@@ -8,24 +8,19 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public abstract class DataBaseRepository<T extends HasId> implements IRepository<T>, AutoCloseable {
-    protected  Connection connection;
-    private String DB_URL = "jdbc:sqlite:src/cinemaDB.db";
+    protected Connection connection;
+    private String DB_URL = "jdbc:sqlite:D:/Facultate/Semestrul3/MAP/Cinema-Management-Project/cinemaDB.db";
 
     public DataBaseRepository() {
         try {
-            connection = DriverManager.getConnection(DB_URL);
+            connection = DriverManager.getConnection(DB_URL, "user", "password");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
     }
     @Override
     public void close() throws Exception {
-        if (connection != null)
-            try {
-                connection.close();
-            } catch (SQLException e) {
-                System.out.println(e.getMessage());
-            }
+        connection.close();
     }
 
 }

@@ -27,9 +27,9 @@ public class Controller {
      * default entry point to initialize sample data for testing
      */
     public void add(){
-        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
-        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
-        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
+        //cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
+        //cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
+        //cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
 
         cinemaService.addStaff("Alexandra","Olah","alexandra");
         cinemaService.addStaff("Klara","Orban","klara");

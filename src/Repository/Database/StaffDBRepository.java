@@ -14,8 +14,8 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
     public StaffDBRepository() {
         super();
         createTable();
-
     }
+
     /**
      * Creates the "Staff" table in the database if it does not already exist.
      *
@@ -57,10 +57,10 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      */
     @Override
     public void add(Staff obj) {
-        String addSQL = "INSERT INTO TABLE Staff (id, firstName, lastName, email) VALUES (" + obj.getId() + ", " + obj.getFirstName() + ", " + obj.getLastName() + ", " + obj.getEmail() + ");";
+        String addSQL = "INSERT INTO Staff (id, firstName, lastName, email) VALUES (" + obj.getId() + ", '" + obj.getFirstName() + "', '" + obj.getLastName() + "', '" + obj.getEmail() + "');";
         try {
             Statement addStatement = connection.createStatement();
-            addStatement.executeQuery(addSQL);
+            addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -95,7 +95,7 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
         String deleteSQL = "DELETE FROM TABLE Staff WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
-            deleteStatement.executeQuery(deleteSQL);
+            deleteStatement.executeUpdate(deleteSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -111,7 +111,7 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
         String updateSQL = "UPDATE TABLE Staff SET firstName = " + obj.getFirstName() + ", lastName = " + obj.getLastName() + ", email = " + obj.getEmail() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
-            updateStatement.executeQuery(updateSQL);
+            updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
