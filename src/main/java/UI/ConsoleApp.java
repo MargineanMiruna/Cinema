@@ -113,13 +113,15 @@ public class ConsoleApp {
                         switch (opt) {
                             case "1": {
                                 loggedStaff = this.logInStaff();
-                                this.staffMenu(loggedStaff);
+                                if (loggedStaff!= null)
+                                    this.staffMenu(loggedStaff);
                                 break;
                             }
                             case "2": {
                                 this.signUpStaff();
                                 loggedStaff = this.logInStaff();
-                                this.staffMenu(loggedStaff);
+                                if (loggedStaff!= null)
+                                    this.staffMenu(loggedStaff);
                                 break;
                             }
                             case "3": {
@@ -160,25 +162,23 @@ public class ConsoleApp {
         System.out.println("\n================Log in================");
 
         String email = "";
-        boolean isValid = false;
+        Customer loggedCustomer = null;
 
-        while (!isValid) {
+        while (loggedCustomer == null) {
             System.out.println("Please enter your email: ");
             email = sc.nextLine();
 
             if (email.isEmpty()) {
                 System.out.println("Email cannot be empty. Please try again.");
-            } else {
-                isValid = true;
+                continue;
+            }
+
+            loggedCustomer = controller.logCustomer(email);
+
+            if (loggedCustomer == null) {
+                System.out.println("No account found with the email: " + email + ". Please try again.");
             }
         }
-
-        Customer loggedCustomer = controller.logCustomer(email);
-
-        if (loggedCustomer == null) {
-                System.out.println("No customer found with the provided email.");
-                return null;
-            }
 
         System.out.println("\nHello, " + loggedCustomer.getFirstName() + " " + loggedCustomer.getLastName() + ", you logged in successfully!");
 
@@ -248,6 +248,7 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n======================================");
 
+        // Selectarea showtime-ului
         int showtimeId = -1;
         while (true) {
             System.out.println("\nPlease choose the Showtime number: ");
@@ -265,70 +266,105 @@ public class ConsoleApp {
             }
         }
 
-        int nrOfTickets = -1;
+        // Lista finală de scaune rezervate și totalul biletelor
+        List<Integer> allSelectedSeats = new ArrayList<>();
+        int totalTickets = 0;
+
         while (true) {
-            System.out.println("Number of tickets you want to buy: ");
-            if (sc.hasNextInt()) {
-                nrOfTickets = sc.nextInt();
-                sc.nextLine();
-                if (nrOfTickets > 0) {
-                    break;
-                } else {
-                    System.out.println("Please enter a valid number of tickets (greater than 0).");
-                }
-            } else {
-                System.out.println("Please enter a valid number for tickets.");
-                sc.nextLine();
-            }
-        }
-
-        int typeOfTickets = -1;
-        while (true) {
-            System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei ");
-            if (sc.hasNextInt()) {
-                typeOfTickets = sc.nextInt();
-                sc.nextLine();
-                if (typeOfTickets >= 1 && typeOfTickets <= 3) {
-                    break;
-                } else {
-                    System.out.println("Invalid ticket type. Please choose 1, 2, or 3.");
-                }
-            } else {
-                System.out.println("Please enter a valid number for ticket type.");
-                sc.nextLine();
-            }
-        }
-
-        controller.displayAvailableSeats(showtimeId, typeOfTickets);
-
-        List<Integer> seats = new ArrayList<>();
-        System.out.println("\nPlease choose your seats: ");
-        for (int i = 0; i < nrOfTickets; i++) {
-            int seat = -1;
+            // Selectarea tipului de bilete
+            System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei \n 0. Finish");
+            int typeOfTickets = -1;
             while (true) {
                 if (sc.hasNextInt()) {
-                    seat = sc.nextInt();
+                    typeOfTickets = sc.nextInt();
                     sc.nextLine();
-                    if (controller.isSeatAvailable(showtimeId, seat)) {
-                        if (!seats.contains(seat)) {
-                            seats.add(seat);
-                            break;
-                        } else {
-                            System.out.println("Seat " + seat + " has already been selected. Please choose another one.");
-                        }
+                    if (typeOfTickets == 0) {
+                        break; // Ieșire din selecția tipurilor de bilete
+                    } else if (typeOfTickets >= 1 && typeOfTickets <= 3) {
+                        break;
                     } else {
-                        System.out.println("Seat " + seat + " is not available. Please choose a different one.");
+                        System.out.println("Invalid ticket type. Please choose 1, 2, 3, or 0 to finish.");
                     }
                 } else {
-                    System.out.println("Please enter a valid seat number.");
+                    System.out.println("Please enter a valid number for ticket type.");
                     sc.nextLine();
                 }
             }
+
+            if (typeOfTickets == 0) {
+                break; // Încheierea procesului de selecție
+            }
+
+            // Afișăm locurile disponibile pentru tipul de bilet selectat
+            List<Integer> availableSeats = new ArrayList<>(controller.displayAvailableSeats(showtimeId, typeOfTickets));
+            if (availableSeats.isEmpty()) {
+                System.out.println("No seats available for this ticket type. Please choose a different type.");
+                continue;
+            }
+
+            // Alegerea numărului de bilete pentru tipul curent
+            int nrOfTickets = -1;
+            while (true) {
+                System.out.println("Number of tickets you want to buy for this type: ");
+                if (sc.hasNextInt()) {
+                    nrOfTickets = sc.nextInt();
+                    sc.nextLine();
+                    if (nrOfTickets > 0) {
+                        if (nrOfTickets <= availableSeats.size()) {
+                            totalTickets += nrOfTickets; // Actualizăm totalul de bilete
+                            break;
+                        } else {
+                            System.out.println("Only " + availableSeats.size() + " seats are available for this type. Please choose fewer tickets.");
+                        }
+                    } else {
+                        System.out.println("Please enter a valid number of tickets (greater than 0).");
+                    }
+                } else {
+                    System.out.println("Please enter a valid number for tickets.");
+                    sc.nextLine();
+                }
+            }
+
+            // Selectăm scaunele pentru tipul curent
+            List<Integer> seats = new ArrayList<>();
+            System.out.println("\nPlease choose your seats for " + nrOfTickets + " tickets:");
+            for (int i = 0; i < nrOfTickets; i++) {
+                int seat = -1;
+                while (true) {
+                    if (sc.hasNextInt()) {
+                        seat = sc.nextInt();
+                        sc.nextLine();
+                        if (availableSeats.contains(seat)) {
+                            if (!seats.contains(seat)) {
+                                seats.add(seat);
+                                allSelectedSeats.add(seat); // Adăugăm scaunul în lista finală
+                                availableSeats.remove(Integer.valueOf(seat)); // Îl eliminăm din locurile disponibile
+                                break;
+                            } else {
+                                System.out.println("Seat " + seat + " has already been selected. Please choose another one.");
+                            }
+                        } else {
+                            System.out.println("Seat " + seat + " is not available in the list of available seats. Please choose a valid seat.");
+                        }
+                    } else {
+                        System.out.println("Please enter a valid seat number.");
+                        sc.nextLine();
+                    }
+                }
+            }
+
+            // Eliminăm scaunele din disponibilitate
+            controller.removeSeatsFromAvailable(showtimeId, seats);
         }
 
-        controller.removeSeatsFromAvailable(showtimeId, seats);
+        // Verificăm dacă s-au selectat scaune
+        if (allSelectedSeats.isEmpty()) {
+            System.out.println("You have not selected any seats. Booking cannot be created.");
+            return;
+        }
 
-        int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), nrOfTickets, seats);
+        // Creăm rezervarea combinată cu lista simplă de scaune
+        int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), totalTickets, allSelectedSeats);
         System.out.println("\nBooking created successfully!");
 
         controller.displayTickets(loggedCustomer, controller.getBooking(currentBookingId));
@@ -345,38 +381,60 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
 
         boolean invalidOption = true;
-        while(invalidOption) {
-            System.out.println("\n======================================");
-            System.out.println("""
+        while (invalidOption) {
+            try {
+                System.out.println("\n======================================");
+                System.out.println("""
                 Please choose the type of membership you want to purchase:
                 1. Basic
                 2. Premium
                 Enter your choice:
                 """);
-            String type = sc.nextLine();
 
-            switch (type) {
-                case "1": {
-                    BasicMembership membership = controller.createBasicMembership(loggedCustomer.getId(), LocalDate.now(), LocalDate.now().plusDays(30));
-                    System.out.println("\nYour total is: " + membership.getPrice());
-                    invalidOption = false;
-                    break;
+                if (!sc.hasNextInt()) {
+                    throw new IllegalArgumentException("Please enter a valid number (1 or 2).");
                 }
-                case "2": {
-                    PremiumMembership membership = controller.createPremiumMembership(loggedCustomer.getId(), LocalDate.now(), LocalDate.now().plusDays(30));
-                    System.out.println("\nYour total is: " + membership.getPrice());
-                    invalidOption = false;
-                    break;
+
+                int type = sc.nextInt();
+                sc.nextLine();
+
+                switch (type) {
+                    case 1: {
+                        BasicMembership membership = controller.createBasicMembership(
+                                loggedCustomer.getId(),
+                                LocalDate.now(),
+                                LocalDate.now().plusDays(30)
+                        );
+                        System.out.println("\nYour total is: " + membership.getPrice());
+                        invalidOption = false;
+                        break;
+                    }
+                    case 2: {
+                        PremiumMembership membership = controller.createPremiumMembership(
+                                loggedCustomer.getId(),
+                                LocalDate.now(),
+                                LocalDate.now().plusDays(30)
+                        );
+                        System.out.println("\nYour total is: " + membership.getPrice());
+                        invalidOption = false;
+                        break;
+                    }
+                    default: {
+                        System.out.println("Invalid input. Please enter a number between 1 and 2.");
+                        break;
+                    }
                 }
-                default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
-                    break;
-                }
+            } catch (IllegalArgumentException e) {
+                System.out.println(e.getMessage());
+                sc.nextLine();
+            } catch (Exception e) {
+                System.out.println("An unexpected error occurred: " + e.getMessage());
             }
         }
 
-        System.out.println("\nMembership created successfully! ");
+        System.out.println("\nMembership created successfully!");
     }
+
 
     /**
      * Displays showtimes based on user-selected filters or sorting criteria, such as date, movie title,
@@ -387,50 +445,72 @@ public class ConsoleApp {
     public void displayShowtimes(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n=====================================");
-        System.out.println("Display \n 1. all showtimes \n 2. showtimes filtered by date \n 3. showtimes filtered by movie \n 4. showtimes sorted by duration \n 5. showtimes sorted by date");
+        System.out.println("""
+        Display:
+        1. All showtimes
+        2. Showtimes filtered by date
+        3. Showtimes filtered by movie
+        4. Showtimes sorted by duration
+        5. Showtimes sorted by date
+        """);
 
-        Integer showtimesId = sc.nextInt();
+        if (!sc.hasNextInt()) {
+            System.out.println("Invalid input. Please enter a number between 1 and 5.");
+            sc.nextLine();
+            return;
+        }
+
+        int showtimesId = sc.nextInt();
         sc.nextLine();
-        switch(showtimesId) {
+
+        switch (showtimesId) {
             case 1: {
                 controller.displayShowtimesFilteredByPg(loggedCustomer);
                 break;
             }
             case 2: {
-                System.out.println("Please enter a date (dd-MM-yyyy): ");
-                String date = sc.nextLine();
-
-                try {
-                    LocalDate date1 = LocalDate.parse(date, dateFormatter);
-                    controller.displayShowtimesFilteredByDate(loggedCustomer,date1);
-
-                } catch (DateTimeParseException e) {
-                    System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                LocalDate date1 = null;
+                while (date1 == null) {
+                    System.out.println("Please enter a date (dd-MM-yyyy): ");
+                    String date = sc.nextLine();
+                    try {
+                        date1 = LocalDate.parse(date, dateFormatter); // Parsăm data
+                        controller.displayShowtimesFilteredByDate(loggedCustomer, date1);
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                    }
                 }
                 break;
             }
-            case 3:{
-                System.out.println("Please enter the movie title: ");
-                String movieTitle = sc.nextLine();
-                controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle);
+            case 3: {
+                String movieTitle = null;
+                while (true) {
+                    System.out.println("Please enter the movie title: ");
+                    movieTitle = sc.nextLine();
+                    if (controller.doesMovieExist(movieTitle)) {
+                        controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle);
+                        break;
+                    } else {
+                        System.out.println("The movie \"" + movieTitle + "\" does not exist. Please try again.");
+                    }
+                }
                 break;
             }
-            case 4:{
+            case 4: {
                 controller.displaySortedShowtimesByDuration(loggedCustomer);
                 break;
             }
-            case 5:{
+            case 5: {
                 controller.displaySortedShowtimesByDateAsc(loggedCustomer);
                 break;
             }
             default: {
-                System.out.println("Invalid option. Please choose 1, 2, 3, 4 or 5.");
+                System.out.println("Invalid option. Please choose 1, 2, 3, 4, or 5.");
                 break;
             }
-
         }
-
     }
+
 
     /**
      * Presents the customer menu, allowing the logged-in customer to perform actions such as
@@ -482,22 +562,39 @@ public class ConsoleApp {
     }
 
     /**
-     * Logs in a staff member by prompting for their email and retrieves their information.
+     * Logs in a staff member by verifying the email and checking if a staff member with the given email exists.
      *
-     * @return the logged-in Staff instance
+     * @return The logged-in staff member if the email is valid and exists, or throws an exception otherwise.
      */
     public Staff logInStaff() {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n================Log in================");
 
-        System.out.println("Please enter your email: ");
-        String email = sc.nextLine();
+        String email = "";
+        Staff loggedStaff = null;
 
-        Staff loggedStaff = controller.logStaff(email);
+        while (loggedStaff == null) {
+            System.out.println("Please enter your email: ");
+            email = sc.nextLine().trim();  // Remove any leading/trailing spaces
+
+            if (email.isEmpty()) {
+                System.out.println("Email cannot be empty. Please try again.");
+                continue;
+            }
+
+            loggedStaff = controller.logStaff(email);
+
+            if (loggedStaff == null) {
+                System.out.println("No staff member found with the email: " + email + ". Please try again.");
+            }
+        }
+
         System.out.println("\nHello, " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + ", you logged in successfully!");
 
         return loggedStaff;
     }
+
+
 
     /**
      * Signs up a new staff member by collecting their details and creating an account.
@@ -507,17 +604,49 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
         System.out.println("\n===============Sign up================");
 
-        System.out.println("Please enter your first name: ");
-        String firstName = sc.next();
+        String firstName = "";
+        while (true) {
+            System.out.println("Please enter your first name: ");
+            firstName = sc.nextLine();
+            if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
+                System.out.println("First name must contain only letters and cannot be empty. Please try again.");
+            } else {
+                break;
+            }
+        }
 
-        System.out.println("Please enter your last name: ");
-        String lastName = sc.next();
+        String lastName = "";
+        while (true) {
+            System.out.println("Please enter your last name: ");
+            lastName = sc.nextLine();
+            if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
+                System.out.println("Last name must contain only letters and cannot be empty. Please try again.");
+            } else {
+                break;
+            }
+        }
 
         System.out.println("Please enter your email: ");
-        String email = sc.next();
+        String email = sc.nextLine();
 
-        controller.createStaff(firstName, lastName, email);
-        System.out.println("\nAccount created successfully!");
+        boolean invalidDate = true;
+        while (invalidDate) {
+            System.out.println("Please enter your birthday (dd-MM-yyyy): ");
+            String date = sc.nextLine();
+
+            try {
+                LocalDate birthday = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                if (birthday.isAfter(LocalDate.now())) {
+                    System.out.println("Birthdate cannot be in the future. Please try again.");
+                } else {
+                    controller.createStaff(firstName, lastName, email);
+                    System.out.println("\nAccount created successfully!");
+                    invalidDate = false;
+                }
+            } catch (DateTimeParseException e) {
+                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+            }
+        }
     }
 
     /**
@@ -530,37 +659,62 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
 
         boolean invalidOption = true;
-        while(invalidOption) {
+        while (invalidOption) {
             controller.staffMenu2();
             String option = sc.nextLine();
             System.out.println("\n======================================");
 
-
             switch (option) {
                 case "1": {
-                    //add Movie
+                    // Adăugare Film
                     System.out.println("\nPlease enter movie title: ");
-                    String title = sc.nextLine();
+                    String title = sc.nextLine().trim();
+
+                    // Validare titlu film
+                    if (title.isEmpty()) {
+                        System.out.println("Title cannot be empty. Please try again.");
+                        break;
+                    }
 
                     System.out.println("Please enter movie PG (true/false): ");
-                    boolean pg = sc.nextBoolean();
-                    sc.nextLine();
+                    boolean pg = false;
+                    boolean validPg = false;
+                    while (!validPg) {
+                        String pgInput = sc.nextLine().trim().toLowerCase();
+                        if (pgInput.equals("true")) {
+                            pg = true;
+                            validPg = true;
+                        } else if (pgInput.equals("false")) {
+                            pg = false;
+                            validPg = true;
+                        } else {
+                            System.out.println("Invalid PG value. Please enter 'true' or 'false'.");
+                        }
+                    }
 
                     System.out.println("Please enter movie genre: ");
-                    String genre = sc.nextLine();
+                    String genre = sc.nextLine().trim();
+
+                    // Validare gen
+                    if (genre.isEmpty()) {
+                        System.out.println("Genre cannot be empty. Please try again.");
+                        break;
+                    }
 
                     boolean invalidTime = true;
-                    while(invalidTime) {
-                        System.out.println("Please enter movie release date: ");
-                        String date = sc.nextLine();
+                    while (invalidTime) {
+                        System.out.println("Please enter movie release date (dd-MM-yyyy): ");
+                        String date = sc.nextLine().trim();
 
                         try {
-                            LocalDate releaseDate = LocalDate.parse(date, timeFormatter);
+                            LocalDate releaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                            // Permite orice dată, inclusiv din viitor
                             controller.addMovie(title, pg, genre, releaseDate);
                             System.out.println("\nMovie added successfully!");
                             invalidTime = false;
+
                         } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use HH:mm.");
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
                         }
                     }
 
@@ -568,30 +722,56 @@ public class ConsoleApp {
                     break;
                 }
                 case "2": {
-                    //update Movie
+                    // Actualizare Film
                     controller.displayMoviesStaff();
                     System.out.println("\nPlease enter title of the movie you want to update: ");
-                    String title = sc.nextLine();
+                    String title = sc.nextLine().trim();
+
+                    // Verifică dacă filmul există
+                    if (!controller.doesMovieExist(title)) {
+                        System.out.println("No movie found with that title. Please try again.");
+                        break;
+                    }
 
                     System.out.println("Please enter new PG (true/false): ");
-                    boolean newPg = sc.nextBoolean();
-                    sc.nextLine();
+                    boolean newPg = false;
+                    boolean validPg = false;
+                    while (!validPg) {
+                        String pgInput = sc.nextLine().trim().toLowerCase();
+                        if (pgInput.equals("true")) {
+                            newPg = true;
+                            validPg = true;
+                        } else if (pgInput.equals("false")) {
+                            newPg = false;
+                            validPg = true;
+                        } else {
+                            System.out.println("Invalid PG value. Please enter 'true' or 'false'.");
+                        }
+                    }
 
                     System.out.println("Please enter new genre: ");
-                    String newGenre = sc.nextLine();
+                    String newGenre = sc.nextLine().trim();
+
+                    // Validare gen
+                    if (newGenre.isEmpty()) {
+                        System.out.println("Genre cannot be empty. Please try again.");
+                        break;
+                    }
 
                     boolean invalidTime = true;
-                    while(invalidTime) {
-                        System.out.println("Please enter new release date: ");
-                        String date = sc.nextLine();
+                    while (invalidTime) {
+                        System.out.println("Please enter new release date (dd-MM-yyyy): ");
+                        String date = sc.nextLine().trim();
 
                         try {
-                            LocalDate newReleaseDate = LocalDate.parse(date, timeFormatter);
+                            LocalDate newReleaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                            // Permite orice dată, inclusiv din viitor
                             controller.updateMovie(title, newPg, newGenre, newReleaseDate);
                             System.out.println("\nMovie updated successfully!");
                             invalidTime = false;
+
                         } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use HH:mm.");
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
                         }
                     }
 
@@ -599,10 +779,16 @@ public class ConsoleApp {
                     break;
                 }
                 case "3": {
-                    //delete Movie
+                    // Ștergere Film
                     controller.displayMoviesStaff();
                     System.out.println("\nPlease enter title of the movie you want to delete: ");
-                    String title = sc.nextLine();
+                    String title = sc.nextLine().trim();
+
+                    // Verifică dacă filmul există
+                    if (!controller.doesMovieExist(title)) {
+                        System.out.println("No movie found with that title. Please try again.");
+                        break;
+                    }
 
                     controller.deleteMovie(title);
                     System.out.println("\nMovie deleted successfully!");
@@ -617,6 +803,8 @@ public class ConsoleApp {
             }
         }
     }
+
+
 
     /**
      * Allows a logged-in staff member to modify screen details, including adding, updating, or deleting screens.

@@ -936,4 +936,17 @@ public class CinemaService {
         }
       return false;
     }
+
+    /**
+     * Checks if a movie with the given title exists in the database.
+     *
+     * @param movieTitle The title of the movie to check.
+     * @return {@code true} if the movie exists (case-insensitive), {@code false} otherwise.
+     */
+    public boolean doesMovieExist(String movieTitle){
+        Map<Integer, Movie> allMovies = movieRepo.getAll();
+        return allMovies.values().stream().anyMatch(movie -> movie.getTitle().equalsIgnoreCase(movieTitle));
+
+
+    }
 }

@@ -71,7 +71,6 @@ public class Controller {
                 return cinemaService.findCustomerByEmail(email);
             }
             else {
-                System.out.println("No account by this email!");
                 return null;
             }
         } catch (Exception e) {
@@ -101,7 +100,6 @@ public class Controller {
                 return cinemaService.findStaffByEmail(email);
             }
             else {
-                System.out.println("No account by this email!");
                 return null;
             }
         } catch (Exception e) {
@@ -147,7 +145,7 @@ public class Controller {
      * @param showtimeId The identifier of the showtime for which available seats will be displayed.
      * @param typeOfTickets The type of tickets for which seats are being filtered ( standard, premium, etc.).
      */
-    public void displayAvailableSeats(int showtimeId,int typeOfTickets) {
+    public List<Integer> displayAvailableSeats(int showtimeId,int typeOfTickets) {
         List<Integer> seats = cinemaService.filterSeatsByType(showtimeId, typeOfTickets);
 
         System.out.println("\n======================================");
@@ -155,6 +153,7 @@ public class Controller {
             System.out.print(seat + " ");
         }
         System.out.println("\n======================================");
+        return seats;
     }
 
     /**
@@ -549,5 +548,15 @@ public class Controller {
      */
     public boolean isSeatAvailable(int showtimeId, int seat) {
         return cinemaService.isSeatAvailable(showtimeId, seat);
+    }
+
+    /**
+     * Checks if a movie with the given title exists by delegating to the cinema service.
+     *
+     * @param movieTitle The title of the movie to check.
+     * @return {@code true} if the movie exists, {@code false} otherwise.
+     */
+    public boolean doesMovieExist(String movieTitle) {
+        return cinemaService.doesMovieExist(movieTitle);
     }
 }
