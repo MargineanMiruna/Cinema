@@ -27,20 +27,20 @@ public class Controller {
      * default entry point to initialize sample data for testing
      */
     public void add(){
-        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
-        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
-        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
-
-        cinemaService.addStaff("Alexandra","Olah","alexandra");
-        cinemaService.addStaff("Klara","Orban","klara");
-
-        cinemaService.addScreen(6,10,7);
-        cinemaService.addScreen(12,4,8);
-        cinemaService.addScreen(10,5,2);
-
-        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
-        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
-        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
+//        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
+//        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
+//        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
+//
+//        cinemaService.addStaff("Alexandra","Olah","alexandra");
+//        cinemaService.addStaff("Klara","Orban","klara");
+//
+//        cinemaService.addScreen(6,10,7);
+//        cinemaService.addScreen(12,4,8);
+//        cinemaService.addScreen(10,5,2);
+//
+//        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
+//        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
+//        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
 
         cinemaService.addShowtime(1,2, LocalDate.of(2025, 1, 5), LocalTime.of(12,45), 120);
         cinemaService.addShowtime(2,3, LocalDate.of(2024,12,24), LocalTime.of(20, 30), 210);

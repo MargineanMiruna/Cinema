@@ -80,8 +80,8 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
     @Override
     public Booking read(int id) {
         String readSQL = "SELECT * FROM Booking WHERE id = " + id + ";";
-        String getTicketsSQL = "SELECT T.id FROM Tickets T " +
-                "JOIN Booking B ON B.id = T.bookingId" +
+        String getTicketsSQL = "SELECT T.id FROM Ticket T " +
+                "JOIN Booking B ON B.id = T.bookingId " +
                 "WHERE B.id = " + id + ";";
 
         List<Integer> ticketIds = new ArrayList<>();
@@ -109,7 +109,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Booking WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM Booking WHERE id = " + id + ";";
         String deleteTicketsSQL = "DELETE FROM Tickets WHERE bookingId = " + id + ";";
         try {
             Statement deleteTicketsStatement = connection.createStatement();
@@ -128,7 +128,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
      */
     @Override
     public void update(Booking obj) {
-        String updateSQL = "UPDATE TABLE Booking SET customerId = " + obj.getCustomerId() + ", showtimeId = " + obj.getShowtimeId() + ", bookingDate = " + obj.getDate() + ", nrOfCustomers = " + obj.getNrOfCustomers() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Booking SET customerId = " + obj.getCustomerId() + ", showtimeId = " + obj.getShowtimeId() + ", bookingDate = " + obj.getDate() + ", nrOfCustomers = " + obj.getNrOfCustomers() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
@@ -154,8 +154,8 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
                 List<Integer> ticketIds = new ArrayList<>();
-                String getTicketsSQL = "SELECT T.id FROM Tickets T " +
-                        "JOIN Booking B ON B.id = T.bookingId" +
+                String getTicketsSQL = "SELECT T.id FROM Ticket T " +
+                        "JOIN Booking B ON B.id = T.bookingId " +
                         "WHERE B.id = " + resultSet.getInt("id") + ";";
                 Statement getTicketsStatement = connection.createStatement();
                 ResultSet resultSet1 = getTicketsStatement.executeQuery(getTicketsSQL);

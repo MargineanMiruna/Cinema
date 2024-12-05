@@ -95,7 +95,7 @@ public class CustomerDBRepository extends DataBaseRepository<Customer> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Customer WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM Customer WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -111,7 +111,7 @@ public class CustomerDBRepository extends DataBaseRepository<Customer> {
      */
     @Override
     public void update(Customer obj) {
-        String updateSQL = "UPDATE TABLE Customer SET firstName = " + obj.getFirstName() + ", lastName = " + obj.getLastName() + ", email = " + obj.getEmail() + ", underage = " + obj.getUnderaged() + ", membershipId = " + obj.getMembershipId() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Customer SET firstName = '" + obj.getFirstName() + "', lastName = '" + obj.getLastName() + "', email = '" + obj.getEmail() + "', underage = " + obj.getUnderaged() + ", membershipId = " + obj.getMembershipId() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);

@@ -3,6 +3,9 @@ import Model.Showtime;
 import Model.Seat;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,6 +17,9 @@ import java.util.Map;
  */
 public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
     AvailableSeatsDBRepository AvailableSeats;
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+    DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
+
 
     /**
      * Default constructor for ShowtimeDBRepository.
@@ -112,8 +118,8 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
                     resultSet.getInt("id"),
                     resultSet.getInt("screenId"),
                     resultSet.getInt("movieId"),
-                    resultSet.getDate("date").toLocalDate(),
-                    resultSet.getTime("startTime").toLocalTime(),
+                    LocalDate.parse(resultSet.getString("date"), dateFormatter),
+                    LocalTime.parse(resultSet.getString("startTime"), timeFormatter),
                     resultSet.getInt("duration"),
                     seatList
             );
@@ -152,8 +158,8 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
                 "movieId = " + obj.getMovieId() + ", " +
                 "date = '" + obj.getDate() + "', " +
                 "startTime = '" + obj.getStartTime() + "', " +
-                "duration = " + obj.getDuration() + ", " +
-                "WHERE id = " + obj.getId() + ";";
+                "duration = " + obj.getDuration() +
+                " WHERE id = " + obj.getId() + ";";
 
         try {
             Statement updateStatement = connection.createStatement();
@@ -188,8 +194,8 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
                 Showtime obj = new Showtime(resultSet.getInt("id"),
                         resultSet.getInt("screenId"),
                         resultSet.getInt("movieId"),
-                        resultSet.getDate("date").toLocalDate(),
-                        resultSet.getTime("startTime").toLocalTime(),
+                        LocalDate.parse(resultSet.getString("date"), dateFormatter),
+                        LocalTime.parse(resultSet.getString("startTime"), timeFormatter),
                         resultSet.getInt("duration"),
                         seats
                         );

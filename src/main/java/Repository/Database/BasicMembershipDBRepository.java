@@ -95,7 +95,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE BasicMembership WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM BasicMembership WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -111,7 +111,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
      */
     @Override
     public void update(BasicMembership obj) {
-        String updateSQL = "UPDATE TABLE BasicMembership SET customerId = " + obj.getCustomerId() + ", startDate = " + obj.getStartDate() + ", endDate = " + obj.getEndDate() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE BasicMembership SET customerId = " + obj.getCustomerId() + ", startDate = " + obj.getStartDate() + ", endDate = " + obj.getEndDate() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);

@@ -66,7 +66,7 @@ public class SeatLocationDBRepository {
      * @param screenId the ID of the screen whose seat associations are to be removed.
      */
     public void removeAllSeatsFromScreen(int screenId) {
-        String deleteSQL = "DELETE FROM TABLE SeatLocation WHERE screenId = " + screenId + ";";
+        String deleteSQL = "DELETE FROM SeatLocation WHERE screenId = " + screenId + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
