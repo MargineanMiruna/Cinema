@@ -15,8 +15,8 @@ public class TicketDBRepository extends DataBaseRepository<Ticket> {
      * Default constructor for TicketDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Ticket data is created.
      */
-    public TicketDBRepository() {
-        super();
+    public TicketDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 

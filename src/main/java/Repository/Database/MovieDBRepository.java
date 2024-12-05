@@ -15,8 +15,8 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
      * Default constructor for MovieDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Movie data is created.
      */
-    public MovieDBRepository() {
-        super();
+    public MovieDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 

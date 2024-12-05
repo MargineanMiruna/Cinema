@@ -17,8 +17,8 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
      * Default constructor for SeatDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Seat data is created.
      */
-    public SeatDBRepository() {
-        super();
+    public SeatDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 
@@ -53,16 +53,7 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+
         return lastId + 1;
     }
 
@@ -78,16 +69,6 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
             addStatement.executeUpdate(addSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
@@ -108,16 +89,6 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
     /**
@@ -134,16 +105,6 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
     /**
@@ -159,16 +120,6 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
             updateStatement.executeUpdate(updateSQL);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
@@ -192,16 +143,6 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
 
         return objects;

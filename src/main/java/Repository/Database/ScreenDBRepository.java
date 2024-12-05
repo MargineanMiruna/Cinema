@@ -13,8 +13,8 @@ import Model.Seat;
 public class ScreenDBRepository extends DataBaseRepository<Screen> {
     SeatLocationDBRepository SeatLocation;
 
-    public ScreenDBRepository() {
-        super();
+    public ScreenDBRepository(Connection connection) {
+        super(connection);
         createTable();
         SeatLocation = new SeatLocationDBRepository(connection);
     }
@@ -51,16 +51,7 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
+
         return lastId + 1;
     }
 
@@ -79,16 +70,6 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
                 SeatLocation.add(obj, seat);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
@@ -111,16 +92,6 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
     }
 
     /**
@@ -138,17 +109,6 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-        }
-
     }
 
     /**
@@ -167,16 +127,6 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
                 SeatLocation.add(obj, seat);
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
     }
 
@@ -200,16 +150,6 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (connection != null) {
-                try {
-                    connection.close();
-                }
-                catch (SQLException e) {
-                    throw new RuntimeException(e);
-                }
-            }
         }
 
         return objects;

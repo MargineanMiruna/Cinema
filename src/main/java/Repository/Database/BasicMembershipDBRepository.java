@@ -15,8 +15,8 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
      * Default constructor for BasicMembershipDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing BasicMembership data is created.
      */
-    public BasicMembershipDBRepository() {
-        super();
+    public BasicMembershipDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 

@@ -34,7 +34,7 @@ public class ConsoleApp {
      * Runs the application by receiving user input and calling the appropriate methods from the Controller Layer.
      */
     public void run() {
-        //controller.add();
+        controller.add();
         controller.terminateMemberships();
         Scanner sc = new Scanner(System.in);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");

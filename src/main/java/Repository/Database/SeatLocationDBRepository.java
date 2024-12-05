@@ -83,7 +83,7 @@ public class SeatLocationDBRepository {
      */
     public List<Seat> getSeatsForScreen(int screenId) {
         List<Seat> seats = new ArrayList<>();
-        String readSQL = "SELECT ST.seatId, ST.seatNr, ST.seatType FROM Seat ST " +
+        String readSQL = "SELECT ST.id, ST.seatNr, ST.seatType FROM Seat ST " +
                 "JOIN SeatLocation SL ON SL.seatId = ST.id" +
                 " WHERE screenId = " + screenId + ";";
 

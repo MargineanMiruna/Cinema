@@ -11,8 +11,8 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Staff entities.
  */
 public class StaffDBRepository extends DataBaseRepository<Staff> {
-    public StaffDBRepository() {
-        super();
+    public StaffDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 

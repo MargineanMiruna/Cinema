@@ -15,8 +15,8 @@ public class CustomerDBRepository extends DataBaseRepository<Customer> {
      * Default constructor for CustomerDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Customer data is created.
      */
-    public CustomerDBRepository() {
-        super();
+    public CustomerDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 

@@ -19,8 +19,8 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
      * Default constructor for ShowtimeDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Showtime data is created.
      */
-    public ShowtimeDBRepository() {
-        super();
+    public ShowtimeDBRepository(Connection connection) {
+        super(connection);
         createTable();
         AvailableSeats = new AvailableSeatsDBRepository(connection);
     }
@@ -76,13 +76,13 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
      */
     @Override
     public void add(Showtime obj) {
-        String addSQL = "INSERT INTO Showtime (id, screenId, movieId, date, startTime, duration, seats) VALUES ("
+        String addSQL = "INSERT INTO Showtime (id, screenId, movieId, date, startTime, duration) VALUES ("
                 + obj.getId() + ", "
                 + obj.getScreenId() + ", "
                 + obj.getMovieId() + ", '"
                 + obj.getDate() + "', '"
                 + obj.getStartTime() + "', "
-                + obj.getDuration() + ";";
+                + obj.getDuration() + ");";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeUpdate(addSQL);
@@ -202,6 +202,4 @@ public class ShowtimeDBRepository extends DataBaseRepository<Showtime>{
 
         return objects;
     }
-
-
 }

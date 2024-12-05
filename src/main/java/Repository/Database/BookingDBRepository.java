@@ -17,8 +17,8 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
      * Default constructor for BookingDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Booking data is created.
      */
-    public BookingDBRepository() {
-        super();
+    public BookingDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 

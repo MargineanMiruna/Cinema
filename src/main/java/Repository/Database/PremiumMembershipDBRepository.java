@@ -15,8 +15,8 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
      * Default constructor for PremiumMembershipDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing PremiumMembership data is created.
      */
-    public PremiumMembershipDBRepository() {
-        super();
+    public PremiumMembershipDBRepository(Connection connection) {
+        super(connection);
         createTable();
     }
 
