@@ -27,24 +27,24 @@ public class Controller {
      * default entry point to initialize sample data for testing
      */
     public void add(){
-//        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
-//        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
-//        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
-//
-//        cinemaService.addStaff("Alexandra","Olah","alexandra");
-//        cinemaService.addStaff("Klara","Orban","klara");
-//
-//        cinemaService.addScreen(6,10,7);
-//        cinemaService.addScreen(12,4,8);
-//        cinemaService.addScreen(10,5,2);
-//
-//        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
-//        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
-//        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
+        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
+        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
+        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
+
+        cinemaService.addStaff("Alexandra","Olah","alexandra");
+        cinemaService.addStaff("Klara","Orban","klara");
+
+        cinemaService.addScreen(6,10,7);
+        cinemaService.addScreen(12,4,8);
+        cinemaService.addScreen(10,5,2);
+
+        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
+        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
+        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
 
         cinemaService.addShowtime(1,2, LocalDate.of(2025, 1, 5), LocalTime.of(12,45), 120);
         cinemaService.addShowtime(2,3, LocalDate.of(2024,12,24), LocalTime.of(20, 30), 210);
-        cinemaService.addShowtime(3,1, LocalDate.of(2024,12,14), LocalTime.of(16,20), 190);
+        cinemaService.addShowtime(2,1, LocalDate.of(2024,12,14), LocalTime.of(16,20), 190);
 
     }
 
@@ -132,7 +132,7 @@ public class Controller {
         for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
             Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
             System.out.println("\n======================================");
-            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration()+ " min");
         }
     }
 
@@ -388,7 +388,7 @@ public class Controller {
         for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
             Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
             System.out.println("\n======================================");
-            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
+            System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration() + " min");
         }
     }
 
@@ -558,5 +558,45 @@ public class Controller {
      */
     public boolean doesMovieExist(String movieTitle) {
         return cinemaService.doesMovieExist(movieTitle);
+    }
+
+    /**
+     * Checks if a screen exists in the repository by its ID.
+     *
+     * @param id the unique identifier of the screen to check
+     * @return true if the screen exists, false otherwise
+     */
+    public boolean doesScreenExist(int id) {
+       return  cinemaService.doesScreenExist(id);
+    }
+
+    /**
+     * Checks if a screen with the given ID has showtimes scheduled for the future.
+     *
+     * @param id the unique identifier of the screen
+     * @return true if the screen has future showtimes, false otherwise
+     */
+    public boolean hasFutureShowtimes(int id) {
+        return cinemaService.hasFutureShowtimes(id);
+    }
+
+    /**
+     * Checks if a showtime exists in the repository by its ID.
+     *
+     * @param id the unique identifier of the showtime to check
+     * @return true if the showtime exists, false otherwise
+     */
+    public boolean doesShowtimeExist(int id) {
+        return cinemaService.doesShowtimeExist(id);
+    }
+
+    /**
+     * Checks if there are any bookings associated with a given showtime ID.
+     *
+     * @param id the ID of the showtime to check for bookings
+     * @return true if there are bookings for the given showtime ID, false otherwise
+     */
+    public boolean hasBookingsForShowtime(int id) {
+        return cinemaService.hasBookingsForShowtime(id);
     }
 }

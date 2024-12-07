@@ -227,6 +227,8 @@ public class ConsoleApp {
                 LocalDate birthday = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                 if (birthday.isAfter(LocalDate.now())) {
                     System.out.println("Birthdate cannot be in the future. Please try again.");
+                } else if (birthday.getYear() < 1900) {
+                    System.out.println("Birth year cannot be earlier than 1900. Please try again.");
                 } else {
                     controller.createCustomer(firstName, lastName, email, birthday);
                     System.out.println("\nAccount created successfully!");
@@ -236,6 +238,7 @@ public class ConsoleApp {
                 System.out.println("Invalid date format. Please use dd-MM-yyyy.");
             }
         }
+
     }
 
     /**
@@ -266,12 +269,10 @@ public class ConsoleApp {
             }
         }
 
-        // Lista finală de scaune rezervate și totalul biletelor
         List<Integer> allSelectedSeats = new ArrayList<>();
         int totalTickets = 0;
 
         while (true) {
-            // Selectarea tipului de bilete
             System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei \n 0. Finish");
             int typeOfTickets = -1;
             while (true) {
@@ -279,7 +280,7 @@ public class ConsoleApp {
                     typeOfTickets = sc.nextInt();
                     sc.nextLine();
                     if (typeOfTickets == 0) {
-                        break; // Ieșire din selecția tipurilor de bilete
+                        break;
                     } else if (typeOfTickets >= 1 && typeOfTickets <= 3) {
                         break;
                     } else {
@@ -292,17 +293,15 @@ public class ConsoleApp {
             }
 
             if (typeOfTickets == 0) {
-                break; // Încheierea procesului de selecție
+                break;
             }
 
-            // Afișăm locurile disponibile pentru tipul de bilet selectat
             List<Integer> availableSeats = new ArrayList<>(controller.displayAvailableSeats(showtimeId, typeOfTickets));
             if (availableSeats.isEmpty()) {
                 System.out.println("No seats available for this ticket type. Please choose a different type.");
                 continue;
             }
 
-            // Alegerea numărului de bilete pentru tipul curent
             int nrOfTickets = -1;
             while (true) {
                 System.out.println("Number of tickets you want to buy for this type: ");
@@ -311,7 +310,7 @@ public class ConsoleApp {
                     sc.nextLine();
                     if (nrOfTickets > 0) {
                         if (nrOfTickets <= availableSeats.size()) {
-                            totalTickets += nrOfTickets; // Actualizăm totalul de bilete
+                            totalTickets += nrOfTickets;
                             break;
                         } else {
                             System.out.println("Only " + availableSeats.size() + " seats are available for this type. Please choose fewer tickets.");
@@ -325,7 +324,6 @@ public class ConsoleApp {
                 }
             }
 
-            // Selectăm scaunele pentru tipul curent
             List<Integer> seats = new ArrayList<>();
             System.out.println("\nPlease choose your seats for " + nrOfTickets + " tickets:");
             for (int i = 0; i < nrOfTickets; i++) {
@@ -337,8 +335,8 @@ public class ConsoleApp {
                         if (availableSeats.contains(seat)) {
                             if (!seats.contains(seat)) {
                                 seats.add(seat);
-                                allSelectedSeats.add(seat); // Adăugăm scaunul în lista finală
-                                availableSeats.remove(Integer.valueOf(seat)); // Îl eliminăm din locurile disponibile
+                                allSelectedSeats.add(seat);
+                                availableSeats.remove(Integer.valueOf(seat));
                                 break;
                             } else {
                                 System.out.println("Seat " + seat + " has already been selected. Please choose another one.");
@@ -353,17 +351,14 @@ public class ConsoleApp {
                 }
             }
 
-            // Eliminăm scaunele din disponibilitate
             controller.removeSeatsFromAvailable(showtimeId, seats);
         }
 
-        // Verificăm dacă s-au selectat scaune
         if (allSelectedSeats.isEmpty()) {
             System.out.println("You have not selected any seats. Booking cannot be created.");
             return;
         }
 
-        // Creăm rezervarea combinată cu lista simplă de scaune
         int currentBookingId = controller.createBooking(loggedCustomer.getId(), showtimeId, LocalDate.now(), totalTickets, allSelectedSeats);
         System.out.println("\nBooking created successfully!");
 
@@ -638,6 +633,8 @@ public class ConsoleApp {
                 LocalDate birthday = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                 if (birthday.isAfter(LocalDate.now())) {
                     System.out.println("Birthdate cannot be in the future. Please try again.");
+                } else if (birthday.getYear() < 1900) {
+                    System.out.println("Birth year cannot be earlier than 1900. Please try again.");
                 } else {
                     controller.createStaff(firstName, lastName, email);
                     System.out.println("\nAccount created successfully!");
@@ -666,11 +663,10 @@ public class ConsoleApp {
 
             switch (option) {
                 case "1": {
-                    // Adăugare Film
+                    // Adaugare Film
                     System.out.println("\nPlease enter movie title: ");
                     String title = sc.nextLine().trim();
 
-                    // Validare titlu film
                     if (title.isEmpty()) {
                         System.out.println("Title cannot be empty. Please try again.");
                         break;
@@ -695,7 +691,6 @@ public class ConsoleApp {
                     System.out.println("Please enter movie genre: ");
                     String genre = sc.nextLine().trim();
 
-                    // Validare gen
                     if (genre.isEmpty()) {
                         System.out.println("Genre cannot be empty. Please try again.");
                         break;
@@ -708,7 +703,6 @@ public class ConsoleApp {
 
                         try {
                             LocalDate releaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                            // Permite orice dată, inclusiv din viitor
                             controller.addMovie(title, pg, genre, releaseDate);
                             System.out.println("\nMovie added successfully!");
                             invalidTime = false;
@@ -722,12 +716,11 @@ public class ConsoleApp {
                     break;
                 }
                 case "2": {
-                    // Actualizare Film
+
                     controller.displayMoviesStaff();
                     System.out.println("\nPlease enter title of the movie you want to update: ");
                     String title = sc.nextLine().trim();
 
-                    // Verifică dacă filmul există
                     if (!controller.doesMovieExist(title)) {
                         System.out.println("No movie found with that title. Please try again.");
                         break;
@@ -752,7 +745,6 @@ public class ConsoleApp {
                     System.out.println("Please enter new genre: ");
                     String newGenre = sc.nextLine().trim();
 
-                    // Validare gen
                     if (newGenre.isEmpty()) {
                         System.out.println("Genre cannot be empty. Please try again.");
                         break;
@@ -765,7 +757,6 @@ public class ConsoleApp {
 
                         try {
                             LocalDate newReleaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                            // Permite orice dată, inclusiv din viitor
                             controller.updateMovie(title, newPg, newGenre, newReleaseDate);
                             System.out.println("\nMovie updated successfully!");
                             invalidTime = false;
@@ -779,12 +770,11 @@ public class ConsoleApp {
                     break;
                 }
                 case "3": {
-                    // Ștergere Film
+
                     controller.displayMoviesStaff();
                     System.out.println("\nPlease enter title of the movie you want to delete: ");
                     String title = sc.nextLine().trim();
 
-                    // Verifică dacă filmul există
                     if (!controller.doesMovieExist(title)) {
                         System.out.println("No movie found with that title. Please try again.");
                         break;
@@ -816,68 +806,97 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
 
         boolean invalidOption = true;
-        while(invalidOption) {
+        while (invalidOption) {
             controller.staffMenu2();
             String option = sc.nextLine();
             System.out.println("\n======================================");
 
             switch (option) {
-                case "1": {
-                    //add Screen
-                    System.out.println("\nPlease enter the number of standard seats: ");
-                    int nrStandardSeats = sc.nextInt();
-                    sc.nextLine();
+                case "1": { // Add Screen
+                    int nrStandardSeats, nrVipSeats, nrPremiumSeats;
 
-                    System.out.println("Please enter the number of VIP seats: ");
-                    int nrVipSeats = sc.nextInt();
-                    sc.nextLine();
+                    while (true) {
+                        System.out.println("\nPlease enter the number of standard seats (0-199): ");
+                        nrStandardSeats = sc.nextInt();
+                        System.out.println("Please enter the number of VIP seats (0-199): ");
+                        nrVipSeats = sc.nextInt();
+                        System.out.println("Please enter the number of premium seats (0-199): ");
+                        nrPremiumSeats = sc.nextInt();
+                        sc.nextLine();
 
-                    System.out.println("Please enter the number of premium seats: ");
-                    int nrPremiumSeats = sc.nextInt();
-                    sc.nextLine();
+                        if ((nrStandardSeats > 0 || nrVipSeats > 0 || nrPremiumSeats > 0) &&
+                                nrStandardSeats <= 199 && nrVipSeats <= 199 && nrPremiumSeats <= 199) {
+                            break;
+                        } else {
+                            System.out.println("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
+                        }
+                    }
 
                     controller.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
                     System.out.println("\nScreen added successfully!");
-
                     invalidOption = false;
                     break;
                 }
-                case "2": {
-                    //update Screen
+                case "2": { // Update Screen
                     controller.displayScreensStaff();
-                    System.out.println("\nPlease enter the ID of the screen you want to update: ");
-                    int id = sc.nextInt();
-                    sc.nextLine();
+                    int id;
 
-                    System.out.println("Please enter new number of standard seats: ");
-                    int newNrStandardSeats = sc.nextInt();
-                    sc.nextLine();
+                    while (true) {
+                        System.out.println("\nPlease enter the ID of the screen you want to update: ");
+                        id = sc.nextInt();
+                        sc.nextLine();
 
-                    System.out.println("Please enter new number of VIP seats: ");
-                    int newNrVipSeats = sc.nextInt();
-                    sc.nextLine();
+                        if (controller.doesScreenExist(id)) {
+                            break;
+                        } else {
+                            System.out.println("Invalid screen ID. Please try again.");
+                        }
+                    }
 
-                    System.out.println("Please enter new number of premium seats: ");
-                    int newNrPremiumSeats = sc.nextInt();
-                    sc.nextLine();
+                    int newNrStandardSeats, newNrVipSeats, newNrPremiumSeats;
+                    while (true) {
+                        System.out.println("Please enter new number of standard seats (0-199): ");
+                        newNrStandardSeats = sc.nextInt();
+                        System.out.println("Please enter new number of VIP seats (0-199): ");
+                        newNrVipSeats = sc.nextInt();
+                        System.out.println("Please enter new number of premium seats (0-199): ");
+                        newNrPremiumSeats = sc.nextInt();
+                        sc.nextLine();
 
-                    List<Seat> seats = new ArrayList<>();
+                        if ((newNrStandardSeats > 0 || newNrVipSeats > 0 || newNrPremiumSeats > 0) &&
+                                newNrStandardSeats <= 199 && newNrVipSeats <= 199 && newNrPremiumSeats <= 199) {
+                            break;
+                        } else {
+                            System.out.println("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
+                        }
+                    }
+
+                    List<Seat> seats = new ArrayList<>(); // Assuming this is managed elsewhere
                     controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats, seats);
                     System.out.println("\nScreen updated successfully!");
-
                     invalidOption = false;
                     break;
                 }
-                case "3": {
-                    //delete Screen
+                case "3": { // Delete Screen
                     controller.displayScreensStaff();
-                    System.out.println("\nPlease enter the ID of the screen you want to delete: ");
-                    int id = sc.nextInt();
-                    sc.nextLine();
+                    int id;
+
+                    while (true) {
+                        System.out.println("\nPlease enter the ID of the screen you want to delete: ");
+                        id = sc.nextInt();
+                        sc.nextLine();
+
+                        if (!controller.doesScreenExist(id)) {
+                            System.out.println("Invalid screen ID. Please try again.");
+                        } else if (controller.hasFutureShowtimes(id)) {
+                            System.out.println("This screen has showtimes scheduled in the future. Cannot delete until they are completed.");
+                        } else {
+                            break;
+                        }
+                    }
 
                     controller.deleteScreen(id);
                     System.out.println("\nScreen deleted successfully!");
-
                     invalidOption = false;
                     break;
                 }
@@ -891,7 +910,8 @@ public class ConsoleApp {
 
     /**
      * Allows a logged-in staff member to modify showtime details, including adding, updating, or deleting showtimes.
-     * Provides options to perform each of these actions and handles input validation.
+     * Validates input to ensure screen ID, movie title, date, time, and duration meet required conditions.
+     * Prevents updating or deleting a showtime with existing bookings.
      *
      * @param loggedStaff the currently logged-in staff member
      */
@@ -899,125 +919,183 @@ public class ConsoleApp {
         Scanner sc = new Scanner(System.in);
 
         boolean invalidOption = true;
-        while(invalidOption) {
+        while (invalidOption) {
             controller.staffMenu2();
             String option = sc.nextLine();
             System.out.println("\n=====================================");
 
             switch (option) {
-                case "1": {
-                    //add Showtime
+                case "1": { // Add Showtime
                     System.out.println("\nPlease enter screen ID: ");
                     int screenId = sc.nextInt();
                     sc.nextLine();
+
+                    if (!controller.doesScreenExist(screenId)) {
+                        System.out.println("Screen ID does not exist. Please try again.");
+                        break;
+                    }
 
                     System.out.println("Please enter movie title: ");
                     String title = sc.nextLine();
 
                     int movieId = controller.findMovieIdByTitle(title);
+                    if (movieId == -1) {
+                        System.out.println("Movie title does not exist. Please try again.");
+                        break;
+                    }
 
-                    LocalDate showtimeDate = LocalDate.now();
+                    LocalDate showtimeDate = null;
                     boolean invalidDate = true;
-                    while(invalidDate) {
-                        System.out.println("Please enter a date: ");
+                    while (invalidDate) {
+                        System.out.println("Please enter a date (dd-MM-yyyy): ");
                         String date = sc.nextLine();
 
                         try {
                             showtimeDate = LocalDate.parse(date, dateFormatter);
-                            invalidDate = false;
+                            if (showtimeDate.isBefore(LocalDate.now())) {
+                                System.out.println("Date must be in the future. Please try again.");
+                            } else {
+                                invalidDate = false;
+                            }
                         } catch (DateTimeParseException e) {
                             System.out.println("Invalid date format. Please use dd-MM-yyyy.");
                         }
                     }
 
-                    LocalTime startTime = LocalTime.now();
-                    invalidDate = true;
-                    while(invalidDate) {
-                        System.out.println("Please enter a starting time: ");
+                    LocalTime startTime = null;
+                    boolean invalidTime = true;
+                    while (invalidTime) {
+                        System.out.println("Please enter a starting time (HH:mm): ");
                         String time = sc.nextLine();
 
                         try {
                             startTime = LocalTime.parse(time, timeFormatter);
-                            invalidDate = false;
+                            if (startTime.isBefore(LocalTime.of(6, 0)) || startTime.isAfter(LocalTime.of(23, 59))) {
+                                System.out.println("Start time must be between 06:00 and 24:00. Please try again.");
+                            } else {
+                                invalidTime = false;
+                            }
                         } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use HH:mm.");
+                            System.out.println("Invalid time format. Please use HH:mm.");
                         }
                     }
 
-                    System.out.println("Please enter duration: ");
+                    System.out.println("Please enter duration (in minutes): ");
                     int duration = sc.nextInt();
                     sc.nextLine();
 
+                    if (duration <= 0 || duration > 200) {
+                        System.out.println("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                        break;
+                    }
+
                     controller.addShowtime(screenId, movieId, showtimeDate, startTime, duration);
                     System.out.println("\nShowtime added successfully!");
-
                     invalidOption = false;
                     break;
                 }
-                case "2": {
-                    //update Showtime
+                case "2": { // Update Showtime
                     controller.displayShowtimesStaff();
                     System.out.println("\nPlease enter the ID of the showtime you want to update: ");
                     int id = sc.nextInt();
                     sc.nextLine();
 
+                    if (!controller.doesShowtimeExist(id)) {
+                        System.out.println("Showtime ID does not exist. Please try again.");
+                        break;
+                    }
+
+                    if (controller.hasBookingsForShowtime(id)) {
+                        System.out.println("Cannot update a showtime with existing bookings. Please try again.");
+                        break;
+                    }
+
                     System.out.println("Please enter new screen ID: ");
                     int newScreenId = sc.nextInt();
                     sc.nextLine();
+
+                    if (!controller.doesScreenExist(newScreenId)) {
+                        System.out.println("Screen ID does not exist. Please try again.");
+                        break;
+                    }
 
                     System.out.println("Please enter new movie title: ");
                     String title = sc.nextLine();
 
                     int newMovieId = controller.findMovieIdByTitle(title);
+                    if (newMovieId == -1) {
+                        System.out.println("Movie title does not exist. Please try again.");
+                        break;
+                    }
 
-                    LocalDate newShowtimeDate = LocalDate.now();
+                    LocalDate newShowtimeDate = null;
                     boolean invalidDate = true;
-                    while(invalidDate) {
-                        System.out.println("Please enter a date: ");
+                    while (invalidDate) {
+                        System.out.println("Please enter a new date (dd-MM-yyyy): ");
                         String date = sc.nextLine();
 
                         try {
                             newShowtimeDate = LocalDate.parse(date, dateFormatter);
-                            invalidDate = false;
+                            if (newShowtimeDate.isBefore(LocalDate.now())) {
+                                System.out.println("Date must be in the future. Please try again.");
+                            } else {
+                                invalidDate = false;
+                            }
                         } catch (DateTimeParseException e) {
                             System.out.println("Invalid date format. Please use dd-MM-yyyy.");
                         }
                     }
 
-                    LocalTime newStartTime = LocalTime.now();
-                    invalidDate = true;
-                    while(invalidDate) {
-                        System.out.println("Please enter a starting time: ");
+                    LocalTime newStartTime = null;
+                    boolean invalidTime = true;
+                    while (invalidTime) {
+                        System.out.println("Please enter a new starting time (HH:mm): ");
                         String time = sc.nextLine();
 
                         try {
                             newStartTime = LocalTime.parse(time, timeFormatter);
-                            invalidDate = false;
+                            if (newStartTime.isBefore(LocalTime.of(6, 0)) || newStartTime.isAfter(LocalTime.of(23, 59))) {
+                                System.out.println("Start time must be between 06:00 and 24:00. Please try again.");
+                            } else {
+                                invalidTime = false;
+                            }
                         } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use HH:mm.");
+                            System.out.println("Invalid time format. Please use HH:mm.");
                         }
                     }
 
-                    System.out.println("Please enter duration: ");
+                    System.out.println("Please enter a new duration (in minutes): ");
                     int newDuration = sc.nextInt();
                     sc.nextLine();
 
+                    if (newDuration <= 0 || newDuration > 200) {
+                        System.out.println("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                        break;
+                    }
+
                     controller.updateShowtime(id, newScreenId, newMovieId, newShowtimeDate, newStartTime, newDuration);
                     System.out.println("\nShowtime updated successfully!");
-
                     invalidOption = false;
                     break;
                 }
-                case "3": {
-                    //delete Showtime
+                case "3": { // Delete Showtime
                     controller.displayShowtimesStaff();
                     System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
                     int id = sc.nextInt();
                     sc.nextLine();
 
+                    if (!controller.doesShowtimeExist(id)) {
+                        System.out.println("Showtime ID does not exist. Please try again.");
+                        break;
+                    }
+
+                    if (controller.hasBookingsForShowtime(id)) {
+                        System.out.println("Cannot delete a showtime with existing bookings. Please try again.");
+                        break;
+                    }
+
                     controller.deleteShowtime(id);
                     System.out.println("\nShowtime deleted successfully!");
-
                     invalidOption = false;
                     break;
                 }
@@ -1028,6 +1106,7 @@ public class ConsoleApp {
             }
         }
     }
+
 
     /**
      * Presents the staff menu, allowing the logged-in staff member to perform actions such as

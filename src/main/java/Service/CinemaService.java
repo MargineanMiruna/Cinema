@@ -5,6 +5,7 @@ import Repository.IRepository;
 
 import java.awt.print.Book;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.*;
@@ -949,4 +950,57 @@ public class CinemaService {
 
 
     }
+
+    /**
+     * Checks if a screen exists in the repository by its ID.
+     *
+     * @param id the unique identifier of the screen to check
+     * @return true if the screen exists, false otherwise
+     */
+    public boolean doesScreenExist(int id) {
+        Map<Integer, Screen> allScreens = screenRepo.getAll();
+        return allScreens.containsKey(id);
+    }
+
+    /**
+     * Checks if a screen with the given ID has showtimes scheduled for the future.
+     *
+     * @param id the unique identifier of the screen
+     * @return true if the screen has future showtimes, false otherwise
+     */
+    public boolean hasFutureShowtimes(int id) {
+
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        LocalDateTime now = LocalDateTime.now();
+
+        return allShowtimes.values().stream()
+                .anyMatch(showtime -> showtime.getScreenId() == id && showtime.getStartTime().isAfter(LocalTime.from(now)));
+    }
+
+    /**
+     * Checks if a showtime exists in the repository by its ID.
+     *
+     * @param id the unique identifier of the showtime to check
+     * @return true if the showtime exists, false otherwise
+     */
+    public boolean doesShowtimeExist(int id) {
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        return allShowtimes.containsKey(id);
+    }
+
+    /**
+     * Checks if there are any bookings associated with a given showtime ID.
+     *
+     * @param id the ID of the showtime to check for bookings
+     * @return true if there are bookings for the given showtime ID, false otherwise
+     */
+    public boolean hasBookingsForShowtime(int id) {
+        Map<Integer,Booking> allBookings = bookingRepo.getAll();
+        if (allBookings == null) {
+            return false;
+        }
+        return allBookings.values().stream().anyMatch(booking -> booking.getShowtimeId() == id);
+
+    }
+
 }
