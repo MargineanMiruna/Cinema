@@ -1,5 +1,7 @@
 package Model;
 
+import java.util.Objects;
+
 /**
  * The seat class represents a seat within a screening environment, with a seat number and seat type.
  */
@@ -77,4 +79,22 @@ public class Seat implements HasId{
         String[] parts = csvLine.split(",");
         return new Seat(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]), SeatType.valueOf(parts[2]));
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Seat seat = (Seat) obj;
+        return id == seat.id &&
+                seatNr == seat.seatNr &&
+                type == seat.type;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, seatNr, type);
+    }
+
+
+
 }
