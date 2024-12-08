@@ -37,8 +37,6 @@ public class ConsoleApp {
         controller.add();
         controller.terminateMemberships();
         Scanner sc = new Scanner(System.in);
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-        DateTimeFormatter fmt2 = DateTimeFormatter.ofPattern("HH:mm");
         System.out.println("\n\u001B[1m" + "=======Welcome to the CinemApp!=======" + "\u001B[0m");
         boolean continueLoop = true;
 
@@ -224,7 +222,7 @@ public class ConsoleApp {
             String date = sc.nextLine();
 
             try {
-                LocalDate birthday = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                LocalDate birthday = LocalDate.parse(date, dateFormatter);
                 if (birthday.isAfter(LocalDate.now())) {
                     System.out.println("Birthdate cannot be in the future. Please try again.");
                 } else if (birthday.getYear() < 1900) {

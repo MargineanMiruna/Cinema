@@ -3,6 +3,8 @@ package Repository.Database;
 import Model.Movie;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,8 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Movie entities.
  */
 public class MovieDBRepository extends DataBaseRepository<Movie> {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     /**
      * Default constructor for MovieDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Movie data is created.
@@ -60,7 +64,7 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
      */
     @Override
     public void add(Movie obj) {
-        String addSQL = "INSERT INTO Movie (id, title, pg, genre, releaseDate) VALUES (" + obj.getId() + ", '" + obj.getTitle() + "', " + obj.getPg() + ", '" + obj.getGenre() + "', " + obj.getReleaseDate() + ");";
+        String addSQL = "INSERT INTO Movie (id, title, pg, genre, releaseDate) VALUES (" + obj.getId() + ", '" + obj.getTitle() + "', " + obj.getPg() + ", '" + obj.getGenre() + "', '" + obj.getReleaseDate() + "');";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeUpdate(addSQL);
@@ -81,7 +85,7 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
-            Movie obj = new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getBoolean("pg"), resultSet.getString("genre"), resultSet.getDate("releaseDate").toLocalDate());
+            Movie obj = new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getBoolean("pg"), resultSet.getString("genre"), LocalDate.parse(resultSet.getString("releaseDate"),dateFormatter));
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -111,7 +115,7 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
      */
     @Override
     public void update(Movie obj) {
-        String updateSQL = "UPDATE TABLE Movie SET title = " + obj.getTitle() + ", pg = " + obj.getPg() + ", genre = " + obj.getGenre() + ", releaseDate = " + obj.getReleaseDate() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE TABLE Movie SET title = '" + obj.getTitle() + "', pg = " + obj.getPg() + ", genre = '" + obj.getGenre() + "', releaseDate = '" + obj.getReleaseDate() + "' WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
@@ -135,7 +139,7 @@ public class MovieDBRepository extends DataBaseRepository<Movie> {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
-                Movie obj = new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getBoolean("pg"), resultSet.getString("genre"), resultSet.getDate("releaseDate").toLocalDate());
+                Movie obj = new Movie(resultSet.getInt("id"), resultSet.getString("title"), resultSet.getBoolean("pg"), resultSet.getString("genre"), LocalDate.parse(resultSet.getString("releaseDate"),dateFormatter));
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {

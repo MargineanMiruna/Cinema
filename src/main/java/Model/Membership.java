@@ -24,7 +24,7 @@ public abstract class Membership implements HasId {
     public Membership(int id, int customerId, LocalDate startDate, LocalDate endDate) {
         this.id = id;
         this.customerId = customerId;
-        this.startDate = LocalDate.now();
+        this.startDate = startDate;
         this.endDate = endDate;
     }
 

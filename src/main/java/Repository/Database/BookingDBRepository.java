@@ -3,6 +3,8 @@ package Repository.Database;
 import Model.Booking;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,6 +15,8 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for Booking entities.
  */
 public class BookingDBRepository extends DataBaseRepository<Booking> {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     /**
      * Default constructor for BookingDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing Booking data is created.
@@ -62,7 +66,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
      */
     @Override
     public void add(Booking obj) {
-        String addSQL = "INSERT INTO Booking (id, customerId, showtimeId, bookingDate, nrOfCustomers) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getShowtimeId() + ", " + obj.getDate() + ", " + obj.getNrOfCustomers() + ");";
+        String addSQL = "INSERT INTO Booking (id, customerId, showtimeId, bookingDate, nrOfCustomers) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getShowtimeId() + ", '" + obj.getDate() + "', " + obj.getNrOfCustomers() + ");";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeUpdate(addSQL);
@@ -95,7 +99,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
 
-            Booking obj = new Booking(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getInt("showtimeId"), resultSet.getDate("bookingDate").toLocalDate(), resultSet.getInt("nrOfCustomers"), ticketIds);
+            Booking obj = new Booking(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getInt("showtimeId"), LocalDate.parse(resultSet.getString("bookingDate"),dateFormatter), resultSet.getInt("nrOfCustomers"), ticketIds);
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -128,7 +132,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
      */
     @Override
     public void update(Booking obj) {
-        String updateSQL = "UPDATE Booking SET customerId = " + obj.getCustomerId() + ", showtimeId = " + obj.getShowtimeId() + ", bookingDate = " + obj.getDate() + ", nrOfCustomers = " + obj.getNrOfCustomers() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Booking SET customerId = " + obj.getCustomerId() + ", showtimeId = " + obj.getShowtimeId() + ", bookingDate = '" + obj.getDate() + "', nrOfCustomers = " + obj.getNrOfCustomers() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
@@ -163,7 +167,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
                     ticketIds.add(resultSet1.getInt("id"));
                 }
 
-                Booking obj = new Booking(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getInt("showtimeId"), resultSet.getDate("bookingDate").toLocalDate(), resultSet.getInt("nrOfCustomers"), ticketIds);
+                Booking obj = new Booking(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getInt("showtimeId"), LocalDate.parse(resultSet.getString("bookingDate"),dateFormatter), resultSet.getInt("nrOfCustomers"), ticketIds);
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {

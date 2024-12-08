@@ -27,24 +27,24 @@ public class Controller {
      * default entry point to initialize sample data for testing
      */
     public void add(){
-        cinemaService.addCustomer("Miruna", "Marginean", "miruna", LocalDate.of(2004,5,10));
-        cinemaService.addCustomer("Tea", "Nicola", "tea", LocalDate.of(2004,11,11));
-        cinemaService.addCustomer("Bence", "Molnar", "bence", LocalDate.of(2009,9,24));
+        cinemaService.addCustomer("Miruna", "Marginean", "miruna.marginean.2018@gmail.com", LocalDate.of(2004,5,10));
+        cinemaService.addCustomer("Tea", "Nicola", "tea.nicola1104@yahoo.ro", LocalDate.of(2004,11,11));
+        cinemaService.addCustomer("Bence", "Molnar", "mbence@outlook.com", LocalDate.of(2009,9,24));
 
-        cinemaService.addStaff("Alexandra","Olah","alexandra");
-        cinemaService.addStaff("Klara","Orban","klara");
+        cinemaService.addStaff("Alexandra","Olah","aleolah3110@gmail.com");
+        cinemaService.addStaff("Klara","Orban","oklara@gmail.com");
 
         cinemaService.addScreen(6,10,7);
         cinemaService.addScreen(12,4,8);
         cinemaService.addScreen(10,5,2);
 
-        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(1998,11,17));
-        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2024, 4, 25));
-        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 14));
+        cinemaService.addMovie("The Notebook", true, "romance", LocalDate.of(2004,6,25));
+        cinemaService.addMovie("Barbie", false, "comedy", LocalDate.of(2023, 7, 21));
+        cinemaService.addMovie("Joker", true, "thriller", LocalDate.of(2019, 10, 4));
 
         cinemaService.addShowtime(1,2, LocalDate.of(2025, 1, 5), LocalTime.of(12,45), 120);
-        cinemaService.addShowtime(2,3, LocalDate.of(2024,12,24), LocalTime.of(20, 30), 210);
-        cinemaService.addShowtime(2,1, LocalDate.of(2024,12,14), LocalTime.of(16,20), 190);
+        cinemaService.addShowtime(2,3, LocalDate.of(2024,12,24), LocalTime.of(20, 30), 135);
+        cinemaService.addShowtime(2,1, LocalDate.of(2024,12,14), LocalTime.of(16,20), 130);
 
     }
 

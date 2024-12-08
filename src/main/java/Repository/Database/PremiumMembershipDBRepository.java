@@ -3,6 +3,9 @@ package Repository.Database;
 import Model.PremiumMembership;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +14,8 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for PremiumMembership entities.
  */
 public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMembership> {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     /**
      * Default constructor for PremiumMembershipDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing PremiumMembership data is created.
@@ -60,7 +65,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
      */
     @Override
     public void add(PremiumMembership obj) {
-        String addSQL = "INSERT INTO PremiumMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getStartDate() + ", " + obj.getEndDate() + ");";
+        String addSQL = "INSERT INTO PremiumMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", '" + obj.getStartDate() + "', '" + obj.getEndDate() + "');";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeUpdate(addSQL);
@@ -81,7 +86,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
-            PremiumMembership obj = new PremiumMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getDate("startDate").toLocalDate(), resultSet.getDate("endDate").toLocalDate());
+            PremiumMembership obj = new PremiumMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), LocalDate.parse(resultSet.getString("startDate"), dateFormatter), LocalDate.parse(resultSet.getString("endDate"), dateFormatter));
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -111,7 +116,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
      */
     @Override
     public void update(PremiumMembership obj) {
-        String updateSQL = "UPDATE TABLE PremiumMembership SET customerId = " + obj.getCustomerId() + ", startDate = " + obj.getStartDate() + ", endDate = " + obj.getEndDate() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE TABLE PremiumMembership SET customerId = " + obj.getCustomerId() + ", startDate = '" + obj.getStartDate() + "', endDate = '" + obj.getEndDate() + "' WHERE id = " + obj.getId() + ";";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
@@ -135,7 +140,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
-                PremiumMembership obj = new PremiumMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getDate("startDate").toLocalDate(), resultSet.getDate("enddate").toLocalDate());
+                PremiumMembership obj = new PremiumMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), LocalDate.parse(resultSet.getString("startDate"), dateFormatter), LocalDate.parse(resultSet.getString("endDate"), dateFormatter));
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {

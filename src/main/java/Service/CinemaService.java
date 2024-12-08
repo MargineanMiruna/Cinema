@@ -749,7 +749,8 @@ public class CinemaService {
 
         for(Map.Entry<Integer, BasicMembership> entry : basicMembershipMap.entrySet()){
             if(entry.getValue().getEndDate() == LocalDate.now()) {
-                getCustomer(entry.getValue().getCustomerId()).setMembershipId(0);
+                Customer customerWithExpiredMembership = getCustomer(entry.getValue().getCustomerId());
+                updateCustomer(customerWithExpiredMembership.getId(), customerWithExpiredMembership.getFirstName(), customerWithExpiredMembership.getLastName(), customerWithExpiredMembership.getEmail(), customerWithExpiredMembership.getUnderaged(), -1);
                 deleteBasicMembership(entry.getKey());
             }
         }
@@ -758,8 +759,9 @@ public class CinemaService {
 
         for(Map.Entry<Integer, PremiumMembership> entry : premiumMembershipMap.entrySet()){
             if(entry.getValue().getEndDate() == LocalDate.now()) {
-                getCustomer(entry.getValue().getCustomerId()).setMembershipId(0);
-                deleteBasicMembership(entry.getKey());
+                Customer customerWithExpiredMembership = getCustomer(entry.getValue().getCustomerId());
+                updateCustomer(customerWithExpiredMembership.getId(), customerWithExpiredMembership.getFirstName(), customerWithExpiredMembership.getLastName(), customerWithExpiredMembership.getEmail(), customerWithExpiredMembership.getUnderaged(), -1);
+                deletePremiumMembership(entry.getKey());
             }
         }
     }

@@ -3,6 +3,8 @@ package Repository.Database;
 import Model.BasicMembership;
 
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +13,8 @@ import java.util.Map;
  * Extends the generic DataBaseRepository for BasicMembership entities.
  */
 public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembership> {
+    DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
     /**
      * Default constructor for BasicMembershipDBRepository.
      * Calls the superclass constructor and ensures the necessary table for storing BasicMembership data is created.
@@ -60,7 +64,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
      */
     @Override
     public void add(BasicMembership obj) {
-        String addSQL = "INSERT INTO BasicMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", " + obj.getStartDate() + ", " + obj.getEndDate() + ");";
+        String addSQL = "INSERT INTO BasicMembership (id, customerId, startDate, endDate) VALUES (" + obj.getId() + ", " + obj.getCustomerId() + ", '" + obj.getStartDate() + "', '" + obj.getEndDate() + "');";
         try {
             Statement addStatement = connection.createStatement();
             addStatement.executeUpdate(addSQL);
@@ -81,7 +85,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
         try {
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
-            BasicMembership obj = new BasicMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getDate("startDate").toLocalDate(), resultSet.getDate("endDate").toLocalDate());
+            BasicMembership obj = new BasicMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), LocalDate.parse(resultSet.getString("startDate"),dateFormatter), LocalDate.parse(resultSet.getString("endDate"),dateFormatter));
             return obj;
         } catch (SQLException e) {
             throw new RuntimeException(e);
@@ -111,7 +115,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
      */
     @Override
     public void update(BasicMembership obj) {
-        String updateSQL = "UPDATE BasicMembership SET customerId = " + obj.getCustomerId() + ", startDate = " + obj.getStartDate() + ", endDate = " + obj.getEndDate() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE BasicMembership SET customerId = " + obj.getCustomerId() + ", startDate = '" + obj.getStartDate() + "', endDate = '" + obj.getEndDate() + "' WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
@@ -135,7 +139,7 @@ public class BasicMembershipDBRepository extends DataBaseRepository<BasicMembers
             Statement readStatement = connection.createStatement();
             ResultSet resultSet = readStatement.executeQuery(readSQL);
             while (resultSet.next()) {
-                BasicMembership obj = new BasicMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), resultSet.getDate("startDate").toLocalDate(), resultSet.getDate("enddate").toLocalDate());
+                BasicMembership obj = new BasicMembership(resultSet.getInt("id"), resultSet.getInt("customerId"), LocalDate.parse(resultSet.getString("startDate"),dateFormatter), LocalDate.parse(resultSet.getString("endDate"),dateFormatter));
                 objects.put(obj.getId(), obj);
             }
         } catch (SQLException e) {
