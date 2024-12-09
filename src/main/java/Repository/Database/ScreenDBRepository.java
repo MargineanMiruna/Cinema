@@ -101,7 +101,7 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Screen WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM Screen WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -118,7 +118,7 @@ public class ScreenDBRepository extends DataBaseRepository<Screen> {
      */
     @Override
     public void update(Screen obj) {
-        String updateSQL = "UPDATE TABLE Screen SET nrStandardSeats = " + obj.getNrStandardSeats() + ", nrVipSeats = " + obj.getNrVipSeats()+ ", nrPremiumSeats = " + obj.getNrPremiumSeats() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Screen SET nrStandardSeats = " + obj.getNrStandardSeats() + ", nrVipSeats = " + obj.getNrVipSeats()+ ", nrPremiumSeats = " + obj.getNrPremiumSeats() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);

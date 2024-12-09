@@ -21,7 +21,7 @@ class CustomerDBRepositoryTest {
     Customer customer2;
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         try {
             connection = DriverManager.getConnection(DB_URL, "user", "password");
         } catch (SQLException e) {
@@ -30,14 +30,6 @@ class CustomerDBRepositoryTest {
         customerRepo = new CustomerDBRepository(connection);
         customer1 = new Customer(1, "John", "Doe", "john.doe@gamil.com", false, 1);
         customer2 = new Customer(2, "Jane", "Doe", "jane.doe@gamil.com", true, 2);
-
-        String createSQL = "CREATE TABLE IF NOT EXISTS Customer (id INT, firstName VARCHAR(100), lastName VARCHAR(100), email VARCHAR(100), underage INT, membershipId INT, PRIMARY KEY(id));";
-        try {
-            Statement createStatement = connection.createStatement();
-            createStatement.executeUpdate(createSQL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @AfterEach

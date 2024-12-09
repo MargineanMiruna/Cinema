@@ -21,7 +21,7 @@ class StaffDBRepositoryTest {
     Staff staff2;
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         try {
             connection = DriverManager.getConnection(DB_URL, "user", "password");
         } catch (SQLException e) {
@@ -30,14 +30,6 @@ class StaffDBRepositoryTest {
         staffRepo = new StaffDBRepository(connection);
         staff1 = new Staff(1, "John", "Doe", "john.doe@gmail.com");
         staff2 = new Staff(2, "Jane", "Doe", "jane.doe@gmail.com");
-
-        String createSQL = "CREATE TABLE IF NOT EXISTS Staff (id INT, firstName VARCHAR(100), lastName VARCHAR(100), email VARCHAR(100), PRIMARY KEY(id));";
-        try {
-            Statement createStatement = connection.createStatement();
-            createStatement.executeUpdate(createSQL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @AfterEach

@@ -114,7 +114,7 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
     @Override
     public void delete(int id) {
         String deleteSQL = "DELETE FROM Booking WHERE id = " + id + ";";
-        String deleteTicketsSQL = "DELETE FROM Tickets WHERE bookingId = " + id + ";";
+        String deleteTicketsSQL = "DELETE FROM Ticket WHERE bookingId = " + id + ";";
         try {
             Statement deleteTicketsStatement = connection.createStatement();
             deleteTicketsStatement.executeUpdate(deleteTicketsSQL);
@@ -133,12 +133,30 @@ public class BookingDBRepository extends DataBaseRepository<Booking> {
     @Override
     public void update(Booking obj) {
         String updateSQL = "UPDATE Booking SET customerId = " + obj.getCustomerId() + ", showtimeId = " + obj.getShowtimeId() + ", bookingDate = '" + obj.getDate() + "', nrOfCustomers = " + obj.getNrOfCustomers() + " WHERE id = " + obj.getId() + " ;";
+        String selectSQL = "SELECT id FROM Ticket;";
+        String updateTicketsSQL = "DELETE FROM Ticket WHERE id = ?;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
+
+            List<Integer> ticketIds = new ArrayList<>();
+            Statement readStatement = connection.createStatement();
+            ResultSet resultSet = readStatement.executeQuery(selectSQL);
+            while (resultSet.next()) {
+                if (!obj.getTickets().contains(resultSet.getInt("id"))) {
+                    ticketIds.add(resultSet.getInt("id"));
+                }
+            }
+
+            PreparedStatement updateTicketsStatement = connection.prepareStatement(updateTicketsSQL);
+            for(int i : ticketIds) {
+                updateTicketsStatement.setInt(1, i);
+                updateTicketsStatement.executeUpdate();
+            }
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+
     }
 
     /**

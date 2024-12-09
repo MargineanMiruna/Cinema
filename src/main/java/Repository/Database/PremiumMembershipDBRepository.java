@@ -100,7 +100,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE PremiumMembership WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM PremiumMembership WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -116,7 +116,7 @@ public class PremiumMembershipDBRepository extends DataBaseRepository<PremiumMem
      */
     @Override
     public void update(PremiumMembership obj) {
-        String updateSQL = "UPDATE TABLE PremiumMembership SET customerId = " + obj.getCustomerId() + ", startDate = '" + obj.getStartDate() + "', endDate = '" + obj.getEndDate() + "' WHERE id = " + obj.getId() + ";";
+        String updateSQL = "UPDATE PremiumMembership SET customerId = " + obj.getCustomerId() + ", startDate = '" + obj.getStartDate() + "', endDate = '" + obj.getEndDate() + "' WHERE id = " + obj.getId() + ";";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);

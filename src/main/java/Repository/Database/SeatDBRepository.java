@@ -98,7 +98,7 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Seat WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM Seat WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -114,7 +114,7 @@ public class SeatDBRepository extends DataBaseRepository<Seat> {
      */
     @Override
     public void update(Seat obj) {
-        String updateSQL = "UPDATE TABLE Seat SET seatNr = " + obj.getSeatNr() + ", seatType = " + obj.getType() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Seat SET seatNr = " + obj.getSeatNr() + ", seatType = '" + obj.getType() + "' WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);

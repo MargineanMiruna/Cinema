@@ -22,7 +22,7 @@ class MovieDBRepositoryTest {
     Movie movie2;
 
     @BeforeEach
-    void setUp() throws SQLException {
+    void setUp() {
         try {
             connection = DriverManager.getConnection(DB_URL, "user", "password");
         } catch (SQLException e) {
@@ -31,14 +31,6 @@ class MovieDBRepositoryTest {
         movieRepo = new MovieDBRepository(connection);
         movie1 = new Movie(1, "Harry Potter", false, "adventure", LocalDate.of(2001,10,30));
         movie2 = new Movie(2, "Titanic", true, "drama", LocalDate.of(2004,4,21));
-
-        String createSQL = "CREATE TABLE IF NOT EXISTS Movie (id INT, title VARCHAR(100), pg INT, genre VARCHAR(100), releaseDate DATE, PRIMARY KEY(id));";
-        try {
-            Statement createStatement = connection.createStatement();
-            createStatement.executeUpdate(createSQL);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @AfterEach

@@ -95,7 +95,7 @@ public class TicketDBRepository extends DataBaseRepository<Ticket> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Ticket WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM Ticket WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -111,7 +111,7 @@ public class TicketDBRepository extends DataBaseRepository<Ticket> {
      */
     @Override
     public void update(Ticket obj) {
-        String updateSQL = "UPDATE TABLE Ticket SET bookingId = " + obj.getBookingId() + ", screenId = " + obj.getScreenId() + ", seatNr = " + obj.getSeatNr() + ", price = " + obj.getPrice() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Ticket SET bookingId = " + obj.getBookingId() + ", screenId = " + obj.getScreenId() + ", seatNr = " + obj.getSeatNr() + ", price = " + obj.getPrice() + " WHERE id = " + obj.getId() + " ;";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
