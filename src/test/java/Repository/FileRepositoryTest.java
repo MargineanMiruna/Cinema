@@ -12,16 +12,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileRepositoryTest {
     String path = System.getProperty("user.dir") + "\\src\\test\\java\\Files\\";
-    FileRepository<Customer> customerRepo = new FileRepository<>(path + "customerTest.csv", Customer::fromCSV);
-    FileRepository<Staff> staffRepo = new FileRepository<>(path + "staffTest.csv", Staff::fromCSV);
-    FileRepository<Movie> movieRepo = new FileRepository<>(path + "movieTest.csv", Movie::fromCSV);
-    FileRepository<Booking> bookingRepo = new FileRepository<>(path + "bookingTest.csv", Booking::fromCSV);
-    FileRepository<Showtime> showtimeRepo = new FileRepository<>(path + "showtimeTest.csv", Showtime::fromCSV);
-    FileRepository<Screen> screenRepo = new FileRepository<>(path + "screenTest.csv", Screen::fromCSV);
-    FileRepository<Seat> seatRepo = new FileRepository<>(path + "seatTest.csv", Seat::fromCSV);
-    FileRepository<Ticket> ticketRepo = new FileRepository<>(path + "ticketTest.csv", Ticket::fromCSV);
-    FileRepository<BasicMembership> basicMembershipRepo = new FileRepository<>(path + "basicMembershipTest.csv", BasicMembership::fromCSV);
-    FileRepository<PremiumMembership> premiumMembershipRepo = new FileRepository<>(path + "premiumMembershipTest.csv", PremiumMembership::fromCSV);
+    FileRepository<Customer> customerRepo = new FileRepository<>(path + "customerTest1.csv", Customer::fromCSV);
+    FileRepository<Staff> staffRepo = new FileRepository<>(path + "staffTest1.csv", Staff::fromCSV);
+    FileRepository<Movie> movieRepo = new FileRepository<>(path + "movieTest1.csv", Movie::fromCSV);
+    FileRepository<Booking> bookingRepo = new FileRepository<>(path + "bookingTest1.csv", Booking::fromCSV);
+    FileRepository<Showtime> showtimeRepo = new FileRepository<>(path + "showtimeTest1.csv", Showtime::fromCSV);
+    FileRepository<Screen> screenRepo = new FileRepository<>(path + "screenTest1.csv", Screen::fromCSV);
+    FileRepository<Seat> seatRepo = new FileRepository<>(path + "seatTest1.csv", Seat::fromCSV);
+    FileRepository<Ticket> ticketRepo = new FileRepository<>(path + "ticketTest1.csv", Ticket::fromCSV);
+    FileRepository<BasicMembership> basicMembershipRepo = new FileRepository<>(path + "basicMembershipTest1.csv", BasicMembership::fromCSV);
+    FileRepository<PremiumMembership> premiumMembershipRepo = new FileRepository<>(path + "premiumMembershipTest1.csv", PremiumMembership::fromCSV);
 
     Customer customer1;
     Customer customer2;

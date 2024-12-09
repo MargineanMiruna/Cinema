@@ -1,2 +1,8 @@
 id,firstName,lastName,email,underaged,membershipId
 2,Jane,Doe,jane.doe@gamil.com,true,2
+3,Alice,Smith,alice.smith@example.com,true,-1
+4,John,Doe,john.doe@example.com,false,-1
+5,John,Doe,john.doe@example.com,false,-1
+6,Alice,Smith,alice.smith@example.com,true,-1
+7,John,Doe,john.doe@example.com,false,-1
+8,John,Doe,john.doe@example.com,false,-1
