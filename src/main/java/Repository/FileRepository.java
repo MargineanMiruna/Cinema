@@ -6,6 +6,7 @@ import Model.HasId;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -44,10 +45,18 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
      * @param objects The data to write to the file.
      */
     private void writeDataToFile(Map<Integer, T> objects) {
-        if(objects.isEmpty()) return;
-
         try (FileWriter writer = new FileWriter(filePath)) {
-            writer.write(String.join(",", objects.get(1).getHeader()) + "\n");
+            if(objects.isEmpty()) {
+                writer.write("");
+                return;
+            }
+
+            int availableKey = 1;
+            for(Map.Entry<Integer, T> entry : objects.entrySet()) {
+                availableKey = entry.getKey();
+                break;
+            }
+            writer.write(String.join(",", objects.get(availableKey).getHeader()) + "\n");
 
             for(Map.Entry<Integer, T> entry : objects.entrySet()){
                 writer.write(entry.getValue().toCSV() + "\n");
