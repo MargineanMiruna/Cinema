@@ -145,7 +145,6 @@ class FileRepositoryTest {
         assertEquals(customer2.getEmail(), customerRepo.getAll().get(2).getEmail());
         assertEquals(customer2.getUnderaged(), customerRepo.getAll().get(2).getUnderaged());
         assertEquals(customer2.getMembershipId(), customerRepo.getAll().get(2).getMembershipId());
-
     }
 
     @Test

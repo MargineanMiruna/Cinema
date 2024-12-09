@@ -92,7 +92,7 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      */
     @Override
     public void delete(int id) {
-        String deleteSQL = "DELETE FROM TABLE Staff WHERE id = " + id + ";";
+        String deleteSQL = "DELETE FROM Staff WHERE id = " + id + ";";
         try {
             Statement deleteStatement = connection.createStatement();
             deleteStatement.executeUpdate(deleteSQL);
@@ -108,7 +108,7 @@ public class StaffDBRepository extends DataBaseRepository<Staff> {
      */
     @Override
     public void update(Staff obj) {
-        String updateSQL = "UPDATE TABLE Staff SET firstName = " + obj.getFirstName() + ", lastName = " + obj.getLastName() + ", email = " + obj.getEmail() + " WHERE id = " + obj.getId() + " ;";
+        String updateSQL = "UPDATE Staff SET firstName = '" + obj.getFirstName() + "', lastName = '" + obj.getLastName() + "', email = '" + obj.getEmail() + "' WHERE id = " + obj.getId() + ";";
         try {
             Statement updateStatement = connection.createStatement();
             updateStatement.executeUpdate(updateSQL);
