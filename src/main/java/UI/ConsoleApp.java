@@ -2,6 +2,7 @@ package UI;
 
 import Controller.Controller;
 import Model.*;
+import Exception.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -86,8 +87,7 @@ public class ConsoleApp {
                                 break;
                             }
                             default: {
-                                System.out.println("Invalid input. Please try again.");
-                                break;
+                                throw new ValidationException("Invalid input. Please try again.");
                             }
                         }
                     }
@@ -127,8 +127,7 @@ public class ConsoleApp {
                                 break;
                             }
                             default: {
-                                System.out.println("Invalid input. Please try again.");
-                                break;
+                                throw new ValidationException("Invalid input. Please try again.");
                             }
                         }
                     }
@@ -140,8 +139,7 @@ public class ConsoleApp {
                     break;
                 }
                 default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
-                    break;
+                    throw new ValidationException("Invalid input. Please enter a number between 1-3!");
                 }
             }
         }
@@ -174,7 +172,7 @@ public class ConsoleApp {
             loggedCustomer = controller.logCustomer(email);
 
             if (loggedCustomer == null) {
-                System.out.println("No account found with the email: " + email + ". Please try again.");
+                throw new EntityNotFoundException("No account found with the email: " + email + ". Please try again.");
             }
         }
 
@@ -196,7 +194,7 @@ public class ConsoleApp {
             System.out.println("Please enter your first name: ");
             firstName = sc.nextLine();
             if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
-                System.out.println("First name must contain only letters and cannot be empty. Please try again.");
+                throw new ValidationException("First name must contain only letters and cannot be empty. Please try again.");
             } else {
                 break;
             }
@@ -207,7 +205,7 @@ public class ConsoleApp {
             System.out.println("Please enter your last name: ");
             lastName = sc.nextLine();
             if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
-                System.out.println("Last name must contain only letters and cannot be empty. Please try again.");
+                throw new ValidationException("Last name must contain only letters and cannot be empty. Please try again.");
             } else {
                 break;
             }
@@ -224,16 +222,16 @@ public class ConsoleApp {
             try {
                 LocalDate birthday = LocalDate.parse(date, dateFormatter);
                 if (birthday.isAfter(LocalDate.now())) {
-                    System.out.println("Birthdate cannot be in the future. Please try again.");
+                    throw new ValidationException("Birthdate cannot be in the future. Please try again.");
                 } else if (birthday.getYear() < 1900) {
-                    System.out.println("Birth year cannot be earlier than 1900. Please try again.");
+                    throw  new ValidationException("Birth year cannot be earlier than 1900. Please try again.");
                 } else {
                     controller.createCustomer(firstName, lastName, email, birthday);
                     System.out.println("\nAccount created successfully!");
                     invalidDate = false;
                 }
             } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                throw new ValidationException("Invalid date format. Please use dd-MM-yyyy.");
             }
         }
 
@@ -259,11 +257,11 @@ public class ConsoleApp {
                 if (controller.isShowtimeAvailable(showtimeId)) {
                     break;
                 } else {
-                    System.out.println("Invalid Showtime number. Please try again.");
+                    throw new ValidationException("Invalid Showtime number. Please try again.");
                 }
             } else {
-                System.out.println("Please enter a valid number for Showtime.");
                 sc.nextLine();
+                throw new ValidationException("Please enter a valid number for Showtime.");
             }
         }
 
@@ -282,11 +280,11 @@ public class ConsoleApp {
                     } else if (typeOfTickets >= 1 && typeOfTickets <= 3) {
                         break;
                     } else {
-                        System.out.println("Invalid ticket type. Please choose 1, 2, 3, or 0 to finish.");
+                        throw new ValidationException("Invalid ticket type. Please choose 1, 2, 3, or 0 to finish.");
                     }
                 } else {
-                    System.out.println("Please enter a valid number for ticket type.");
                     sc.nextLine();
+                    throw new ValidationException("Please enter a valid number for ticket type.");
                 }
             }
 

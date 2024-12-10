@@ -9,9 +9,11 @@ import org.junit.jupiter.api.Test;
 
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 class CinemaServiceTest {
@@ -822,15 +824,55 @@ void getShowtimeInMemory() {
 
 
     @Test
-    void getBasicMembership() {
+    void getBasicMembershipInMemory() {
+        int id = 1;
+        int customerId = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 1, 1);
+        BasicMembership basicMembership = new BasicMembership(id, customerId, startDate, endDate);
+        basicMembershipRepoInMemory.add(basicMembership);
+
+        BasicMembership fetchedMembership = basicMembershipRepoInMemory.getAll().get(id);
+
+        assertNotNull(fetchedMembership);
+        assertEquals(customerId, fetchedMembership.getCustomerId());
+        assertEquals(startDate, fetchedMembership.getStartDate());
+        assertEquals(endDate, fetchedMembership.getEndDate());
     }
 
     @Test
-    void updateBasicMembership() {
+    void testUpdateBasicMembershipInMemory() {
+        int id = 1;
+        int customerId = 1;
+        LocalDate oldStartDate = LocalDate.of(2024, 1, 1);
+        LocalDate oldEndDate = LocalDate.of(2025, 1, 1);
+        LocalDate newStartDate = LocalDate.of(2024, 2, 1);
+        LocalDate newEndDate = LocalDate.of(2025, 2, 1);
+        BasicMembership basicMembership = new BasicMembership(id, customerId, oldStartDate, oldEndDate);
+        basicMembershipRepoInMemory.add(basicMembership);
+
+        cinemaServiceInMemory.updateBasicMembership(id, customerId, newStartDate, newEndDate);
+
+        BasicMembership updatedMembership = basicMembershipRepoInMemory.read(id);
+        assertNotNull(updatedMembership);
+        assertEquals(newStartDate, updatedMembership.getStartDate());
+        assertEquals(newEndDate, updatedMembership.getEndDate());
     }
 
+
     @Test
-    void deleteBasicMembership() {
+    void testDeleteBasicMembershipInMemory() {
+        int id = 1;
+        int customerId = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 1, 1);
+        BasicMembership basicMembership = new BasicMembership(id, customerId, startDate, endDate);
+        basicMembershipRepoInMemory.add(basicMembership);
+
+        cinemaServiceInMemory.deleteBasicMembership(id);
+
+        BasicMembership deletedMembership = basicMembershipRepoInMemory.read(id);
+        assertNull(deletedMembership);
     }
 
     @Test
@@ -849,24 +891,124 @@ void getShowtimeInMemory() {
     }
 
     @Test
-    void getPremiumMembership() {
+    void testGetPremiumMembershipInMemory() {
+        int id = 1;
+        int customerId = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 1, 1);
+        PremiumMembership premiumMembership = new PremiumMembership(id, customerId, startDate, endDate);
+        premiumMembershipRepoInMemory.add(premiumMembership);
+
+        PremiumMembership fetchedMembership = premiumMembershipRepoInMemory.getAll().get(id);
+
+        assertNotNull(fetchedMembership);
+        assertEquals(customerId, fetchedMembership.getCustomerId());
+        assertEquals(startDate, fetchedMembership.getStartDate());
+        assertEquals(endDate, fetchedMembership.getEndDate());
+    }
+
+
+    @Test
+    void testUpdatePremiumMembershipInMemory() {
+        int id = 1;
+        int customerId = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 1, 1);
+        PremiumMembership premiumMembership = new PremiumMembership(id, customerId, startDate, endDate);
+        premiumMembershipRepoInMemory.add(premiumMembership);
+
+        LocalDate newStartDate = LocalDate.of(2025, 2, 1);
+        LocalDate newEndDate = LocalDate.of(2026, 2, 1);
+        PremiumMembership updatedMembership = new PremiumMembership(id, customerId, newStartDate, newEndDate);
+        premiumMembershipRepoInMemory.update(updatedMembership);
+
+        PremiumMembership fetchedMembership = premiumMembershipRepoInMemory.getAll().get(id);
+
+        assertNotNull(fetchedMembership);
+        assertEquals(customerId, fetchedMembership.getCustomerId());
+        assertEquals(newStartDate, fetchedMembership.getStartDate());
+        assertEquals(newEndDate, fetchedMembership.getEndDate());
+    }
+
+
+    @Test
+    void testDeletePremiumMembershipInMemory() {
+        int id = 1;
+        int customerId = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate endDate = LocalDate.of(2025, 1, 1);
+        PremiumMembership premiumMembership = new PremiumMembership(id, customerId, startDate, endDate);
+        premiumMembershipRepoInMemory.add(premiumMembership);
+
+        premiumMembershipRepoInMemory.delete(id);
+
+        PremiumMembership fetchedMembership = premiumMembershipRepoInMemory.getAll().get(id);
+
+        assertNull(fetchedMembership);
+    }
+
+
+    @Test
+    void testGetMembershipTypeInMemory() {
+        int customerIdWithBasic = 1;
+        int customerIdWithPremium = 2;
+        int customerIdWithoutMembership = 3;
+
+        BasicMembership basicMembership = new BasicMembership(1, customerIdWithBasic, LocalDate.of(2024, 1, 1), LocalDate.of(2025, 1, 1));
+        basicMembershipRepoInMemory.add(basicMembership);
+
+        PremiumMembership premiumMembership = new PremiumMembership(2, customerIdWithPremium, LocalDate.of(2024, 2, 1), LocalDate.of(2025, 2, 1));
+        premiumMembershipRepoInMemory.add(premiumMembership);
+
+        assertEquals(1, cinemaServiceInMemory.getMembershipType(customerIdWithBasic));
+        assertEquals(2, cinemaServiceInMemory.getMembershipType(customerIdWithPremium));
+        assertEquals(0, cinemaServiceInMemory.getMembershipType(customerIdWithoutMembership));
+    }
+
+
+    @Test
+    void testFilterShowtimesByPgUnderagedCustomer() {
+        Customer underagedCustomer = new Customer(1, "Alice", "Smith", "alice@example.com", true, 0);
+        customerRepoInMemory.add(underagedCustomer);
+
+        Movie pgMovie = new Movie(1, "PG-13 Movie", true, "Action", LocalDate.of(2023, 6, 15));
+        Movie nonPgMovie = new Movie(2, "Family Movie", false, "Comedy", LocalDate.of(2023, 8, 20));
+        movieRepoInMemory.add(pgMovie);
+        movieRepoInMemory.add(nonPgMovie);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        Map<Integer, Showtime> filteredShowtimes = cinemaServiceInMemory.filterShowtimesByPg(underagedCustomer);
+        assertNotNull(filteredShowtimes);
+        assertEquals(1, filteredShowtimes.size());
+        assertTrue(filteredShowtimes.containsKey(2));
     }
 
     @Test
-    void updatePremiumMembership() {
+    void testFilterShowtimesByPgAdultCustomer() {
+        Customer adultCustomer = new Customer(2, "Bob", "Jones", "bob@example.com", false, 0);
+        customerRepoInMemory.add(adultCustomer);
+
+        Movie pgMovie = new Movie(1, "PG-13 Movie", true, "Action", LocalDate.of(2023, 6, 15));
+        Movie nonPgMovie = new Movie(2, "Family Movie", false, "Comedy", LocalDate.of(2023, 8, 20));
+        movieRepoInMemory.add(pgMovie);
+        movieRepoInMemory.add(nonPgMovie);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        Map<Integer, Showtime> allShowtimes = cinemaServiceInMemory.filterShowtimesByPg(adultCustomer);
+        assertNotNull(allShowtimes);
+        assertEquals(2, allShowtimes.size());
+        assertTrue(allShowtimes.containsKey(1));
+        assertTrue(allShowtimes.containsKey(2));
     }
 
-    @Test
-    void deletePremiumMembership() {
-    }
-
-    @Test
-    void getMembershipType() {
-    }
-
-    @Test
-    void filterShowtimesByPg() {
-    }
 
     @Test
     void displayMoviesStaff() {
