@@ -5,6 +5,7 @@ import Model.*;
 import Exception.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -223,8 +224,20 @@ public class ConsoleApp {
             }
         }
 
-        System.out.println("Please enter your email: ");
-        String email = sc.nextLine();
+        String email = "";
+        while (true) {
+            System.out.println("Please enter your email: ");
+            email = sc.nextLine();
+            try {
+                if (email.isEmpty() || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+                    throw new ValidationException("Email must respect the email format and cannot be empty. Please try again.");
+                } else {
+                    break;
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
+            }
+        }
 
         boolean invalidDate = true;
         while (invalidDate) {
@@ -467,31 +480,35 @@ public class ConsoleApp {
      */
     public void displayShowtimes(Customer loggedCustomer) {
         Scanner sc = new Scanner(System.in);
-        System.out.println("\n=====================================");
-        System.out.println("""
-        Display:
-        1. All showtimes
-        2. Showtimes filtered by date
-        3. Showtimes filtered by movie
-        4. Showtimes sorted by duration
-        5. Showtimes sorted by date
-        Enter your choice:""");
 
-        try {
-            if (!sc.hasNextInt()) {
-                throw new ValidationException("Invalid input. Please enter a number between 1 and 5.");
+        int showtimesDisplayOption = 1;
+        while (true) {
+            System.out.println("\n=====================================");
+            System.out.println("""
+                        Display:
+                        1. All showtimes
+                        2. Showtimes filtered by date
+                        3. Showtimes filtered by movie
+                        4. Showtimes sorted by duration
+                        5. Showtimes sorted by date
+                        Enter your choice:""");
+
+            try {
+                if (!sc.hasNextInt()) {
+                    throw new ValidationException("Invalid input. Please enter a number between 1 and 5.");
+                } else {
+                    showtimesDisplayOption = sc.nextInt();
+                    sc.nextLine();
+                    break;
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
+                sc.nextLine();
             }
-        } catch (ValidationException e) {
-            System.out.println(e.getMessage());
-            sc.nextLine();
-            return;
         }
 
-        int showtimesId = sc.nextInt();
-        sc.nextLine();
-
         try {
-            switch (showtimesId) {
+            switch (showtimesDisplayOption) {
                 case 1: {
                     controller.displayShowtimesFilteredByPg(loggedCustomer);
                     break;
@@ -503,9 +520,17 @@ public class ConsoleApp {
                         String date = sc.nextLine();
                         try {
                             date1 = LocalDate.parse(date, dateFormatter); // Parsăm data
-                            controller.displayShowtimesFilteredByDate(loggedCustomer, date1);
+                            if(date1.isBefore(LocalDate.now())) {
+                                throw new ValidationException("Date is in the past. Please enter a future date.");
+                            }
+                            if (controller.displayShowtimesFilteredByDate(loggedCustomer, date1).isEmpty()) {
+                                throw new EntityNotFoundException("Please try another date.");
+                            }
                         } catch (DateTimeParseException e) {
                             System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        } catch (EntityNotFoundException | ValidationException e) {
+                            System.out.println(e.getMessage());
+                            date1 = null;
                         }
                     }
                     break;
@@ -517,7 +542,9 @@ public class ConsoleApp {
                         movieTitle = sc.nextLine();
                         try {
                             if (controller.doesMovieExist(movieTitle)) {
-                                controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle);
+                                if (controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle).isEmpty()) {
+                                    throw new EntityNotFoundException("Please try another movie.");
+                                }
                                 break;
                             } else {
                                 throw new EntityNotFoundException("The movie \"" + movieTitle + "\" does not exist. Please try again.");
@@ -680,6 +707,8 @@ public class ConsoleApp {
                 if (email.isEmpty() || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
                     throw new ValidationException("Email must respect the email format and cannot be empty. Please try again.");
                 } else {
+                    controller.createStaff(firstName, lastName, email);
+                    System.out.println("\nAccount created successfully!");
                     break;
                 }
             } catch (ValidationException e) {
@@ -707,22 +736,24 @@ public class ConsoleApp {
                 switch (option) {
                     case "1": {
                         // Adaugare Film
-                        System.out.println("\nPlease enter movie title: ");
-                        String title = sc.nextLine().trim();
 
-                        try {
-                            if (title.isEmpty()) {
-                                throw new ValidationException("Movie title cannot be empty. Please try again.");
+                        String title = "";
+                        while (true) {
+                            System.out.println("\nPlease enter movie title: ");
+                            title = sc.nextLine().trim();
+                            try {
+                                if (title.isEmpty()) {
+                                    throw new ValidationException("Movie title cannot be empty. Please try again.");
+                                } else break;
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
-                        System.out.println("Please enter movie PG (true/false): ");
                         boolean pg = false;
                         boolean validPg = false;
                         while (!validPg) {
+                            System.out.println("Please enter movie PG (true/false): ");
                             String pgInput = sc.nextLine().trim().toLowerCase();
                             try {
                                 if (pgInput.equals("true")) {
@@ -739,27 +770,26 @@ public class ConsoleApp {
                             }
                         }
 
-                        System.out.println("Please enter movie genre: ");
-                        String genre = sc.nextLine().trim();
-
-                        try {
-                            if (genre.isEmpty()) {
-                                throw new ValidationException("Movie genre cannot be empty. Please try again.");
+                        String genre = "";
+                        while (true) {
+                            System.out.println("Please enter movie genre: ");
+                            genre = sc.nextLine().trim();
+                            try {
+                                if (genre.isEmpty()) {
+                                    throw new ValidationException("Movie genre cannot be empty. Please try again.");
+                                } else break;
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
                         boolean invalidTime = true;
+                        LocalDate releaseDate = null;
                         while (invalidTime) {
                             System.out.println("Please enter movie release date (dd-MM-yyyy): ");
                             String date = sc.nextLine().trim();
-
                             try {
-                                LocalDate releaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                                controller.addMovie(title, pg, genre, releaseDate);
-                                System.out.println("\nMovie added successfully!");
+                                releaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
                                 invalidTime = false;
 
                             } catch (DateTimeParseException e) {
@@ -767,27 +797,40 @@ public class ConsoleApp {
                             }
                         }
 
+                        controller.addMovie(title, pg, genre, releaseDate);
+                        System.out.println("\nMovie added successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now());
                         invalidOption = false;
                         break;
                     }
                     case "2": {
                         //modificare film
                         controller.displayMoviesStaff();
-                        System.out.println("\nPlease enter title of the movie you want to update: ");
-                        String title = sc.nextLine().trim();
 
-                        try {
-                            if (!controller.doesMovieExist(title)) {
-                                throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                        String title = "";
+                        while (true) {
+                            System.out.println("\nPlease enter title of the movie you want to update: ");
+                            title = sc.nextLine().trim();
+                            try {
+                                if (!controller.doesMovieExist(title)) {
+                                    throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                                } else {
+                                    int movieId = controller.findMovieIdByTitle(title);
+                                    if (controller.hasAssignedShowtimesforMovie(movieId)) {
+                                        throw new BusinessLogicException("This movie has showtimes already scheduled. Cannot be updated.");
+                                    } else break;
+                                }
+                            } catch (EntityNotFoundException e) {
+                                System.out.println(e.getMessage());
+                            } catch (BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                                return;
                             }
-                        } catch (EntityNotFoundException e) {
-                            System.out.println(e.getMessage());
                         }
 
-                        System.out.println("Please enter new PG (true/false): ");
                         boolean newPg = false;
                         boolean validPg = false;
                         while (!validPg) {
+                            System.out.println("Please enter new PG (true/false): ");
                             String pgInput = sc.nextLine().trim().toLowerCase();
                             try {
                                 if (pgInput.equals("true")) {
@@ -804,53 +847,66 @@ public class ConsoleApp {
                             }
                         }
 
-                        System.out.println("Please enter new genre: ");
-                        String newGenre = sc.nextLine().trim();
-
-                        try {
-                            if (newGenre.isEmpty()) {
-                                throw new ValidationException("Genre cannot be empty. Please try again.");
+                        String newGenre = "";
+                        while (true) {
+                            System.out.println("Please enter new genre: ");
+                            newGenre = sc.nextLine().trim();
+                            try {
+                                if (newGenre.isEmpty()) {
+                                    throw new ValidationException("Genre cannot be empty. Please try again.");
+                                } else break;
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
-                        boolean invalidTime = true;
-                        while (invalidTime) {
+                        boolean invalidDate = true;
+                        LocalDate newReleaseDate = null;
+                        while (invalidDate) {
                             System.out.println("Please enter new release date (dd-MM-yyyy): ");
                             String date = sc.nextLine().trim();
-
                             try {
-                                LocalDate newReleaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                                controller.updateMovie(title, newPg, newGenre, newReleaseDate);
-                                System.out.println("\nMovie updated successfully!");
-                                invalidTime = false;
+                                newReleaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                invalidDate = false;
 
                             } catch (DateTimeParseException e) {
                                 System.out.println("Invalid date format. Please use dd-MM-yyyy.");
                             }
                         }
 
+                        controller.updateMovie(title, newPg, newGenre, newReleaseDate);
+                        System.out.println("\nMovie updated successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
                         invalidOption = false;
                         break;
                     }
                     case "3": {
                         //stergere film
                         controller.displayMoviesStaff();
-                        System.out.println("\nPlease enter title of the movie you want to delete: ");
-                        String title = sc.nextLine().trim();
 
-                        try {
-                            if (!controller.doesMovieExist(title)) {
-                                throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                        String title = "";
+                        while (true) {
+                            System.out.println("\nPlease enter title of the movie you want to delete: ");
+                            title = sc.nextLine().trim();
+                            try {
+                                if (!controller.doesMovieExist(title)) {
+                                    throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                                } else {
+                                    int movieId = controller.findMovieIdByTitle(title);
+                                    if (controller.hasAssignedShowtimesforMovie(movieId)) {
+                                        throw new BusinessLogicException("This movie has showtimes already scheduled. Cannot be updated.");
+                                    } else {
+                                        controller.deleteMovie(title);
+                                        System.out.println("\nMovie deleted successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
+                                        break;
+                                    }
+                                }
+                            } catch (EntityNotFoundException e) {
+                                System.out.println(e.getMessage());
+                            } catch (BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                                return;
                             }
-                        } catch (EntityNotFoundException e) {
-                            System.out.println(e.getMessage());
                         }
-
-                        controller.deleteMovie(title);
-                        System.out.println("\nMovie deleted successfully!");
 
                         invalidOption = false;
                         break;
@@ -893,10 +949,11 @@ public class ConsoleApp {
                             System.out.println("Please enter the number of premium seats (0-199): ");
                             nrPremiumSeats = sc.nextInt();
                             sc.nextLine();
-
                             try {
                                 if ((nrStandardSeats > 0 || nrVipSeats > 0 || nrPremiumSeats > 0) &&
                                         nrStandardSeats <= 199 && nrVipSeats <= 199 && nrPremiumSeats <= 199) {
+                                    controller.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
+                                    System.out.println("\nScreen added successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
                                     break;
                                 } else {
                                     throw new ValidationException("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
@@ -906,8 +963,6 @@ public class ConsoleApp {
                             }
                         }
 
-                        controller.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
-                        System.out.println("\nScreen added successfully!");
                         invalidOption = false;
                         break;
                     }
@@ -919,17 +974,20 @@ public class ConsoleApp {
                             System.out.println("\nPlease enter the ID of the screen you want to update: ");
                             id = sc.nextInt();
                             sc.nextLine();
-
                             try {
                                 if (controller.doesScreenExist(id)) {
+                                    if (controller.hasAssignedShowtimesForScreen(id)) {
+                                        throw new BusinessLogicException("This screen has showtimes scheduled. Cannot be updated.");
+                                    }
                                     break;
-                                } else if (controller.hasFutureShowtimes(id)) {
-                                    throw new BusinessLogicException("This screen has showtimes scheduled in the future. Cannot update until they are completed.");
                                 } else {
                                     throw new EntityNotFoundException("No screen found with that ID. Please try again.");
                                 }
-                            } catch (EntityNotFoundException | BusinessLogicException e) {
+                            } catch (EntityNotFoundException e) {
                                 System.out.println(e.getMessage());
+                            } catch (BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                                return;
                             }
                         }
 
@@ -942,10 +1000,12 @@ public class ConsoleApp {
                             System.out.println("Please enter new number of premium seats (0-199): ");
                             newNrPremiumSeats = sc.nextInt();
                             sc.nextLine();
-
                             try {
                                 if ((newNrStandardSeats > 0 || newNrVipSeats > 0 || newNrPremiumSeats > 0) &&
                                         newNrStandardSeats <= 199 && newNrVipSeats <= 199 && newNrPremiumSeats <= 199) {
+                                    List<Seat> seats = new ArrayList<>();
+                                    controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats, seats);
+                                    System.out.println("\nScreen updated successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
                                     break;
                                 } else {
                                     throw new ValidationException("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
@@ -955,36 +1015,34 @@ public class ConsoleApp {
                             }
                         }
 
-                        List<Seat> seats = new ArrayList<>();
-                        controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats, seats);
-                        System.out.println("\nScreen updated successfully!");
                         invalidOption = false;
                         break;
                     }
                     case "3": { // Delete Screen
                         controller.displayScreensStaff();
                         int id;
-
                         while (true) {
                             System.out.println("\nPlease enter the ID of the screen you want to delete: ");
                             id = sc.nextInt();
                             sc.nextLine();
-
                             try {
                                 if (!controller.doesScreenExist(id)) {
                                     throw new EntityNotFoundException("No screen found with that ID. Please try again.");
-                                } else if (controller.hasFutureShowtimes(id)) {
-                                    throw new BusinessLogicException("This screen has showtimes scheduled in the future. Cannot delete until they are completed.");
+                                } else if (controller.hasAssignedShowtimesForScreen(id)) {
+                                    throw new BusinessLogicException("This screen has showtimes already scheduled. Cannot be deleted.");
                                 } else {
+                                    controller.deleteScreen(id);
+                                    System.out.println("\nScreen deleted successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
                                     break;
                                 }
-                            } catch (EntityNotFoundException | BusinessLogicException e) {
+                            } catch (EntityNotFoundException e) {
                                 System.out.println(e.getMessage());
+                            } catch (BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                                return;
                             }
                         }
 
-                        controller.deleteScreen(id);
-                        System.out.println("\nScreen deleted successfully!");
                         invalidOption = false;
                         break;
                     }
@@ -1017,28 +1075,38 @@ public class ConsoleApp {
             try {
                 switch (option) {
                     case "1": { // Add Showtime
-                        System.out.println("\nPlease enter screen ID: ");
-                        int screenId = sc.nextInt();
-                        sc.nextLine();
-
-                        try {
-                            if (!controller.doesScreenExist(screenId)) {
-                                throw new EntityNotFoundException("No screen found with that ID. Please try again.");
+                        int screenId = 0;
+                        while (true) {
+                            System.out.println("\nPlease enter screen ID: ");
+                            screenId = sc.nextInt();
+                            sc.nextLine();
+                            try {
+                                if (!controller.doesScreenExist(screenId)) {
+                                    throw new EntityNotFoundException("No screen found with that ID. Please try again.");
+                                } else break;
+                            } catch (EntityNotFoundException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (EntityNotFoundException e) {
-                            System.out.println(e.getMessage());
                         }
 
-                        System.out.println("Please enter movie title: ");
-                        String title = sc.nextLine();
-
-                        int movieId = controller.findMovieIdByTitle(title);
-                        try {
-                            if (movieId == -1) {
-                                throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                        String title = "";
+                        int movieId;
+                        while (true) {
+                            System.out.println("Please enter movie title: ");
+                            title = sc.nextLine();
+                            try {
+                                if (title.isEmpty()) {
+                                    throw new ValidationException("Movie title cannot be empty. Please try again.");
+                                }
+                                else {
+                                    movieId = controller.findMovieIdByTitle(title);
+                                    if (movieId == -1) {
+                                        throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                                    } else break;
+                                }
+                            } catch (EntityNotFoundException | ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (EntityNotFoundException e) {
-                            System.out.println(e.getMessage());
                         }
 
                         LocalDate showtimeDate = null;
@@ -1046,7 +1114,6 @@ public class ConsoleApp {
                         while (invalidDate) {
                             System.out.println("Please enter a date (dd-MM-yyyy): ");
                             String date = sc.nextLine();
-
                             try {
                                 showtimeDate = LocalDate.parse(date, dateFormatter);
                                 if (showtimeDate.isBefore(LocalDate.now())) {
@@ -1066,7 +1133,6 @@ public class ConsoleApp {
                         while (invalidTime) {
                             System.out.println("Please enter a starting time (HH:mm): ");
                             String time = sc.nextLine();
-
                             try {
                                 startTime = LocalTime.parse(time, timeFormatter);
                                 if (startTime.isBefore(LocalTime.of(6, 0)) || startTime.isAfter(LocalTime.of(23, 59))) {
@@ -1081,65 +1147,78 @@ public class ConsoleApp {
                             }
                         }
 
-                        System.out.println("Please enter duration (in minutes): ");
-                        int duration = sc.nextInt();
-                        sc.nextLine();
-
-                        try {
-                            if (duration <= 0 || duration > 200) {
-                                throw new ValidationException("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                        int duration;
+                        while(true) {
+                            System.out.println("Please enter duration (in minutes): ");
+                            duration = sc.nextInt();
+                            sc.nextLine();
+                            try {
+                                if (duration <= 0 || duration > 200) {
+                                    throw new ValidationException("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                                } else break;
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
                         controller.addShowtime(screenId, movieId, showtimeDate, startTime, duration);
-                        System.out.println("\nShowtime added successfully!");
+                        System.out.println("\nShowtime added successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
                         invalidOption = false;
                         break;
                     }
                     case "2": { // Update Showtime
                         controller.displayShowtimesStaff();
-                        System.out.println("\nPlease enter the ID of the showtime you want to update: ");
-                        int id = sc.nextInt();
-                        sc.nextLine();
 
-                        try {
-                            if (!controller.doesShowtimeExist(id)) {
-                                throw new ValidationException("No showtime found with that ID. Please try again.");
-                            } else if (controller.hasBookingsForShowtime(id)) {
-                                throw new BusinessLogicException("Cannot update a showtime with existing bookings. Please try again.");
+                        int id;
+                        while (true) {
+                            System.out.println("\nPlease enter the ID of the showtime you want to update: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
+                            try {
+                                if (!controller.doesShowtimeExist(id)) {
+                                    throw new ValidationException("No showtime found with that ID. Please try again.");
+                                } else if (controller.hasBookingsForShowtime(id)) {
+                                    throw new BusinessLogicException("Cannot update a showtime with existing bookings. Please try again.");
+                                } else break;
+                            } catch (ValidationException | BusinessLogicException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException | BusinessLogicException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
-                        System.out.println("Please enter new screen ID: ");
-                        int newScreenId = sc.nextInt();
-                        sc.nextLine();
-
-                        try {
-                            if (!controller.doesScreenExist(newScreenId)) {
-                                throw new ValidationException("No screen found with that ID. Please try again.");
+                        int newScreenId;
+                        while (true) {
+                            System.out.println("Please enter new screen ID: ");
+                            newScreenId = sc.nextInt();
+                            sc.nextLine();
+                            try {
+                                if (!controller.doesScreenExist(newScreenId)) {
+                                    throw new ValidationException("No screen found with that ID. Please try again.");
+                                } else break;
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
-                        System.out.println("Please enter new movie title: ");
-                        String title = sc.nextLine();
-
-                        int newMovieId = controller.findMovieIdByTitle(title);
-                        try {
-                            if (newMovieId == -1) {
-                                throw new ValidationException("No movie found with that title. Please try again.");
+                        String title = "";
+                        int newMovieId;
+                        while (true) {
+                            System.out.println("Please enter new movie title: ");
+                            title = sc.nextLine();
+                            try {
+                                if (title.isEmpty()) {
+                                    throw new ValidationException("Movie title cannot be empty. Please try again.");
+                                } else {
+                                    newMovieId = controller.findMovieIdByTitle(title);
+                                    if (newMovieId == -1) {
+                                        throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                                    } else break;
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            } catch (EntityNotFoundException e) {
+                                System.out.println(e.getMessage());
+                                return;
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
                         LocalDate newShowtimeDate = null;
@@ -1147,7 +1226,6 @@ public class ConsoleApp {
                         while (invalidDate) {
                             System.out.println("Please enter a new date (dd-MM-yyyy): ");
                             String date = sc.nextLine();
-
                             try {
                                 newShowtimeDate = LocalDate.parse(date, dateFormatter);
                                 if (newShowtimeDate.isBefore(LocalDate.now())) {
@@ -1182,43 +1260,50 @@ public class ConsoleApp {
                             }
                         }
 
-                        System.out.println("Please enter a new duration (in minutes): ");
-                        int newDuration = sc.nextInt();
-                        sc.nextLine();
-
-                        try {
-                            if (newDuration <= 0 || newDuration > 200) {
-                                throw new ValidationException("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                        int newDuration;
+                        while (true) {
+                            System.out.println("Please enter a new duration (in minutes): ");
+                            newDuration = sc.nextInt();
+                            sc.nextLine();
+                            try {
+                                if (newDuration <= 0 || newDuration > 200) {
+                                    throw new ValidationException("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                                } else break;
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
                             }
-                        } catch (ValidationException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
                         controller.updateShowtime(id, newScreenId, newMovieId, newShowtimeDate, newStartTime, newDuration);
-                        System.out.println("\nShowtime updated successfully!");
+                        System.out.println("\nShowtime updated successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
                         invalidOption = false;
                         break;
                     }
                     case "3": { // Delete Showtime
                         controller.displayShowtimesStaff();
-                        System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
-                        int id = sc.nextInt();
-                        sc.nextLine();
-
-                        try {
-                            if (!controller.doesShowtimeExist(id)) {
-                                throw new ValidationException("No showtime found with that ID. Please try again.");
-                            } else if (controller.hasBookingsForShowtime(id)) {
-                                throw new BusinessLogicException("Cannot delete a showtime with existing bookings. Please try again.");
+                        int id;
+                        while (true) {
+                            System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
+                            try {
+                                if (!controller.doesShowtimeExist(id)) {
+                                    throw new ValidationException("No showtime found with that ID. Please try again.");
+                                } else if (controller.hasBookingsForShowtime(id)) {
+                                    throw new BusinessLogicException("Cannot delete a showtime with existing bookings. Please try again.");
+                                } else {
+                                    controller.deleteShowtime(id);
+                                    System.out.println("\nShowtime deleted successfully by " + loggedStaff.getFirstName() + " " + loggedStaff.getLastName() + " on " + LocalDate.now() + ".");
+                                    break;
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            } catch (BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                                return;
                             }
-                        } catch (ValidationException | BusinessLogicException e) {
-                            System.out.println(e.getMessage());
-                            break;
                         }
 
-                        controller.deleteShowtime(id);
-                        System.out.println("\nShowtime deleted successfully!");
                         invalidOption = false;
                         break;
                     }

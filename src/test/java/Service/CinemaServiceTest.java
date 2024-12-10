@@ -1450,16 +1450,15 @@ void getShowtimeInMemory() {
         showtimeRepoInMemory.add(showtime2);
         showtimeRepoInMemory.add(showtime3);
 
-        boolean hasFutureShowtimesScreen1 = cinemaServiceInMemory.hasFutureShowtimes(1);
+        boolean hasFutureShowtimesScreen1 = cinemaServiceInMemory.hasAssignedShowtimesForScreen(1);
         assertTrue(hasFutureShowtimesScreen1);
 
-        boolean hasFutureShowtimesScreen2 = cinemaServiceInMemory.hasFutureShowtimes(2);
+        boolean hasFutureShowtimesScreen2 = cinemaServiceInMemory.hasAssignedShowtimesForScreen(2);
         assertTrue(hasFutureShowtimesScreen2);
 
-        boolean hasFutureShowtimesNonExistingScreen = cinemaServiceInMemory.hasFutureShowtimes(3);
+        boolean hasFutureShowtimesNonExistingScreen = cinemaServiceInMemory.hasAssignedShowtimesForScreen(3);
         assertFalse(hasFutureShowtimesNonExistingScreen);
     }
-
 
     @Test
     void doesShowtimeExistInMemory() {

@@ -11,12 +11,13 @@ import java.awt.print.Book;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 class Main {
     public static void main(String[] args) {
         Connection connection;
-        //final String DB_URL = "jdbc:sqlite:D:/Facultate/Semestrul3/MAP/Cinema-Management-Project/cinemaDB.db";
-        final String DB_URL = "jdbc:sqlite:C:/Users/aleol/Facultate/Sem3/FP/Cinema-Management-Project/cinemaDB.db";
+        final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/main/java/Files/cinemaDB.db";
 
         try {
             connection = DriverManager.getConnection(DB_URL, "user", "password");

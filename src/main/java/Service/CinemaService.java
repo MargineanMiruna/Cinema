@@ -583,7 +583,7 @@ public class CinemaService {
         if(customer.getUnderaged()) {
             Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
             for(Map.Entry<Integer, Showtime> entry : unfilteredShowtimes.entrySet()) {
-                if(!movieRepo.read(entry.getValue().getMovieId()).getPg())
+                if(!movieRepo.read(entry.getValue().getMovieId()).getPg() && (entry.getValue().getDate().isAfter(LocalDate.now()) || (entry.getValue().getDate().isBefore(LocalDate.now())&&entry.getValue().getStartTime().isAfter(LocalTime.now().plusMinutes(10)))))
                     filteredShowtimes.put(entry.getKey(), entry.getValue());
             }
 
@@ -616,7 +616,7 @@ public class CinemaService {
      * @return a map of all screens
      */
     public Map<Integer, Screen> displayScreensStaff(){
-        Map<Integer, Screen> allscreens= screenRepo.getAll();
+        Map<Integer, Screen> allscreens = screenRepo.getAll();
         return allscreens;
     }
 
@@ -810,7 +810,6 @@ public class CinemaService {
         }
 
         return filteredShowtimes;
-
     }
 
     /**
@@ -872,8 +871,7 @@ public class CinemaService {
      *         the showtime IDs (Integer), and the values are the corresponding Showtime objects.
      *         If no showtimes are found for the customer, an empty map is returned.
      */
-    public Map<Integer,Showtime> sortShowtimesByDuration(Customer customer)
-    {
+    public Map<Integer,Showtime> sortShowtimesByDuration(Customer customer) {
         Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
         List<Map.Entry<Integer, Showtime>> list = new ArrayList<>(allShowtimes.entrySet());
         list.sort(Comparator.comparing(entry -> entry.getValue().getDuration()));
@@ -884,7 +882,6 @@ public class CinemaService {
         }
 
         return sortedShowtimes;
-
     }
 
     /**
@@ -921,7 +918,6 @@ public class CinemaService {
     public boolean isShowtimeAvailable(int showtimeId) {
         Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
         return allShowtimes.containsKey(showtimeId);
-
     }
 
     /**
@@ -942,7 +938,6 @@ public class CinemaService {
                     return true;  // the seat is available if it is the list
                 }
             }
-
         }
       return false;
     }
@@ -956,8 +951,6 @@ public class CinemaService {
     public boolean doesMovieExist(String movieTitle){
         Map<Integer, Movie> allMovies = movieRepo.getAll();
         return allMovies.values().stream().anyMatch(movie -> movie.getTitle().equalsIgnoreCase(movieTitle));
-
-
     }
 
     /**
@@ -972,18 +965,25 @@ public class CinemaService {
     }
 
     /**
-     * Checks if a screen with the given ID has showtimes scheduled for the future.
+     * Checks if a screen with the given ID has showtimes scheduled.
      *
      * @param id the unique identifier of the screen
      * @return true if the screen has future showtimes, false otherwise
      */
-    public boolean hasFutureShowtimes(int id) {
-
+    public boolean hasAssignedShowtimesForScreen(int id) {
         Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
-        LocalDateTime now = LocalDateTime.now();
+        return allShowtimes.values().stream().anyMatch(showtime -> showtime.getScreenId() == id);
+    }
 
-        return allShowtimes.values().stream()
-                .anyMatch(showtime -> showtime.getScreenId() == id && showtime.getStartTime().isAfter(LocalTime.from(now)));
+    /**
+     * Checks if a movie with the given ID has showtimes scheduled.
+     *
+     * @param id the unique identifier of the movie
+     * @return true if the movie has future showtimes, false otherwise
+     */
+    public boolean hasAssignedShowtimesForMovie(int id) {
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+        return allShowtimes.values().stream().anyMatch(showtime -> showtime.getMovieId() == id);
     }
 
     /**
@@ -1009,7 +1009,6 @@ public class CinemaService {
             return false;
         }
         return allBookings.values().stream().anyMatch(booking -> booking.getShowtimeId() == id);
-
     }
 
 }

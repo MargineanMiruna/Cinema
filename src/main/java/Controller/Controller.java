@@ -402,8 +402,9 @@ public class Controller {
      * release date, showtime date, screen ID, start time, and duration.
      *
      * @param date The date by which the showtimes will be filtered.
+     * @return A list of filtered showtimes.
      */
-    public void displayShowtimesFilteredByDate (Customer customer, LocalDate date){
+    public Map<Integer, Showtime> displayShowtimesFilteredByDate (Customer customer, LocalDate date){
         Map<Integer,Showtime> filteredShowtimes = cinemaService.filerShowtimesByDate(customer, date);
 
         try {
@@ -412,7 +413,7 @@ public class Controller {
             }
         } catch (EntityNotFoundException e) {
             System.out.println(e.getMessage());
-            return;
+            return filteredShowtimes;
         }
 
         for(Map.Entry<Integer, Showtime> entry : filteredShowtimes.entrySet()) {
@@ -421,6 +422,7 @@ public class Controller {
             System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
         }
 
+        return filteredShowtimes;
     }
 
     /**
@@ -450,8 +452,9 @@ public class Controller {
      *
      * @param customer   The customer whose showtimes are filtered and displayed.
      * @param movieTitle The title of the movie used to filter the showtimes.
+     * @return A list of the filtered Showtimes.
      */
-    public void displayFilteredShowtimesByMovie(Customer customer, String movieTitle){
+    public Map<Integer, Showtime> displayFilteredShowtimesByMovie(Customer customer, String movieTitle){
         Map<Integer, Showtime> filteredShowtimes = cinemaService.filterShowtimesByMovie(customer,movieTitle);
 
         try {
@@ -460,7 +463,7 @@ public class Controller {
             }
         } catch (EntityNotFoundException e) {
             System.out.println(e.getMessage());
-            return;
+            return filteredShowtimes;
         }
 
         for(Map.Entry<Integer, Showtime> entry : filteredShowtimes.entrySet()) {
@@ -469,6 +472,7 @@ public class Controller {
             System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
         }
 
+        return filteredShowtimes;
     }
 
     /**
@@ -514,9 +518,9 @@ public class Controller {
             System.out.println("\tShowtime ID: " + showtime.getId());
             System.out.println("\tMovie : " + cinemaService.getMovie(showtime.getMovieId()).getTitle());
             System.out.println("\tDate: " + showtime.getDate());
-            System.out.println("\tStart Time: " + showtime.getStartTime());
+            System.out.println("\tStart time: " + showtime.getStartTime());
             System.out.println("\tDuration: " + showtime.getDuration() + " minutes");
-            System.out.println("\tNumber of Customers: " + booking.getNrOfCustomers());
+            System.out.println("\tNumber of tickets: " + booking.getNrOfCustomers());
         }
     }
 
@@ -563,13 +567,23 @@ public class Controller {
     }
 
     /**
-     * Checks if a screen with the given ID has showtimes scheduled for the future.
+     * Checks if a screen with the given ID has showtimes scheduled.
      *
      * @param id the unique identifier of the screen
      * @return true if the screen has future showtimes, false otherwise
      */
-    public boolean hasFutureShowtimes(int id) {
-        return cinemaService.hasFutureShowtimes(id);
+    public boolean hasAssignedShowtimesForScreen(int id) {
+        return cinemaService.hasAssignedShowtimesForScreen(id);
+    }
+
+    /**
+     * Checks if a movie with the given ID has showtimes scheduled.
+     *
+     * @param id the unique identifier of the movie
+     * @return true if the movie has future showtimes, false otherwise
+     */
+    public boolean hasAssignedShowtimesforMovie(int id) {
+        return cinemaService.hasAssignedShowtimesForMovie(id);
     }
 
     /**
