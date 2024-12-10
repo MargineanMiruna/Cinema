@@ -1322,16 +1322,79 @@ void getShowtimeInMemory() {
     }
 
     @Test
-    void getBookingsByCustomerInMemory() {
+    void testGetBookingsByCustomerWithBookingsInMemory() {
+        Customer customer = new Customer(1, "John", "Doe", "john.doe@example.com", false, 1);
+        Seat seat1 = new Seat(1, 1, SeatType.standard);
+        Seat seat2 = new Seat(2, 1, SeatType.vip);
+        List<Seat> availableSeats = new ArrayList<>(Arrays.asList(seat1, seat2));
+        Showtime showtime = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, availableSeats);
+        Booking booking = new Booking(1, customer.getId(), showtime.getId(), LocalDate.now(), 2, Arrays.asList(1, 2));
+
+        customerRepoInMemory.add(customer);
+        showtimeRepoInMemory.add(showtime);
+        bookingRepoInMemory.add(booking);
+
+        Map<Integer, Map.Entry<Booking, Showtime>> bookings = cinemaServiceInMemory.getBookingsByCustomer(customer);
+
+        assertEquals(1, bookings.size());
+        assertTrue(bookings.containsKey(1));
+        assertEquals(booking, bookings.get(1).getKey());
+        assertEquals(showtime, bookings.get(1).getValue());
     }
 
     @Test
-    void isShowtimeAvailableInMemory() {
+    void testGetBookingsByCustomerNoBookingsInMemory() {
+        Customer customer = new Customer(2, "Jane", "Smith", "jane.smith@example.com", false, 2);
+
+        customerRepoInMemory.add(customer);
+
+        Map<Integer, Map.Entry<Booking, Showtime>> bookings = cinemaServiceInMemory.getBookingsByCustomer(customer);
+
+        assertTrue(bookings.isEmpty());
+    }
+
+
+    @Test
+    void testIsShowtimeAvailableInMemoryExists() {
+        Showtime showtime = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime);
+
+        boolean result = cinemaServiceInMemory.isShowtimeAvailable(1);
+
+        assertTrue(result);
     }
 
     @Test
-    void isSeatAvailableInMemory() {
+    void testIsShowtimeAvailableInMemoryNotExists() {
+        boolean result = cinemaServiceInMemory.isShowtimeAvailable(999);
+
+        assertFalse(result);
     }
+
+
+    @Test
+    void testIsSeatAvailableInMemoryExists() {
+        Seat seat1 = new Seat(1, 1, SeatType.standard);
+        Seat seat2 = new Seat(2, 1, SeatType.vip);
+        Showtime showtime = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>(Arrays.asList(seat1, seat2)));
+        showtimeRepoInMemory.add(showtime);
+
+        boolean result = cinemaServiceInMemory.isSeatAvailable(1, 1);
+
+        assertTrue(result);
+    }
+
+    @Test
+    void testIsSeatAvailableInMemoryNotExists() {
+        Seat seat1 = new Seat(1, 1, SeatType.standard);
+        Showtime showtime = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>(Arrays.asList(seat1)));
+        showtimeRepoInMemory.add(showtime);
+
+        boolean result = cinemaServiceInMemory.isSeatAvailable(1, 2);
+
+        assertFalse(result);
+    }
+
 
     @Test
     void doesMovieExistInMemory() {
