@@ -1273,7 +1273,6 @@ void getShowtimeInMemory() {
     }
 
 
-
     @Test
     void testTerminateMembershipsInMemory() {
         BasicMembership expiredBasicMembership = new BasicMembership(1, 1, LocalDate.of(2023, 1, 1), LocalDate.now());
@@ -1303,23 +1302,178 @@ void getShowtimeInMemory() {
 
     @Test
     void testFilterSeatsByTypeInMemory() {
+        List<Seat> seats = List.of(
+                new Seat(1, 1,SeatType.standard),
+                new Seat(2, 2,SeatType.vip),
+                new Seat(3, 3,SeatType.premium),
+                new Seat(4, 4,SeatType.standard),
+                new Seat(5, 5,SeatType.vip)
+        );
+        Showtime showtime = new Showtime(1, 1,2,LocalDate.now(), LocalTime.now(), 120, seats);
+        showtimeRepoInMemory.add(showtime);
+
+        List<Integer> standardSeats = cinemaServiceInMemory.filterSeatsByType(1, 1);
+        assertEquals(List.of(1, 4), standardSeats);
+
+        List<Integer> vipSeats = cinemaServiceInMemory.filterSeatsByType(1, 2);
+        assertEquals(List.of(2, 5), vipSeats);
+
+        List<Integer> premiumSeats = cinemaServiceInMemory.filterSeatsByType(1, 3);
+        assertEquals(List.of(3), premiumSeats);
+
+    }
+
+
+    @Test
+    void testFilterShowtimesByDateInMemory() {
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        Customer customer =  new Customer(1,"Ale","Olah","aleolah",false,1);
+        Movie movie = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+        customerRepoInMemory.add(customer);
+        movieRepoInMemory.add(movie);
+
+
+        Showtime showtime1 = new Showtime(1, 1, 1, today, LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 1, 1, tomorrow, LocalTime.of(16, 0), 120, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, today, LocalTime.of(18, 0), 120, List.of());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        Map<Integer, Showtime> resultToday = cinemaServiceInMemory.filerShowtimesByDate(customer, today);
+        assertEquals(2, resultToday.size());
+        assertTrue(resultToday.containsKey(1));
+        assertTrue(resultToday.containsKey(3));
+
+        Map<Integer, Showtime> resultTomorrow = cinemaServiceInMemory.filerShowtimesByDate(customer, tomorrow);
+        assertEquals(1, resultTomorrow.size());
+        assertTrue(resultTomorrow.containsKey(2));
+
+        LocalDate futureDate = today.plusDays(5);
+        Map<Integer, Showtime> resultFuture = cinemaServiceInMemory.filerShowtimesByDate(customer, futureDate);
+        assertTrue(resultFuture.isEmpty());
     }
 
     @Test
-    void testFilerShowtimesByDateInMemory() {
+    void testFilterShowtimesByDateInMemory2() {
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        Customer customer =  new Customer(1,"Ale","Olah","aleolah",true,1);
+        Movie movie = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+        customerRepoInMemory.add(customer);
+        movieRepoInMemory.add(movie);
+
+
+        Showtime showtime1 = new Showtime(1, 1, 1, today, LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 1, 1, tomorrow, LocalTime.of(16, 0), 120, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, today, LocalTime.of(18, 0), 120, List.of());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        Map<Integer, Showtime> resultToday = cinemaServiceInMemory.filerShowtimesByDate(customer, today);
+        assertEquals(0, resultToday.size());
+
+
+        Map<Integer, Showtime> resultTomorrow = cinemaServiceInMemory.filerShowtimesByDate(customer, tomorrow);
+        assertEquals(0, resultTomorrow.size());
+
+        LocalDate futureDate = today.plusDays(5);
+        Map<Integer, Showtime> resultFuture = cinemaServiceInMemory.filerShowtimesByDate(customer, futureDate);
+        assertTrue(resultFuture.isEmpty());
     }
+
 
     @Test
     void testSortShowtimesByDateAscInMemory() {
+        LocalDate today = LocalDate.now();
+        LocalDate tomorrow = today.plusDays(1);
+        LocalDate yesterday = today.minusDays(1);
+
+        Customer customer = new Customer(1, "Ale", "Olah", "aleolah", false, 1);
+        Movie movie = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+
+        customerRepoInMemory.add(customer);
+        movieRepoInMemory.add(movie);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, today, LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 1, 1, tomorrow, LocalTime.of(16, 0), 120, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, yesterday, LocalTime.of(18, 0), 120, List.of());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        Map<Integer, Showtime> sortedShowtimes = cinemaServiceInMemory.sortShowtimesByDateAsc(customer);
+
+        assertEquals(3, sortedShowtimes.size());
+
+        List<Showtime> sortedList = new ArrayList<>(sortedShowtimes.values());
+        assertEquals(yesterday, sortedList.get(0).getDate());
+        assertEquals(today, sortedList.get(1).getDate());
+        assertEquals(tomorrow, sortedList.get(2).getDate());
     }
+
 
     @Test
     void filterShowtimesByMovieInMemory() {
+        Customer customer = new Customer(1, "Ale", "Olah", "aleolah", false, 1);
+        Movie movie1 = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+        Movie movie2 = new Movie(2, "Comedy Movie", true, "Comedy", LocalDate.of(2024, 1, 1));
+
+        customerRepoInMemory.add(customer);
+        movieRepoInMemory.add(movie1);
+        movieRepoInMemory.add(movie2);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.now(), LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 2, 1, LocalDate.now(), LocalTime.of(16, 0), 90, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, LocalDate.now(), LocalTime.of(18, 0), 120, List.of());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        Map<Integer, Showtime> filteredShowtimesAction = cinemaServiceInMemory.filterShowtimesByMovie(customer, "Action Movie");
+        assertEquals(3, filteredShowtimesAction.size());
+        assertTrue(filteredShowtimesAction.containsKey(1));
+        assertTrue(filteredShowtimesAction.containsKey(3));
+
+        Map<Integer, Showtime> filteredShowtimesComedy = cinemaServiceInMemory.filterShowtimesByMovie(customer, "Comedy Movie");
+        assertEquals(0, filteredShowtimesComedy.size());
+
+        Map<Integer, Showtime> filteredShowtimesNonExistent = cinemaServiceInMemory.filterShowtimesByMovie(customer, "Non Existent Movie");
+        assertTrue(filteredShowtimesNonExistent.isEmpty());
     }
 
     @Test
     void sortShowtimesByDurationInMemory() {
+        Customer customer = new Customer(1, "Ale", "Olah", "aleolah", false, 1);
+        Movie movie = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+
+        customerRepoInMemory.add(customer);
+        movieRepoInMemory.add(movie);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.now(), LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.now(), LocalTime.of(16, 0), 90, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, LocalDate.now(), LocalTime.of(18, 0), 150, List.of());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        Map<Integer, Showtime> sortedShowtimes = cinemaServiceInMemory.sortShowtimesByDuration(customer);
+
+        assertEquals(3, sortedShowtimes.size());
+
+        List<Showtime> sortedList = new ArrayList<>(sortedShowtimes.values());
+        assertEquals(90, sortedList.get(0).getDuration());
+        assertEquals(120, sortedList.get(1).getDuration());
+        assertEquals(150, sortedList.get(2).getDuration());
     }
+
 
     @Test
     void testGetBookingsByCustomerWithBookingsInMemory() {

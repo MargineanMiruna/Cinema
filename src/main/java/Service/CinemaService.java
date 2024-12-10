@@ -754,24 +754,39 @@ public class CinemaService {
     public void terminateMemberships() {
         Map<Integer, BasicMembership> basicMembershipMap = basicMembershipRepo.getAll();
 
-        for(Map.Entry<Integer, BasicMembership> entry : basicMembershipMap.entrySet()){
-            if(entry.getValue().getEndDate() == LocalDate.now()) {
+        for (Map.Entry<Integer, BasicMembership> entry : basicMembershipMap.entrySet()) {
+            if (entry.getValue().getEndDate().isBefore(LocalDate.now()) || entry.getValue().getEndDate().isEqual(LocalDate.now())) {
                 Customer customerWithExpiredMembership = getCustomer(entry.getValue().getCustomerId());
-                updateCustomer(customerWithExpiredMembership.getId(), customerWithExpiredMembership.getFirstName(), customerWithExpiredMembership.getLastName(), customerWithExpiredMembership.getEmail(), customerWithExpiredMembership.getUnderaged(), -1);
+                updateCustomer(
+                        customerWithExpiredMembership.getId(),
+                        customerWithExpiredMembership.getFirstName(),
+                        customerWithExpiredMembership.getLastName(),
+                        customerWithExpiredMembership.getEmail(),
+                        customerWithExpiredMembership.getUnderaged(),
+                        -1
+                );
                 deleteBasicMembership(entry.getKey());
             }
         }
 
         Map<Integer, PremiumMembership> premiumMembershipMap = premiumMembershipRepo.getAll();
 
-        for(Map.Entry<Integer, PremiumMembership> entry : premiumMembershipMap.entrySet()){
-            if(entry.getValue().getEndDate() == LocalDate.now()) {
+        for (Map.Entry<Integer, PremiumMembership> entry : premiumMembershipMap.entrySet()) {
+            if (entry.getValue().getEndDate().isBefore(LocalDate.now()) || entry.getValue().getEndDate().isEqual(LocalDate.now())) {
                 Customer customerWithExpiredMembership = getCustomer(entry.getValue().getCustomerId());
-                updateCustomer(customerWithExpiredMembership.getId(), customerWithExpiredMembership.getFirstName(), customerWithExpiredMembership.getLastName(), customerWithExpiredMembership.getEmail(), customerWithExpiredMembership.getUnderaged(), -1);
+                updateCustomer(
+                        customerWithExpiredMembership.getId(),
+                        customerWithExpiredMembership.getFirstName(),
+                        customerWithExpiredMembership.getLastName(),
+                        customerWithExpiredMembership.getEmail(),
+                        customerWithExpiredMembership.getUnderaged(),
+                        -1
+                );
                 deletePremiumMembership(entry.getKey());
             }
         }
     }
+
 
     /**
      * Filters and retrieves a list of seat numbers based on the specified seat type for a given showtime.
