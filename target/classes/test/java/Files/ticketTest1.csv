@@ -1,0 +1,3 @@
+id,bookingId,screenId,seatNr,price
+1,1,1,1,30.0
+2,1,1,2,40.0

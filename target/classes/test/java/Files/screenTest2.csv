@@ -1,0 +1,2 @@
+id,nrStandardSeats,nrVipSeats,nrPremiumSeats,seats
+1,2,10,10,0,0,standard;1,1,standard;2,2,vip;3,3,vip;4,4,vip;5,5,vip;6,6,vip;7,7,vip;8,8,vip;9,9,vip;10,10,vip;11,11,vip;10,10,premium;11,11,premium;12,12,premium;13,13,premium;14,14,premium;15,15,premium;16,16,premium;17,17,premium;18,18,premium;19,19,premium;20,20,premium;21,21,premium
