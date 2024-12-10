@@ -707,6 +707,13 @@ public class CinemaService {
         }
     }
 
+    /**
+     * Calculates the total price for a booking based on the tickets associated with the booking.
+     * The total price is computed by summing the price of each individual ticket in the booking.
+     *
+     * @param currentBookingId The ID of the booking for which the total price is to be calculated.
+     * @return The total price of the booking, calculated by adding the price of all the tickets in the booking.
+     */
     public double calculateTotalPrice(int currentBookingId) {
         List<Integer> tickets = this.getBooking(currentBookingId).getTickets();
 

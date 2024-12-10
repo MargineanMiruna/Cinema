@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -1011,98 +1012,427 @@ void getShowtimeInMemory() {
 
 
     @Test
-    void displayMoviesStaff() {
+    void testDisplayMoviesStaffInMemory() {
+        Movie movie1 = new Movie(1, "Movie 1", true, "Action", LocalDate.of(2024, 1, 1));
+        Movie movie2 = new Movie(2, "Movie 2", false, "Comedy", LocalDate.of(2024, 2, 1));
+        movieRepoInMemory.add(movie1);
+        movieRepoInMemory.add(movie2);
+
+        Map<Integer, Movie> movies = cinemaServiceInMemory.displayMoviesStaff();
+
+        assertNotNull(movies);
+        assertEquals(2, movies.size());
+        assertTrue(movies.containsKey(1));
+        assertTrue(movies.containsKey(2));
+        assertEquals("Movie 1", movies.get(1).getTitle());
+        assertEquals("Movie 2", movies.get(2).getTitle());
+    }
+
+
+    @Test
+    void testDisplayShowtimesStaffInMemory() {
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        Map<Integer, Showtime> showtimes = cinemaServiceInMemory.displayShowtimesStaff();
+
+        assertNotNull(showtimes);
+        assertEquals(2, showtimes.size());
+        assertTrue(showtimes.containsKey(1));
+        assertTrue(showtimes.containsKey(2));
+        assertEquals(LocalTime.of(18, 0), showtimes.get(1).getStartTime());
+        assertEquals(LocalTime.of(20, 0), showtimes.get(2).getStartTime());
+    }
+
+
+    @Test
+    void testDisplayScreensStaffInMemory() {
+        int screenId = 1;
+        List<Seat> seats = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            seats.add(new Seat(i + 1, i + 1, SeatType.standard));
+        }
+        for (int i = 5; i < 8; i++) {
+            seats.add(new Seat(i + 1, i + 1, SeatType.vip));
+        }
+        for (int i = 8; i < 10; i++) {
+            seats.add(new Seat(i + 1, i + 1, SeatType.premium));
+        }
+        Screen screen = new Screen(screenId, 5, 3, 2, seats);
+        screenRepoInMemory.add(screen);
+
+        int screenId2 = 2;
+        List<Seat> seats2 = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            seats2.add(new Seat(i + 1, i + 1, SeatType.standard));
+        }
+        for (int i = 5; i < 8; i++) {
+            seats2.add(new Seat(i + 1, i + 1, SeatType.vip));
+        }
+        for (int i = 8; i < 10; i++) {
+            seats2.add(new Seat(i + 1, i + 1, SeatType.premium));
+        }
+        Screen screen2 = new Screen(screenId2, 5, 3, 2, seats2);
+        screenRepoInMemory.add(screen2);
+
+        Map<Integer, Screen> screens = cinemaServiceInMemory.displayScreensStaff();
+
+        assertNotNull(screens);
+        assertEquals(2, screens.size());
+        assertTrue(screens.containsKey(1));
+        assertTrue(screens.containsKey(2));
+        assertEquals(5, screens.get(1).getNrStandardSeats());
+        assertEquals(3, screens.get(2).getNrVipSeats());
+
+
+    }
+
+
+    @Test
+    void testFindCustomerByEmailInMemory() {
+        Customer customer1 = new Customer(1, "Alice", "Smith", "alice@example.com", true, 0);
+        Customer customer2 = new Customer(2, "Bob", "Jones", "bob@example.com", false, 0);
+        customerRepoInMemory.add(customer1);
+        customerRepoInMemory.add(customer2);
+
+        String emailToFind = "alice@example.com";
+        Customer customer = cinemaServiceInMemory.findCustomerByEmail(emailToFind);
+
+        assertNotNull(customer);
+        assertEquals("Alice", customer.getFirstName());
+        assertEquals("Smith", customer.getLastName());
+
+        String nonExistentEmail = "nonexistent@example.com";
+        Customer nonExistentCustomer =cinemaServiceInMemory.findCustomerByEmail(nonExistentEmail);
+        assertNull(nonExistentCustomer);
     }
 
     @Test
-    void displayShowtimesStaff() {
+    void testRemoveSeatsFromAvailableInMemory() {
+        Seat seat1 = new Seat(1, 1, SeatType.standard);
+        Seat seat2 = new Seat(2, 1, SeatType.standard);
+        Seat seat3 = new Seat(3, 1, SeatType.standard);
+
+        List<Seat> availableSeats = new ArrayList<>(Arrays.asList(seat1, seat2, seat3));
+
+        Showtime showtime = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, availableSeats);
+        showtimeRepoInMemory.add(showtime);
+
+        List<Integer> seatsToRemove = Arrays.asList(1, 2);
+        cinemaServiceInMemory.removeSeatsFromAvailable(1, seatsToRemove);
+
+        Showtime updatedShowtime = showtimeRepoInMemory.read(1);
+        List<Seat> updatedSeats = updatedShowtime.getSeats();
+
+        assertFalse(updatedSeats.stream().anyMatch(seat -> seat.getSeatNr() == 1));
+        assertFalse(updatedSeats.stream().anyMatch(seat -> seat.getSeatNr() == 2));
+
+    }
+
+
+
+    @Test
+    void testFindStaffByEmailInMemory() {
+        Staff staff1 = new Staff(1, "John", "Doe", "john.doe@example.com");
+        staffRepoInMemory.add(staff1);
+
+        Staff staff2 = new Staff(2, "Jane", "Smith", "jane.smith@example.com");
+        staffRepoInMemory.add(staff2);
+
+        Staff foundStaff = cinemaServiceInMemory.findStaffByEmail("john.doe@example.com");
+
+        assertNotNull(foundStaff);
+        assertEquals("John", foundStaff.getFirstName());
+        assertEquals("Doe", foundStaff.getLastName());
     }
 
     @Test
-    void displayScreensStaff() {
+    void testFindStaffByEmailNotFoundInMemory() {
+        Staff staff1 = new Staff(1, "John", "Doe", "john.doe@example.com");
+        staffRepoInMemory.add(staff1);
+
+        Staff foundStaff = cinemaServiceInMemory.findStaffByEmail("nonexistent@example.com");
+
+        assertNull(foundStaff);
+    }
+
+
+    @Test
+    void testDeleteShowtimesByMovieIdInMemory() {
+        Movie movie = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+        movieRepoInMemory.add(movie);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 120, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        cinemaServiceInMemory.deleteShowtimesByMovieId(1);
+
+        Map<Integer, Showtime> allShowtimes = showtimeRepoInMemory.getAll();
+        assertTrue(allShowtimes.isEmpty());
     }
 
     @Test
-    void findCustomerByEmail() {
+    void testDeleteShowtimesByNonExistingMovieIdInMemory() {
+        Movie movie = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+        movieRepoInMemory.add(movie);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 120, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        cinemaServiceInMemory.deleteShowtimesByMovieId(999);
+
+        Map<Integer, Showtime> allShowtimes = showtimeRepoInMemory.getAll();
+        assertEquals(2, allShowtimes.size());
+    }
+
+
+    @Test
+    void testDeleteShowtimesByScreenIdInMemory() {
+        Screen screen = new Screen(1, 50, 20, 10, new ArrayList<>());
+        screenRepoInMemory.add(screen);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 120, new ArrayList<>());
+        Showtime showtime3 = new Showtime(3, 2, 1, LocalDate.of(2024, 1, 1), LocalTime.of(22, 0), 120, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        cinemaServiceInMemory.deleteShowtimesByScreenId(1);
+
+        Map<Integer, Showtime> allShowtimes = showtimeRepoInMemory.getAll();
+        assertEquals(1, allShowtimes.size());
+        assertTrue(allShowtimes.containsKey(3));
     }
 
     @Test
-    void removeSeatsFromAvailable() {
+    void testDeleteShowtimesByNonExistingScreenIdInMemory() {
+        Screen screen = new Screen(1, 50, 20, 10, new ArrayList<>());
+        screenRepoInMemory.add(screen);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 120, new ArrayList<>());
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        cinemaServiceInMemory.deleteShowtimesByScreenId(999);
+
+        Map<Integer, Showtime> allShowtimes = showtimeRepoInMemory.getAll();
+        assertEquals(2, allShowtimes.size());
     }
 
     @Test
-    void findStaffByEmail() {
+    void testCalculateTotalPrice() {
+        Ticket ticket1 = new Ticket(1, 1, 1, 1, 30.0);
+        Ticket ticket2 = new Ticket(2, 1, 1, 2, 40.0);
+        Ticket ticket3 = new Ticket(3, 1, 1, 3, 50.0);
+
+        ticketRepoInMemory.add(ticket1);
+        ticketRepoInMemory.add(ticket2);
+        ticketRepoInMemory.add(ticket3);
+
+        List<Integer> ticketIds = Arrays.asList(1, 2, 3);
+        Booking booking = new Booking(1, 1, 1, LocalDate.of(2024, 1, 1), 3, ticketIds);
+        bookingRepoInMemory.add(booking);
+
+        double totalPrice = cinemaServiceInMemory.calculateTotalPrice(1);
+
+        assertEquals(120.0, totalPrice, 0.01);
+    }
+
+
+    @Test
+    void testCalculateDiscountedPriceInMemory() {
+        Ticket ticket1 = new Ticket(1, 1, 1, 1, 30.0);
+        Ticket ticket2 = new Ticket(2, 1, 1, 2, 40.0);
+        Ticket ticket3 = new Ticket(3, 1, 1, 3, 50.0);
+
+        ticketRepoInMemory.add(ticket1);
+        ticketRepoInMemory.add(ticket2);
+        ticketRepoInMemory.add(ticket3);
+
+        List<Integer> ticketIds = Arrays.asList(1, 2, 3);
+        Booking booking = new Booking(1, 1, 1, LocalDate.of(2024, 1, 1), 3, ticketIds);
+        bookingRepoInMemory.add(booking);
+
+        BasicMembership membership = new BasicMembership(1, 1, LocalDate.of(2023, 1, 1), LocalDate.of(2025, 1, 1));
+        basicMembershipRepoInMemory.add(membership);
+
+        Customer customer = new Customer(1, "John", "Doe", "john.doe@example.com", false, 1);
+        customerRepoInMemory.add(customer);
+
+        double discountedPrice = cinemaServiceInMemory.calculateDiscountedPrice(1, 1);
+
+        assertEquals(108.0, discountedPrice, 0.01);
+    }
+
+
+
+    @Test
+    void testTerminateMembershipsInMemory() {
+        BasicMembership expiredBasicMembership = new BasicMembership(1, 1, LocalDate.of(2023, 1, 1), LocalDate.now());
+        PremiumMembership expiredPremiumMembership = new PremiumMembership(2, 2, LocalDate.of(2023, 1, 1), LocalDate.now());
+
+        basicMembershipRepoInMemory.add(expiredBasicMembership);
+        premiumMembershipRepoInMemory.add(expiredPremiumMembership);
+
+        Customer customer1 = new Customer(1, "John", "Doe", "john.doe@example.com", false, 1);
+        Customer customer2 = new Customer(2, "Jane", "Smith", "jane.smith@example.com", false, 2);
+
+        customerRepoInMemory.add(customer1);
+        customerRepoInMemory.add(customer2);
+
+        cinemaServiceInMemory.terminateMemberships();
+        Customer updatedCustomer1 = customerRepoInMemory.read(1);
+        Customer updatedCustomer2 = customerRepoInMemory.read(2);
+
+        assertEquals(-1, updatedCustomer1.getMembershipId());
+        assertEquals(-1, updatedCustomer2.getMembershipId());
+        assertNull(basicMembershipRepoInMemory.read(1));
+        assertNull(premiumMembershipRepoInMemory.read(2));
+
+
+    }
+
+
+    @Test
+    void testFilterSeatsByTypeInMemory() {
     }
 
     @Test
-    void deleteShowtimesByMovieId() {
+    void testFilerShowtimesByDateInMemory() {
     }
 
     @Test
-    void deleteShowtimesByScreenId() {
+    void testSortShowtimesByDateAscInMemory() {
     }
 
     @Test
-    void calculateTotalPrice() {
+    void filterShowtimesByMovieInMemory() {
     }
 
     @Test
-    void calculateDiscountedPrice() {
+    void sortShowtimesByDurationInMemory() {
     }
 
     @Test
-    void terminateMemberships() {
+    void getBookingsByCustomerInMemory() {
     }
 
     @Test
-    void filterSeatsByType() {
+    void isShowtimeAvailableInMemory() {
     }
 
     @Test
-    void filerShowtimesByDate() {
+    void isSeatAvailableInMemory() {
     }
 
     @Test
-    void sortShowtimesByDateAsc() {
+    void doesMovieExistInMemory() {
+        Movie movie1 = new Movie(1, "The Matrix", false,"Sci-Fi", LocalDate.of(1999, 3, 31));
+        Movie movie2 = new Movie(2, "Inception", false,"Sci-Fi", LocalDate.of(2010, 7, 16));
+
+        movieRepoInMemory.add(movie1);
+        movieRepoInMemory.add(movie2);
+
+        boolean movieExists1 = cinemaServiceInMemory.doesMovieExist("The Matrix");
+        assertTrue(movieExists1);
+
+        boolean movieExists2 = cinemaServiceInMemory.doesMovieExist("Inception");
+        assertTrue(movieExists2);
+
+        boolean movieExistsNonExisting = cinemaServiceInMemory.doesMovieExist("Avatar");
+        assertFalse(movieExistsNonExisting);
     }
 
-    @Test
-    void filterShowtimesByMovie() {
-    }
 
     @Test
-    void sortShowtimesByDuration() {
+    void doesScreenExistInMemory() {
+        Screen screen1 = new Screen(1, 50, 20, 10, new ArrayList<>());
+        Screen screen2 = new Screen(2, 50, 20, 10, new ArrayList<>());
+
+        screenRepoInMemory.add(screen1);
+        screenRepoInMemory.add(screen2);
+
+        boolean screenExists1 = cinemaServiceInMemory.doesScreenExist(1);
+        assertTrue(screenExists1);
+
+        boolean screenExists2 = cinemaServiceInMemory.doesScreenExist(2);
+        assertTrue(screenExists2);
+
+        boolean screenExistsNonExisting = cinemaServiceInMemory.doesScreenExist(3);
+        assertFalse(screenExistsNonExisting);
     }
 
-    @Test
-    void getBookingsByCustomer() {
-    }
 
     @Test
-    void isShowtimeAvailable() {
+    void hasFutureShowtimesInMemory() {
+        Screen screen1 = new Screen(1, 50, 20, 10, new ArrayList<>());
+        Screen screen2 = new Screen(2, 50, 20, 10, new ArrayList<>());
+
+        screenRepoInMemory.add(screen1);
+        screenRepoInMemory.add(screen2);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 2, 1, LocalDate.of(2024, 2, 1), LocalTime.of(19, 0), 120, new ArrayList<>());
+        Showtime showtime3 = new Showtime(3, 1, 2, LocalDate.of(2024, 3, 1), LocalTime.of(21, 0), 120, new ArrayList<>());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+        showtimeRepoInMemory.add(showtime3);
+
+        boolean hasFutureShowtimesScreen1 = cinemaServiceInMemory.hasFutureShowtimes(1);
+        assertTrue(hasFutureShowtimesScreen1);
+
+        boolean hasFutureShowtimesScreen2 = cinemaServiceInMemory.hasFutureShowtimes(2);
+        assertTrue(hasFutureShowtimesScreen2);
+
+        boolean hasFutureShowtimesNonExistingScreen = cinemaServiceInMemory.hasFutureShowtimes(3);
+        assertFalse(hasFutureShowtimesNonExistingScreen);
     }
 
-    @Test
-    void isSeatAvailable() {
-    }
 
     @Test
-    void doesMovieExist() {
+    void doesShowtimeExistInMemory() {
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 2, 2, LocalDate.of(2024, 1, 2), LocalTime.of(20, 0), 150, new ArrayList<>());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        boolean resultForShowtime1 = cinemaServiceInMemory.doesShowtimeExist(1);
+        assertTrue(resultForShowtime1);
+
+        boolean resultForShowtime2 = cinemaServiceInMemory.doesShowtimeExist(2);
+        assertTrue(resultForShowtime2);
+
+        boolean resultForNonExistentShowtime = cinemaServiceInMemory.doesShowtimeExist(3);
+        assertFalse(resultForNonExistentShowtime);
     }
 
-    @Test
-    void doesScreenExist() {
-    }
 
     @Test
-    void hasFutureShowtimes() {
+    void hasBookingsForShowtimeInMemory() {
+        Booking booking1 = new Booking(1, 1, 1, LocalDate.of(2024, 1, 1), 2, Arrays.asList(101, 102));
+        Booking booking2 = new Booking(2, 2, 2, LocalDate.of(2024, 1, 2), 3, Arrays.asList(103, 104, 105));
+
+        bookingRepoInMemory.add(booking1);
+        bookingRepoInMemory.add(booking2);
+
+        boolean resultForShowtime1 = cinemaServiceInMemory.hasBookingsForShowtime(1);
+        assertTrue(resultForShowtime1);
+
+        boolean resultForShowtime2 = cinemaServiceInMemory.hasBookingsForShowtime(2);
+        assertTrue(resultForShowtime2);
+
+        boolean resultForShowtime3 = cinemaServiceInMemory.hasBookingsForShowtime(3);
+        assertFalse(resultForShowtime3);
     }
 
-    @Test
-    void doesShowtimeExist() {
-    }
-
-    @Test
-    void hasBookingsForShowtime() {
-    }
 }
