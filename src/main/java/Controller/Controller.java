@@ -3,7 +3,9 @@ package Controller;
 
 import Model.*;
 import Service.CinemaService;
+import Exception.EntityNotFoundException;
 
+import java.sql.SQLOutput;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
@@ -66,15 +68,9 @@ public class Controller {
      * @return The Customer object if found, otherwise null.
      */
     public Customer logCustomer(String email) {
-        try {
-            if(cinemaService.findCustomerByEmail(email) != null) {
-                return cinemaService.findCustomerByEmail(email);
-            }
-            else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println("An error occurred: ");
+        if(cinemaService.findCustomerByEmail(email) != null) {
+            return cinemaService.findCustomerByEmail(email);
+        } else {
             return null;
         }
     }
@@ -95,15 +91,9 @@ public class Controller {
      * @return The Staff object if found, otherwise null.
      */
     public Staff logStaff(String email) {
-        try {
-            if(cinemaService.findStaffByEmail(email) != null) {
-                return cinemaService.findStaffByEmail(email);
-            }
-            else {
-                return null;
-            }
-        } catch (Exception e) {
-            System.out.println("An error occurred: ");
+        if(cinemaService.findStaffByEmail(email) != null) {
+            return cinemaService.findStaffByEmail(email);
+        } else {
             return null;
         }
     }
@@ -252,13 +242,9 @@ public class Controller {
      * @param genre The genre of the movie.
      * @param releaseDate The release date of the movie.
      */
-    public void updateMovie( String title, boolean pg, String genre, LocalDate releaseDate) {
+    public void updateMovie(String title, boolean pg, String genre, LocalDate releaseDate) {
         Integer movieId = cinemaService.findMovieIdByTitle(title);
-        if (movieId != null) {
-            cinemaService.updateMovie(movieId, title, pg, genre, releaseDate);
-        } else {
-            System.out.println("Movie not found with title: " + title);
-        }
+        cinemaService.updateMovie(movieId, title, pg, genre, releaseDate);
     }
 
     /**
@@ -267,13 +253,8 @@ public class Controller {
      */
     public void deleteMovie(String title){
         Integer movieId = cinemaService.findMovieIdByTitle(title);
-        if (movieId != null) {
-            cinemaService.deleteMovie(movieId);
-            cinemaService.deleteShowtimesByMovieId(movieId);
-
-        } else {
-            System.out.println("Movie not found with title: " + title);
-        }
+        cinemaService.deleteMovie(movieId);
+        cinemaService.deleteShowtimesByMovieId(movieId);
     }
 
     /**
@@ -425,8 +406,12 @@ public class Controller {
     public void displayShowtimesFilteredByDate (Customer customer, LocalDate date){
         Map<Integer,Showtime> filteredShowtimes = cinemaService.filerShowtimesByDate(customer, date);
 
-        if (filteredShowtimes.isEmpty()) {
-            System.out.println("No showtimes available for the selected date.");
+        try {
+            if (filteredShowtimes.isEmpty()) {
+                throw new EntityNotFoundException("No showtimes available for the selected date.");
+            }
+        } catch (EntityNotFoundException e) {
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -469,8 +454,12 @@ public class Controller {
     public void displayFilteredShowtimesByMovie(Customer customer, String movieTitle){
         Map<Integer, Showtime> filteredShowtimes = cinemaService.filterShowtimesByMovie(customer,movieTitle);
 
-        if (filteredShowtimes.isEmpty()) {
-            System.out.println("\nNo showtimes found for the movie \"" + movieTitle + "\".");
+        try {
+            if (filteredShowtimes.isEmpty()) {
+                throw new EntityNotFoundException("No showtimes found for the movie \"" + movieTitle + "\".");
+            }
+        } catch (EntityNotFoundException e) {
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -509,9 +498,12 @@ public class Controller {
     public void displayBookingsWithShowtimes(Customer customer) {
         Map<Integer, Map.Entry<Booking, Showtime>> customerBookings = cinemaService.getBookingsByCustomer(customer);
 
-        if (customerBookings.isEmpty()) {
-            System.out.println("No bookings found for customer: " + customer.getFirstName() + " " + customer.getLastName());
-            return;
+        try {
+            if (customerBookings.isEmpty()) {
+                throw new EntityNotFoundException("No bookings found for customer: " + customer.getFirstName() + " " + customer.getLastName());
+            }
+        } catch (EntityNotFoundException e) {
+            System.out.println(e.getMessage());
         }
 
         for (Map.Entry<Integer, Map.Entry<Booking, Showtime>> entry : customerBookings.entrySet()) {

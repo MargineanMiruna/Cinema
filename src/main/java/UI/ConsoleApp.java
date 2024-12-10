@@ -42,105 +42,106 @@ public class ConsoleApp {
         boolean continueLoop = true;
 
         while (continueLoop) {
-            System.out.println("======================================");
-            System.out.println("""
-                    Please choose an option:
-                    1. Customer
-                    2. Staff
-                    3. Exit
-                    Enter your choice:
-                    """);
-            String userType = sc.nextLine();
+            try {
+                System.out.println("\n======================================");
+                System.out.println("""
+                        Please choose an option:
+                        1. Customer
+                        2. Staff
+                        3. Exit
+                        Enter your choice:""");
+                String userType = sc.nextLine();
 
-            switch (userType) {
-                case "1": {
-                    Customer loggedCustomer;
+                switch (userType) {
+                    case "1": {
+                        Customer loggedCustomer;
 
-                    boolean continueLoop2 = true;
-                    while (continueLoop2) {
-                        System.out.println("""
-                                ======================================
-                                Please choose an option:
-                                1. Log in
-                                2. Sign up
-                                3. Back
-                                Enter your choice:
-                                """);
-                        String opt = sc.nextLine();
+                        boolean continueLoop2 = true;
+                        while (continueLoop2) {
+                            System.out.println("""
+                                    ======================================
+                                    Please choose an option:
+                                    1. Log in
+                                    2. Sign up
+                                    3. Back
+                                    Enter your choice:""");
+                            String opt = sc.nextLine();
 
-                        switch (opt) {
-                            case "1": {
-                                loggedCustomer = this.logInCustomer();
-                                if(loggedCustomer != null)
-                                    this.customerMenu(loggedCustomer);
-                                break;
-                            }
-                            case "2": {
-                                signUpCustomer();
-                                loggedCustomer = this.logInCustomer();
-                                if(loggedCustomer != null)
-                                    this.customerMenu(loggedCustomer);
-                                break;
-                            }
-                            case "3": {
-                                continueLoop2 = false;
-                                break;
-                            }
-                            default: {
-                                throw new ValidationException("Invalid input. Please try again.");
+                            switch (opt) {
+                                case "1": {
+                                    loggedCustomer = this.logInCustomer();
+                                    if (loggedCustomer != null)
+                                        this.customerMenu(loggedCustomer);
+                                    break;
+                                }
+                                case "2": {
+                                    signUpCustomer();
+                                    loggedCustomer = this.logInCustomer();
+                                    if (loggedCustomer != null)
+                                        this.customerMenu(loggedCustomer);
+                                    break;
+                                }
+                                case "3": {
+                                    continueLoop2 = false;
+                                    break;
+                                }
+                                default: {
+                                    throw new ValidationException("Invalid input. Please try again.");
+                                }
                             }
                         }
+                        break;
                     }
-                    break;
-                }
-                case "2": {
-                    Staff loggedStaff;
+                    case "2": {
+                        Staff loggedStaff;
 
-                    boolean continueLoop3 = true;
-                    while (continueLoop3) {
-                        System.out.println("""
-                                ======================================
-                                Please choose an option:
-                                1. Log in
-                                2. Sign up
-                                3. Back
-                                Enter your choice:
-                                """);
-                        String opt = sc.nextLine();
+                        boolean continueLoop3 = true;
+                        while (continueLoop3) {
+                            System.out.println("""
+                                    ======================================
+                                    Please choose an option:
+                                    1. Log in
+                                    2. Sign up
+                                    3. Back
+                                    Enter your choice:""");
+                            String opt = sc.nextLine();
 
-                        switch (opt) {
-                            case "1": {
-                                loggedStaff = this.logInStaff();
-                                if (loggedStaff!= null)
-                                    this.staffMenu(loggedStaff);
-                                break;
-                            }
-                            case "2": {
-                                this.signUpStaff();
-                                loggedStaff = this.logInStaff();
-                                if (loggedStaff!= null)
-                                    this.staffMenu(loggedStaff);
-                                break;
-                            }
-                            case "3": {
-                                continueLoop3 = false;
-                                break;
-                            }
-                            default: {
-                                throw new ValidationException("Invalid input. Please try again.");
+                            switch (opt) {
+                                case "1": {
+                                    loggedStaff = this.logInStaff();
+                                    if (loggedStaff != null)
+                                        this.staffMenu(loggedStaff);
+                                    break;
+                                }
+                                case "2": {
+                                    this.signUpStaff();
+                                    loggedStaff = this.logInStaff();
+                                    if (loggedStaff != null)
+                                        this.staffMenu(loggedStaff);
+                                    break;
+                                }
+                                case "3": {
+                                    continueLoop3 = false;
+                                    break;
+                                }
+                                default: {
+                                    throw new ValidationException("Invalid input. Please try again.");
+                                }
                             }
                         }
-                    }
 
-                    break;
+                        break;
+                    }
+                    case "3": {
+                        continueLoop = false;
+                        break;
+                    }
+                    default: {
+                        throw new ValidationException("Invalid input. Please enter a number between 1-3!");
+                    }
                 }
-                case "3": {
-                    continueLoop = false;
-                    break;
-                }
-                default: {
-                    throw new ValidationException("Invalid input. Please enter a number between 1-3!");
-                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -161,18 +162,21 @@ public class ConsoleApp {
         Customer loggedCustomer = null;
 
         while (loggedCustomer == null) {
-            System.out.println("Please enter your email: ");
-            email = sc.nextLine();
+            try {
+                System.out.println("Please enter your email: ");
+                email = sc.nextLine();
 
-            if (email.isEmpty()) {
-                System.out.println("Email cannot be empty. Please try again.");
-                continue;
-            }
+                if (email.isEmpty()) {
+                    throw new ValidationException("Email cannot be empty. Please try again.");
+                }
 
-            loggedCustomer = controller.logCustomer(email);
+                loggedCustomer = controller.logCustomer(email);
 
-            if (loggedCustomer == null) {
-                throw new EntityNotFoundException("No account found with the email: " + email + ". Please try again.");
+                if (loggedCustomer == null) {
+                    throw new EntityNotFoundException("No account found with the email: " + email + ". Please try again.");
+                }
+            } catch (EntityNotFoundException | ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -191,23 +195,31 @@ public class ConsoleApp {
 
         String firstName = "";
         while (true) {
-            System.out.println("Please enter your first name: ");
-            firstName = sc.nextLine();
-            if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
-                throw new ValidationException("First name must contain only letters and cannot be empty. Please try again.");
-            } else {
-                break;
+            try {
+                System.out.println("Please enter your first name: ");
+                firstName = sc.nextLine();
+                if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
+                    throw new ValidationException("First name must contain only letters and cannot be empty. Please try again.");
+                } else {
+                    break;
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
         String lastName = "";
         while (true) {
-            System.out.println("Please enter your last name: ");
-            lastName = sc.nextLine();
-            if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
-                throw new ValidationException("Last name must contain only letters and cannot be empty. Please try again.");
-            } else {
-                break;
+            try {
+                System.out.println("Please enter your last name: ");
+                lastName = sc.nextLine();
+                if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
+                    throw new ValidationException("Last name must contain only letters and cannot be empty. Please try again.");
+                } else {
+                    break;
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -230,8 +242,8 @@ public class ConsoleApp {
                     System.out.println("\nAccount created successfully!");
                     invalidDate = false;
                 }
-            } catch (DateTimeParseException e) {
-                throw new ValidationException("Invalid date format. Please use dd-MM-yyyy.");
+            } catch (DateTimeParseException | ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -250,18 +262,22 @@ public class ConsoleApp {
         // Selectarea showtime-ului
         int showtimeId = -1;
         while (true) {
-            System.out.println("\nPlease choose the Showtime number: ");
-            if (sc.hasNextInt()) {
-                showtimeId = sc.nextInt();
-                sc.nextLine();
-                if (controller.isShowtimeAvailable(showtimeId)) {
-                    break;
+            try {
+                System.out.println("\nPlease choose the Showtime number: ");
+                if (sc.hasNextInt()) {
+                    showtimeId = sc.nextInt();
+                    sc.nextLine();
+                    if (controller.isShowtimeAvailable(showtimeId)) {
+                        break;
+                    } else {
+                        throw new ValidationException("Invalid Showtime number. Please try again.");
+                    }
                 } else {
-                    throw new ValidationException("Invalid Showtime number. Please try again.");
+                    sc.nextLine();
+                    throw new ValidationException("Please enter a valid number for Showtime.");
                 }
-            } else {
-                sc.nextLine();
-                throw new ValidationException("Please enter a valid number for Showtime.");
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -272,19 +288,23 @@ public class ConsoleApp {
             System.out.println("Type of tickets you want to buy \n 1. standard - 30 lei \n 2. vip - 40 lei \n 3. premium - 50 lei \n 0. Finish");
             int typeOfTickets = -1;
             while (true) {
-                if (sc.hasNextInt()) {
-                    typeOfTickets = sc.nextInt();
-                    sc.nextLine();
-                    if (typeOfTickets == 0) {
-                        break;
-                    } else if (typeOfTickets >= 1 && typeOfTickets <= 3) {
-                        break;
+                try {
+                    if (sc.hasNextInt()) {
+                        typeOfTickets = sc.nextInt();
+                        sc.nextLine();
+                        if (typeOfTickets == 0) {
+                            break;
+                        } else if (typeOfTickets >= 1 && typeOfTickets <= 3) {
+                            break;
+                        } else {
+                            throw new ValidationException("Invalid ticket type. Please choose 1, 2, 3, or 0 to finish.");
+                        }
                     } else {
-                        throw new ValidationException("Invalid ticket type. Please choose 1, 2, 3, or 0 to finish.");
+                        sc.nextLine();
+                        throw new ValidationException("Please enter a valid number for ticket type.");
                     }
-                } else {
-                    sc.nextLine();
-                    throw new ValidationException("Please enter a valid number for ticket type.");
+                } catch (ValidationException e) {
+                    System.out.println(e.getMessage());
                 }
             }
 
@@ -293,30 +313,38 @@ public class ConsoleApp {
             }
 
             List<Integer> availableSeats = new ArrayList<>(controller.displayAvailableSeats(showtimeId, typeOfTickets));
-            if (availableSeats.isEmpty()) {
-                System.out.println("No seats available for this ticket type. Please choose a different type.");
+            try {
+                if (availableSeats.isEmpty()) {
+                    throw new EntityNotFoundException("No seats available for this ticket type. Please choose a different type.");
+                }
+            } catch (EntityNotFoundException e) {
+                System.out.println(e.getMessage());
                 continue;
             }
 
             int nrOfTickets = -1;
             while (true) {
-                System.out.println("Number of tickets you want to buy for this type: ");
-                if (sc.hasNextInt()) {
-                    nrOfTickets = sc.nextInt();
-                    sc.nextLine();
-                    if (nrOfTickets > 0) {
-                        if (nrOfTickets <= availableSeats.size()) {
-                            totalTickets += nrOfTickets;
-                            break;
+                try {
+                    System.out.println("Number of tickets you want to buy for this type: ");
+                    if (sc.hasNextInt()) {
+                        nrOfTickets = sc.nextInt();
+                        sc.nextLine();
+                        if (nrOfTickets > 0) {
+                            if (nrOfTickets <= availableSeats.size()) {
+                                totalTickets += nrOfTickets;
+                                break;
+                            } else {
+                                throw new ValidationException("Only " + availableSeats.size() + " seats are available for this type. Please choose fewer tickets.");
+                            }
                         } else {
-                            System.out.println("Only " + availableSeats.size() + " seats are available for this type. Please choose fewer tickets.");
+                            throw new ValidationException("Please enter a valid number of tickets (greater than 0).");
                         }
                     } else {
-                        System.out.println("Please enter a valid number of tickets (greater than 0).");
+                        sc.nextLine();
+                        throw new ValidationException("Please enter a valid number for tickets.");
                     }
-                } else {
-                    System.out.println("Please enter a valid number for tickets.");
-                    sc.nextLine();
+                } catch (ValidationException e) {
+                    System.out.println(e.getMessage());
                 }
             }
 
@@ -325,24 +353,28 @@ public class ConsoleApp {
             for (int i = 0; i < nrOfTickets; i++) {
                 int seat = -1;
                 while (true) {
-                    if (sc.hasNextInt()) {
-                        seat = sc.nextInt();
-                        sc.nextLine();
-                        if (availableSeats.contains(seat)) {
-                            if (!seats.contains(seat)) {
-                                seats.add(seat);
-                                allSelectedSeats.add(seat);
-                                availableSeats.remove(Integer.valueOf(seat));
-                                break;
+                    try {
+                        if (sc.hasNextInt()) {
+                            seat = sc.nextInt();
+                            sc.nextLine();
+                            if (availableSeats.contains(seat)) {
+                                if (!seats.contains(seat)) {
+                                    seats.add(seat);
+                                    allSelectedSeats.add(seat);
+                                    availableSeats.remove(Integer.valueOf(seat));
+                                    break;
+                                } else {
+                                    throw new ValidationException("Seat " + seat + " has already been selected. Please choose another one.");
+                                }
                             } else {
-                                System.out.println("Seat " + seat + " has already been selected. Please choose another one.");
+                                throw new ValidationException("Seat " + seat + " is not available in the list of available seats. Please choose a valid seat.");
                             }
                         } else {
-                            System.out.println("Seat " + seat + " is not available in the list of available seats. Please choose a valid seat.");
+                            sc.nextLine();
+                            throw new ValidationException("Please enter a valid seat number.");
                         }
-                    } else {
-                        System.out.println("Please enter a valid seat number.");
-                        sc.nextLine();
+                    } catch (ValidationException e) {
+                        System.out.println(e.getMessage());
                     }
                 }
             }
@@ -350,8 +382,12 @@ public class ConsoleApp {
             controller.removeSeatsFromAvailable(showtimeId, seats);
         }
 
-        if (allSelectedSeats.isEmpty()) {
-            System.out.println("You have not selected any seats. Booking cannot be created.");
+        try {
+            if (allSelectedSeats.isEmpty()) {
+                throw new ValidationException("You have not selected any seats. Booking cannot be created.");
+            }
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
             return;
         }
 
@@ -379,11 +415,10 @@ public class ConsoleApp {
                 Please choose the type of membership you want to purchase:
                 1. Basic
                 2. Premium
-                Enter your choice:
-                """);
+                Enter your choice:""");
 
                 if (!sc.hasNextInt()) {
-                    throw new IllegalArgumentException("Please enter a valid number (1 or 2).");
+                    throw new ValidationException("Please enter a valid number (1 or 2).");
                 }
 
                 int type = sc.nextInt();
@@ -411,15 +446,12 @@ public class ConsoleApp {
                         break;
                     }
                     default: {
-                        System.out.println("Invalid input. Please enter a number between 1 and 2.");
-                        break;
+                        throw new ValidationException("Invalid input. Please enter a number between 1 and 2.");
                     }
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (ValidationException e) {
                 System.out.println(e.getMessage());
                 sc.nextLine();
-            } catch (Exception e) {
-                System.out.println("An unexpected error occurred: " + e.getMessage());
             }
         }
 
@@ -443,10 +475,14 @@ public class ConsoleApp {
         3. Showtimes filtered by movie
         4. Showtimes sorted by duration
         5. Showtimes sorted by date
-        """);
+        Enter your choice:""");
 
-        if (!sc.hasNextInt()) {
-            System.out.println("Invalid input. Please enter a number between 1 and 5.");
+        try {
+            if (!sc.hasNextInt()) {
+                throw new ValidationException("Invalid input. Please enter a number between 1 and 5.");
+            }
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
             sc.nextLine();
             return;
         }
@@ -454,51 +490,58 @@ public class ConsoleApp {
         int showtimesId = sc.nextInt();
         sc.nextLine();
 
-        switch (showtimesId) {
-            case 1: {
-                controller.displayShowtimesFilteredByPg(loggedCustomer);
-                break;
-            }
-            case 2: {
-                LocalDate date1 = null;
-                while (date1 == null) {
-                    System.out.println("Please enter a date (dd-MM-yyyy): ");
-                    String date = sc.nextLine();
-                    try {
-                        date1 = LocalDate.parse(date, dateFormatter); // Parsăm data
-                        controller.displayShowtimesFilteredByDate(loggedCustomer, date1);
-                    } catch (DateTimeParseException e) {
-                        System.out.println("Invalid date format. Please use dd-MM-yyyy.");
-                    }
+        try {
+            switch (showtimesId) {
+                case 1: {
+                    controller.displayShowtimesFilteredByPg(loggedCustomer);
+                    break;
                 }
-                break;
-            }
-            case 3: {
-                String movieTitle = null;
-                while (true) {
-                    System.out.println("Please enter the movie title: ");
-                    movieTitle = sc.nextLine();
-                    if (controller.doesMovieExist(movieTitle)) {
-                        controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle);
-                        break;
-                    } else {
-                        System.out.println("The movie \"" + movieTitle + "\" does not exist. Please try again.");
+                case 2: {
+                    LocalDate date1 = null;
+                    while (date1 == null) {
+                        System.out.println("Please enter a date (dd-MM-yyyy): ");
+                        String date = sc.nextLine();
+                        try {
+                            date1 = LocalDate.parse(date, dateFormatter); // Parsăm data
+                            controller.displayShowtimesFilteredByDate(loggedCustomer, date1);
+                        } catch (DateTimeParseException e) {
+                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        }
                     }
+                    break;
                 }
-                break;
+                case 3: {
+                    String movieTitle;
+                    while (true) {
+                        System.out.println("Please enter the movie title: ");
+                        movieTitle = sc.nextLine();
+                        try {
+                            if (controller.doesMovieExist(movieTitle)) {
+                                controller.displayFilteredShowtimesByMovie(loggedCustomer, movieTitle);
+                                break;
+                            } else {
+                                throw new EntityNotFoundException("The movie \"" + movieTitle + "\" does not exist. Please try again.");
+                            }
+                        } catch (EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                    break;
+                }
+                case 4: {
+                    controller.displaySortedShowtimesByDuration(loggedCustomer);
+                    break;
+                }
+                case 5: {
+                    controller.displaySortedShowtimesByDateAsc(loggedCustomer);
+                    break;
+                }
+                default: {
+                    throw new ValidationException("Invalid input. Please enter a number between 1 and 5.");
+                }
             }
-            case 4: {
-                controller.displaySortedShowtimesByDuration(loggedCustomer);
-                break;
-            }
-            case 5: {
-                controller.displaySortedShowtimesByDateAsc(loggedCustomer);
-                break;
-            }
-            default: {
-                System.out.println("Invalid option. Please choose 1, 2, 3, 4, or 5.");
-                break;
-            }
+        } catch (ValidationException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -517,37 +560,40 @@ public class ConsoleApp {
             controller.customerMenu();
             String option = sc.nextLine();
 
-            switch (option) {
-                case "1": {
-                    //display Showtimes
-                    this.displayShowtimes(loggedCustomer);
-                    break;
+            try {
+                switch (option) {
+                    case "1": {
+                        //display Showtimes
+                        this.displayShowtimes(loggedCustomer);
+                        break;
+                    }
+                    case "2": {
+                        //create Booking
+                        this.displayShowtimes(loggedCustomer);
+                        this.createBooking(loggedCustomer);
+                        break;
+                    }
+                    case "3": {
+                        //create Membership
+                        this.createMembership(loggedCustomer);
+                        break;
+                    }
+                    case "4": {
+                        //view Booking history
+                        controller.displayBookingsWithShowtimes(loggedCustomer);
+                        break;
+                    }
+                    case "5": {
+                        //back
+                        continueLoop = false;
+                        break;
+                    }
+                    default: {
+                        throw new ValidationException("Invalid input. Please enter a number between 1 and 5.");
+                    }
                 }
-                case "2": {
-                    //create Booking
-                    this.displayShowtimes(loggedCustomer);
-                    this.createBooking(loggedCustomer);
-                    break;
-                }
-                case "3": {
-                    //create Membership
-                    this.createMembership(loggedCustomer);
-                    break;
-                }
-                case "4":{
-                    //view Booking history
-                    controller.displayBookingsWithShowtimes(loggedCustomer);
-                    break;
-                }
-                case "5": {
-                    //back
-                    continueLoop = false;
-                    break;
-                }
-                default: {
-                    System.out.println("Invalid input. Please enter a number between 1-4!");
-                    break;
-                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -568,15 +614,18 @@ public class ConsoleApp {
             System.out.println("Please enter your email: ");
             email = sc.nextLine().trim();  // Remove any leading/trailing spaces
 
-            if (email.isEmpty()) {
-                System.out.println("Email cannot be empty. Please try again.");
-                continue;
-            }
+            try {
+                if (email.isEmpty()) {
+                    throw new ValidationException("Email cannot be empty. Please try again.");
+                }
 
-            loggedStaff = controller.logStaff(email);
+                loggedStaff = controller.logStaff(email);
 
-            if (loggedStaff == null) {
-                System.out.println("No staff member found with the email: " + email + ". Please try again.");
+                if (loggedStaff == null) {
+                    throw new EntityNotFoundException("No staff member found with the email: " + email + ". Please try again.");
+                }
+            } catch (ValidationException | EntityNotFoundException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -584,8 +633,6 @@ public class ConsoleApp {
 
         return loggedStaff;
     }
-
-
 
     /**
      * Signs up a new staff member by collecting their details and creating an account.
@@ -599,10 +646,14 @@ public class ConsoleApp {
         while (true) {
             System.out.println("Please enter your first name: ");
             firstName = sc.nextLine();
-            if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
-                System.out.println("First name must contain only letters and cannot be empty. Please try again.");
-            } else {
-                break;
+            try {
+                if (firstName.isEmpty() || !firstName.matches("^[A-Za-z]+$")) {
+                    throw new ValidationException("First name must contain only letters and cannot be empty. Please try again.");
+                } else {
+                    break;
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
@@ -610,34 +661,29 @@ public class ConsoleApp {
         while (true) {
             System.out.println("Please enter your last name: ");
             lastName = sc.nextLine();
-            if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
-                System.out.println("Last name must contain only letters and cannot be empty. Please try again.");
-            } else {
-                break;
+            try {
+                if (lastName.isEmpty() || !lastName.matches("^[A-Za-z]+$")) {
+                    throw new ValidationException("Last name must contain only letters and cannot be empty. Please try again.");
+                } else {
+                    break;
+                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
 
-        System.out.println("Please enter your email: ");
-        String email = sc.nextLine();
-
-        boolean invalidDate = true;
-        while (invalidDate) {
-            System.out.println("Please enter your birthday (dd-MM-yyyy): ");
-            String date = sc.nextLine();
-
+        String email = "";
+        while (true) {
+            System.out.println("Please enter your email: ");
+            email = sc.nextLine();
             try {
-                LocalDate birthday = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                if (birthday.isAfter(LocalDate.now())) {
-                    System.out.println("Birthdate cannot be in the future. Please try again.");
-                } else if (birthday.getYear() < 1900) {
-                    System.out.println("Birth year cannot be earlier than 1900. Please try again.");
+                if (email.isEmpty() || !email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$")) {
+                    throw new ValidationException("Email must respect the email format and cannot be empty. Please try again.");
                 } else {
-                    controller.createStaff(firstName, lastName, email);
-                    System.out.println("\nAccount created successfully!");
-                    invalidDate = false;
+                    break;
                 }
-            } catch (DateTimeParseException e) {
-                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -657,140 +703,167 @@ public class ConsoleApp {
             String option = sc.nextLine();
             System.out.println("\n======================================");
 
-            switch (option) {
-                case "1": {
-                    // Adaugare Film
-                    System.out.println("\nPlease enter movie title: ");
-                    String title = sc.nextLine().trim();
-
-                    if (title.isEmpty()) {
-                        System.out.println("Title cannot be empty. Please try again.");
-                        break;
-                    }
-
-                    System.out.println("Please enter movie PG (true/false): ");
-                    boolean pg = false;
-                    boolean validPg = false;
-                    while (!validPg) {
-                        String pgInput = sc.nextLine().trim().toLowerCase();
-                        if (pgInput.equals("true")) {
-                            pg = true;
-                            validPg = true;
-                        } else if (pgInput.equals("false")) {
-                            pg = false;
-                            validPg = true;
-                        } else {
-                            System.out.println("Invalid PG value. Please enter 'true' or 'false'.");
-                        }
-                    }
-
-                    System.out.println("Please enter movie genre: ");
-                    String genre = sc.nextLine().trim();
-
-                    if (genre.isEmpty()) {
-                        System.out.println("Genre cannot be empty. Please try again.");
-                        break;
-                    }
-
-                    boolean invalidTime = true;
-                    while (invalidTime) {
-                        System.out.println("Please enter movie release date (dd-MM-yyyy): ");
-                        String date = sc.nextLine().trim();
+            try {
+                switch (option) {
+                    case "1": {
+                        // Adaugare Film
+                        System.out.println("\nPlease enter movie title: ");
+                        String title = sc.nextLine().trim();
 
                         try {
-                            LocalDate releaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                            controller.addMovie(title, pg, genre, releaseDate);
-                            System.out.println("\nMovie added successfully!");
-                            invalidTime = false;
-
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            if (title.isEmpty()) {
+                                throw new ValidationException("Movie title cannot be empty. Please try again.");
+                            }
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
                         }
-                    }
 
-                    invalidOption = false;
-                    break;
-                }
-                case "2": {
-
-                    controller.displayMoviesStaff();
-                    System.out.println("\nPlease enter title of the movie you want to update: ");
-                    String title = sc.nextLine().trim();
-
-                    if (!controller.doesMovieExist(title)) {
-                        System.out.println("No movie found with that title. Please try again.");
-                        break;
-                    }
-
-                    System.out.println("Please enter new PG (true/false): ");
-                    boolean newPg = false;
-                    boolean validPg = false;
-                    while (!validPg) {
-                        String pgInput = sc.nextLine().trim().toLowerCase();
-                        if (pgInput.equals("true")) {
-                            newPg = true;
-                            validPg = true;
-                        } else if (pgInput.equals("false")) {
-                            newPg = false;
-                            validPg = true;
-                        } else {
-                            System.out.println("Invalid PG value. Please enter 'true' or 'false'.");
+                        System.out.println("Please enter movie PG (true/false): ");
+                        boolean pg = false;
+                        boolean validPg = false;
+                        while (!validPg) {
+                            String pgInput = sc.nextLine().trim().toLowerCase();
+                            try {
+                                if (pgInput.equals("true")) {
+                                    pg = true;
+                                    validPg = true;
+                                } else if (pgInput.equals("false")) {
+                                    pg = false;
+                                    validPg = true;
+                                } else {
+                                    throw new ValidationException("Invalid PG value. Please enter 'true' or 'false'.");
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
-                    }
 
-                    System.out.println("Please enter new genre: ");
-                    String newGenre = sc.nextLine().trim();
-
-                    if (newGenre.isEmpty()) {
-                        System.out.println("Genre cannot be empty. Please try again.");
-                        break;
-                    }
-
-                    boolean invalidTime = true;
-                    while (invalidTime) {
-                        System.out.println("Please enter new release date (dd-MM-yyyy): ");
-                        String date = sc.nextLine().trim();
+                        System.out.println("Please enter movie genre: ");
+                        String genre = sc.nextLine().trim();
 
                         try {
-                            LocalDate newReleaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
-                            controller.updateMovie(title, newPg, newGenre, newReleaseDate);
-                            System.out.println("\nMovie updated successfully!");
-                            invalidTime = false;
-
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            if (genre.isEmpty()) {
+                                throw new ValidationException("Movie genre cannot be empty. Please try again.");
+                            }
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
                         }
-                    }
 
-                    invalidOption = false;
-                    break;
-                }
-                case "3": {
+                        boolean invalidTime = true;
+                        while (invalidTime) {
+                            System.out.println("Please enter movie release date (dd-MM-yyyy): ");
+                            String date = sc.nextLine().trim();
 
-                    controller.displayMoviesStaff();
-                    System.out.println("\nPlease enter title of the movie you want to delete: ");
-                    String title = sc.nextLine().trim();
+                            try {
+                                LocalDate releaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                controller.addMovie(title, pg, genre, releaseDate);
+                                System.out.println("\nMovie added successfully!");
+                                invalidTime = false;
 
-                    if (!controller.doesMovieExist(title)) {
-                        System.out.println("No movie found with that title. Please try again.");
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            }
+                        }
+
+                        invalidOption = false;
                         break;
                     }
+                    case "2": {
+                        //modificare film
+                        controller.displayMoviesStaff();
+                        System.out.println("\nPlease enter title of the movie you want to update: ");
+                        String title = sc.nextLine().trim();
 
-                    controller.deleteMovie(title);
-                    System.out.println("\nMovie deleted successfully!");
+                        try {
+                            if (!controller.doesMovieExist(title)) {
+                                throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                            }
+                        } catch (EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
 
-                    invalidOption = false;
-                    break;
+                        System.out.println("Please enter new PG (true/false): ");
+                        boolean newPg = false;
+                        boolean validPg = false;
+                        while (!validPg) {
+                            String pgInput = sc.nextLine().trim().toLowerCase();
+                            try {
+                                if (pgInput.equals("true")) {
+                                    newPg = true;
+                                    validPg = true;
+                                } else if (pgInput.equals("false")) {
+                                    newPg = false;
+                                    validPg = true;
+                                } else {
+                                    throw new ValidationException("Invalid PG value. Please enter 'true' or 'false'.");
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+
+                        System.out.println("Please enter new genre: ");
+                        String newGenre = sc.nextLine().trim();
+
+                        try {
+                            if (newGenre.isEmpty()) {
+                                throw new ValidationException("Genre cannot be empty. Please try again.");
+                            }
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
+                        }
+
+                        boolean invalidTime = true;
+                        while (invalidTime) {
+                            System.out.println("Please enter new release date (dd-MM-yyyy): ");
+                            String date = sc.nextLine().trim();
+
+                            try {
+                                LocalDate newReleaseDate = LocalDate.parse(date, DateTimeFormatter.ofPattern("dd-MM-yyyy"));
+                                controller.updateMovie(title, newPg, newGenre, newReleaseDate);
+                                System.out.println("\nMovie updated successfully!");
+                                invalidTime = false;
+
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            }
+                        }
+
+                        invalidOption = false;
+                        break;
+                    }
+                    case "3": {
+                        //stergere film
+                        controller.displayMoviesStaff();
+                        System.out.println("\nPlease enter title of the movie you want to delete: ");
+                        String title = sc.nextLine().trim();
+
+                        try {
+                            if (!controller.doesMovieExist(title)) {
+                                throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                            }
+                        } catch (EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
+
+                        controller.deleteMovie(title);
+                        System.out.println("\nMovie deleted successfully!");
+
+                        invalidOption = false;
+                        break;
+                    }
+                    default: {
+                        throw new ValidationException("Invalid input. Please enter a number between 1-3!");
+                    }
                 }
-                default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
-                    break;
-                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
-
-
 
     /**
      * Allows a logged-in staff member to modify screen details, including adding, updating, or deleting screens.
@@ -807,99 +880,120 @@ public class ConsoleApp {
             String option = sc.nextLine();
             System.out.println("\n======================================");
 
-            switch (option) {
-                case "1": { // Add Screen
-                    int nrStandardSeats, nrVipSeats, nrPremiumSeats;
+            try {
+                switch (option) {
+                    case "1": { // Add Screen
+                        int nrStandardSeats, nrVipSeats, nrPremiumSeats;
 
-                    while (true) {
-                        System.out.println("\nPlease enter the number of standard seats (0-199): ");
-                        nrStandardSeats = sc.nextInt();
-                        System.out.println("Please enter the number of VIP seats (0-199): ");
-                        nrVipSeats = sc.nextInt();
-                        System.out.println("Please enter the number of premium seats (0-199): ");
-                        nrPremiumSeats = sc.nextInt();
-                        sc.nextLine();
+                        while (true) {
+                            System.out.println("\nPlease enter the number of standard seats (0-199): ");
+                            nrStandardSeats = sc.nextInt();
+                            System.out.println("Please enter the number of VIP seats (0-199): ");
+                            nrVipSeats = sc.nextInt();
+                            System.out.println("Please enter the number of premium seats (0-199): ");
+                            nrPremiumSeats = sc.nextInt();
+                            sc.nextLine();
 
-                        if ((nrStandardSeats > 0 || nrVipSeats > 0 || nrPremiumSeats > 0) &&
-                                nrStandardSeats <= 199 && nrVipSeats <= 199 && nrPremiumSeats <= 199) {
-                            break;
-                        } else {
-                            System.out.println("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
+                            try {
+                                if ((nrStandardSeats > 0 || nrVipSeats > 0 || nrPremiumSeats > 0) &&
+                                        nrStandardSeats <= 199 && nrVipSeats <= 199 && nrPremiumSeats <= 199) {
+                                    break;
+                                } else {
+                                    throw new ValidationException("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
+
+                        controller.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
+                        System.out.println("\nScreen added successfully!");
+                        invalidOption = false;
+                        break;
                     }
+                    case "2": { // Update Screen
+                        controller.displayScreensStaff();
+                        int id;
 
-                    controller.addScreen(nrStandardSeats, nrVipSeats, nrPremiumSeats);
-                    System.out.println("\nScreen added successfully!");
-                    invalidOption = false;
-                    break;
-                }
-                case "2": { // Update Screen
-                    controller.displayScreensStaff();
-                    int id;
+                        while (true) {
+                            System.out.println("\nPlease enter the ID of the screen you want to update: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
 
-                    while (true) {
-                        System.out.println("\nPlease enter the ID of the screen you want to update: ");
-                        id = sc.nextInt();
-                        sc.nextLine();
-
-                        if (controller.doesScreenExist(id)) {
-                            break;
-                        } else {
-                            System.out.println("Invalid screen ID. Please try again.");
+                            try {
+                                if (controller.doesScreenExist(id)) {
+                                    break;
+                                } else if (controller.hasFutureShowtimes(id)) {
+                                    throw new BusinessLogicException("This screen has showtimes scheduled in the future. Cannot update until they are completed.");
+                                } else {
+                                    throw new EntityNotFoundException("No screen found with that ID. Please try again.");
+                                }
+                            } catch (EntityNotFoundException | BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
-                    }
 
-                    int newNrStandardSeats, newNrVipSeats, newNrPremiumSeats;
-                    while (true) {
-                        System.out.println("Please enter new number of standard seats (0-199): ");
-                        newNrStandardSeats = sc.nextInt();
-                        System.out.println("Please enter new number of VIP seats (0-199): ");
-                        newNrVipSeats = sc.nextInt();
-                        System.out.println("Please enter new number of premium seats (0-199): ");
-                        newNrPremiumSeats = sc.nextInt();
-                        sc.nextLine();
+                        int newNrStandardSeats, newNrVipSeats, newNrPremiumSeats;
+                        while (true) {
+                            System.out.println("Please enter new number of standard seats (0-199): ");
+                            newNrStandardSeats = sc.nextInt();
+                            System.out.println("Please enter new number of VIP seats (0-199): ");
+                            newNrVipSeats = sc.nextInt();
+                            System.out.println("Please enter new number of premium seats (0-199): ");
+                            newNrPremiumSeats = sc.nextInt();
+                            sc.nextLine();
 
-                        if ((newNrStandardSeats > 0 || newNrVipSeats > 0 || newNrPremiumSeats > 0) &&
-                                newNrStandardSeats <= 199 && newNrVipSeats <= 199 && newNrPremiumSeats <= 199) {
-                            break;
-                        } else {
-                            System.out.println("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
+                            try {
+                                if ((newNrStandardSeats > 0 || newNrVipSeats > 0 || newNrPremiumSeats > 0) &&
+                                        newNrStandardSeats <= 199 && newNrVipSeats <= 199 && newNrPremiumSeats <= 199) {
+                                    break;
+                                } else {
+                                    throw new ValidationException("Invalid input. At least one seat type must have more than 0 seats, and all must be below 200.");
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
+
+                        List<Seat> seats = new ArrayList<>();
+                        controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats, seats);
+                        System.out.println("\nScreen updated successfully!");
+                        invalidOption = false;
+                        break;
                     }
+                    case "3": { // Delete Screen
+                        controller.displayScreensStaff();
+                        int id;
 
-                    List<Seat> seats = new ArrayList<>(); // Assuming this is managed elsewhere
-                    controller.updateScreen(id, newNrStandardSeats, newNrVipSeats, newNrPremiumSeats, seats);
-                    System.out.println("\nScreen updated successfully!");
-                    invalidOption = false;
-                    break;
-                }
-                case "3": { // Delete Screen
-                    controller.displayScreensStaff();
-                    int id;
+                        while (true) {
+                            System.out.println("\nPlease enter the ID of the screen you want to delete: ");
+                            id = sc.nextInt();
+                            sc.nextLine();
 
-                    while (true) {
-                        System.out.println("\nPlease enter the ID of the screen you want to delete: ");
-                        id = sc.nextInt();
-                        sc.nextLine();
-
-                        if (!controller.doesScreenExist(id)) {
-                            System.out.println("Invalid screen ID. Please try again.");
-                        } else if (controller.hasFutureShowtimes(id)) {
-                            System.out.println("This screen has showtimes scheduled in the future. Cannot delete until they are completed.");
-                        } else {
-                            break;
+                            try {
+                                if (!controller.doesScreenExist(id)) {
+                                    throw new EntityNotFoundException("No screen found with that ID. Please try again.");
+                                } else if (controller.hasFutureShowtimes(id)) {
+                                    throw new BusinessLogicException("This screen has showtimes scheduled in the future. Cannot delete until they are completed.");
+                                } else {
+                                    break;
+                                }
+                            } catch (EntityNotFoundException | BusinessLogicException e) {
+                                System.out.println(e.getMessage());
+                            }
                         }
-                    }
 
-                    controller.deleteScreen(id);
-                    System.out.println("\nScreen deleted successfully!");
-                    invalidOption = false;
-                    break;
+                        controller.deleteScreen(id);
+                        System.out.println("\nScreen deleted successfully!");
+                        invalidOption = false;
+                        break;
+                    }
+                    default: {
+                        throw new ValidationException("Invalid input. Please enter a number between 1-3!");
+                    }
                 }
-                default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
-                    break;
-                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -920,185 +1014,220 @@ public class ConsoleApp {
             String option = sc.nextLine();
             System.out.println("\n=====================================");
 
-            switch (option) {
-                case "1": { // Add Showtime
-                    System.out.println("\nPlease enter screen ID: ");
-                    int screenId = sc.nextInt();
-                    sc.nextLine();
-
-                    if (!controller.doesScreenExist(screenId)) {
-                        System.out.println("Screen ID does not exist. Please try again.");
-                        break;
-                    }
-
-                    System.out.println("Please enter movie title: ");
-                    String title = sc.nextLine();
-
-                    int movieId = controller.findMovieIdByTitle(title);
-                    if (movieId == -1) {
-                        System.out.println("Movie title does not exist. Please try again.");
-                        break;
-                    }
-
-                    LocalDate showtimeDate = null;
-                    boolean invalidDate = true;
-                    while (invalidDate) {
-                        System.out.println("Please enter a date (dd-MM-yyyy): ");
-                        String date = sc.nextLine();
+            try {
+                switch (option) {
+                    case "1": { // Add Showtime
+                        System.out.println("\nPlease enter screen ID: ");
+                        int screenId = sc.nextInt();
+                        sc.nextLine();
 
                         try {
-                            showtimeDate = LocalDate.parse(date, dateFormatter);
-                            if (showtimeDate.isBefore(LocalDate.now())) {
-                                System.out.println("Date must be in the future. Please try again.");
-                            } else {
-                                invalidDate = false;
+                            if (!controller.doesScreenExist(screenId)) {
+                                throw new EntityNotFoundException("No screen found with that ID. Please try again.");
                             }
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        } catch (EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
                         }
-                    }
 
-                    LocalTime startTime = null;
-                    boolean invalidTime = true;
-                    while (invalidTime) {
-                        System.out.println("Please enter a starting time (HH:mm): ");
-                        String time = sc.nextLine();
+                        System.out.println("Please enter movie title: ");
+                        String title = sc.nextLine();
+
+                        int movieId = controller.findMovieIdByTitle(title);
+                        try {
+                            if (movieId == -1) {
+                                throw new EntityNotFoundException("No movie found with that title. Please try again.");
+                            }
+                        } catch (EntityNotFoundException e) {
+                            System.out.println(e.getMessage());
+                        }
+
+                        LocalDate showtimeDate = null;
+                        boolean invalidDate = true;
+                        while (invalidDate) {
+                            System.out.println("Please enter a date (dd-MM-yyyy): ");
+                            String date = sc.nextLine();
+
+                            try {
+                                showtimeDate = LocalDate.parse(date, dateFormatter);
+                                if (showtimeDate.isBefore(LocalDate.now())) {
+                                    throw new ValidationException("Date must be in the future. Please try again.");
+                                } else {
+                                    invalidDate = false;
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            }
+                        }
+
+                        LocalTime startTime = null;
+                        boolean invalidTime = true;
+                        while (invalidTime) {
+                            System.out.println("Please enter a starting time (HH:mm): ");
+                            String time = sc.nextLine();
+
+                            try {
+                                startTime = LocalTime.parse(time, timeFormatter);
+                                if (startTime.isBefore(LocalTime.of(6, 0)) || startTime.isAfter(LocalTime.of(23, 59))) {
+                                    throw new ValidationException("Start time must be between 06:00 and 24:00. Please try again.");
+                                } else {
+                                    invalidTime = false;
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid time format. Please use HH:mm.");
+                            }
+                        }
+
+                        System.out.println("Please enter duration (in minutes): ");
+                        int duration = sc.nextInt();
+                        sc.nextLine();
 
                         try {
-                            startTime = LocalTime.parse(time, timeFormatter);
-                            if (startTime.isBefore(LocalTime.of(6, 0)) || startTime.isAfter(LocalTime.of(23, 59))) {
-                                System.out.println("Start time must be between 06:00 and 24:00. Please try again.");
-                            } else {
-                                invalidTime = false;
+                            if (duration <= 0 || duration > 200) {
+                                throw new ValidationException("Duration must be greater than 0 and less than or equal to 200. Please try again.");
                             }
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid time format. Please use HH:mm.");
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
                         }
-                    }
 
-                    System.out.println("Please enter duration (in minutes): ");
-                    int duration = sc.nextInt();
-                    sc.nextLine();
-
-                    if (duration <= 0 || duration > 200) {
-                        System.out.println("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                        controller.addShowtime(screenId, movieId, showtimeDate, startTime, duration);
+                        System.out.println("\nShowtime added successfully!");
+                        invalidOption = false;
                         break;
                     }
-
-                    controller.addShowtime(screenId, movieId, showtimeDate, startTime, duration);
-                    System.out.println("\nShowtime added successfully!");
-                    invalidOption = false;
-                    break;
-                }
-                case "2": { // Update Showtime
-                    controller.displayShowtimesStaff();
-                    System.out.println("\nPlease enter the ID of the showtime you want to update: ");
-                    int id = sc.nextInt();
-                    sc.nextLine();
-
-                    if (!controller.doesShowtimeExist(id)) {
-                        System.out.println("Showtime ID does not exist. Please try again.");
-                        break;
-                    }
-
-                    if (controller.hasBookingsForShowtime(id)) {
-                        System.out.println("Cannot update a showtime with existing bookings. Please try again.");
-                        break;
-                    }
-
-                    System.out.println("Please enter new screen ID: ");
-                    int newScreenId = sc.nextInt();
-                    sc.nextLine();
-
-                    if (!controller.doesScreenExist(newScreenId)) {
-                        System.out.println("Screen ID does not exist. Please try again.");
-                        break;
-                    }
-
-                    System.out.println("Please enter new movie title: ");
-                    String title = sc.nextLine();
-
-                    int newMovieId = controller.findMovieIdByTitle(title);
-                    if (newMovieId == -1) {
-                        System.out.println("Movie title does not exist. Please try again.");
-                        break;
-                    }
-
-                    LocalDate newShowtimeDate = null;
-                    boolean invalidDate = true;
-                    while (invalidDate) {
-                        System.out.println("Please enter a new date (dd-MM-yyyy): ");
-                        String date = sc.nextLine();
+                    case "2": { // Update Showtime
+                        controller.displayShowtimesStaff();
+                        System.out.println("\nPlease enter the ID of the showtime you want to update: ");
+                        int id = sc.nextInt();
+                        sc.nextLine();
 
                         try {
-                            newShowtimeDate = LocalDate.parse(date, dateFormatter);
-                            if (newShowtimeDate.isBefore(LocalDate.now())) {
-                                System.out.println("Date must be in the future. Please try again.");
-                            } else {
-                                invalidDate = false;
+                            if (!controller.doesShowtimeExist(id)) {
+                                throw new ValidationException("No showtime found with that ID. Please try again.");
+                            } else if (controller.hasBookingsForShowtime(id)) {
+                                throw new BusinessLogicException("Cannot update a showtime with existing bookings. Please try again.");
                             }
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                        } catch (ValidationException | BusinessLogicException e) {
+                            System.out.println(e.getMessage());
+                            break;
                         }
-                    }
 
-                    LocalTime newStartTime = null;
-                    boolean invalidTime = true;
-                    while (invalidTime) {
-                        System.out.println("Please enter a new starting time (HH:mm): ");
-                        String time = sc.nextLine();
+                        System.out.println("Please enter new screen ID: ");
+                        int newScreenId = sc.nextInt();
+                        sc.nextLine();
 
                         try {
-                            newStartTime = LocalTime.parse(time, timeFormatter);
-                            if (newStartTime.isBefore(LocalTime.of(6, 0)) || newStartTime.isAfter(LocalTime.of(23, 59))) {
-                                System.out.println("Start time must be between 06:00 and 24:00. Please try again.");
-                            } else {
-                                invalidTime = false;
+                            if (!controller.doesScreenExist(newScreenId)) {
+                                throw new ValidationException("No screen found with that ID. Please try again.");
                             }
-                        } catch (DateTimeParseException e) {
-                            System.out.println("Invalid time format. Please use HH:mm.");
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
                         }
-                    }
 
-                    System.out.println("Please enter a new duration (in minutes): ");
-                    int newDuration = sc.nextInt();
-                    sc.nextLine();
+                        System.out.println("Please enter new movie title: ");
+                        String title = sc.nextLine();
 
-                    if (newDuration <= 0 || newDuration > 200) {
-                        System.out.println("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                        int newMovieId = controller.findMovieIdByTitle(title);
+                        try {
+                            if (newMovieId == -1) {
+                                throw new ValidationException("No movie found with that title. Please try again.");
+                            }
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
+                        }
+
+                        LocalDate newShowtimeDate = null;
+                        boolean invalidDate = true;
+                        while (invalidDate) {
+                            System.out.println("Please enter a new date (dd-MM-yyyy): ");
+                            String date = sc.nextLine();
+
+                            try {
+                                newShowtimeDate = LocalDate.parse(date, dateFormatter);
+                                if (newShowtimeDate.isBefore(LocalDate.now())) {
+                                    throw new ValidationException("Date must be in the future. Please try again.");
+                                } else {
+                                    invalidDate = false;
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid date format. Please use dd-MM-yyyy.");
+                            }
+                        }
+
+                        LocalTime newStartTime = null;
+                        boolean invalidTime = true;
+                        while (invalidTime) {
+                            System.out.println("Please enter a new starting time (HH:mm): ");
+                            String time = sc.nextLine();
+
+                            try {
+                                newStartTime = LocalTime.parse(time, timeFormatter);
+                                if (newStartTime.isBefore(LocalTime.of(6, 0)) || newStartTime.isAfter(LocalTime.of(23, 59))) {
+                                    throw new ValidationException("Start time must be between 06:00 and 24:00. Please try again.");
+                                } else {
+                                    invalidTime = false;
+                                }
+                            } catch (ValidationException e) {
+                                System.out.println(e.getMessage());
+                            } catch (DateTimeParseException e) {
+                                System.out.println("Invalid time format. Please use HH:mm.");
+                            }
+                        }
+
+                        System.out.println("Please enter a new duration (in minutes): ");
+                        int newDuration = sc.nextInt();
+                        sc.nextLine();
+
+                        try {
+                            if (newDuration <= 0 || newDuration > 200) {
+                                throw new ValidationException("Duration must be greater than 0 and less than or equal to 200. Please try again.");
+                            }
+                        } catch (ValidationException e) {
+                            System.out.println(e.getMessage());
+                            break;
+                        }
+
+                        controller.updateShowtime(id, newScreenId, newMovieId, newShowtimeDate, newStartTime, newDuration);
+                        System.out.println("\nShowtime updated successfully!");
+                        invalidOption = false;
                         break;
                     }
+                    case "3": { // Delete Showtime
+                        controller.displayShowtimesStaff();
+                        System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
+                        int id = sc.nextInt();
+                        sc.nextLine();
 
-                    controller.updateShowtime(id, newScreenId, newMovieId, newShowtimeDate, newStartTime, newDuration);
-                    System.out.println("\nShowtime updated successfully!");
-                    invalidOption = false;
-                    break;
-                }
-                case "3": { // Delete Showtime
-                    controller.displayShowtimesStaff();
-                    System.out.println("\nPlease enter the ID of the showtime you want to delete: ");
-                    int id = sc.nextInt();
-                    sc.nextLine();
+                        try {
+                            if (!controller.doesShowtimeExist(id)) {
+                                throw new ValidationException("No showtime found with that ID. Please try again.");
+                            } else if (controller.hasBookingsForShowtime(id)) {
+                                throw new BusinessLogicException("Cannot delete a showtime with existing bookings. Please try again.");
+                            }
+                        } catch (ValidationException | BusinessLogicException e) {
+                            System.out.println(e.getMessage());
+                            break;
+                        }
 
-                    if (!controller.doesShowtimeExist(id)) {
-                        System.out.println("Showtime ID does not exist. Please try again.");
+                        controller.deleteShowtime(id);
+                        System.out.println("\nShowtime deleted successfully!");
+                        invalidOption = false;
                         break;
                     }
-
-                    if (controller.hasBookingsForShowtime(id)) {
-                        System.out.println("Cannot delete a showtime with existing bookings. Please try again.");
-                        break;
+                    default: {
+                        throw new ValidationException("Invalid option. Please enter a number between 1-3!");
                     }
-
-                    controller.deleteShowtime(id);
-                    System.out.println("\nShowtime deleted successfully!");
-                    invalidOption = false;
-                    break;
                 }
-                default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
-                    break;
-                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
     }
@@ -1118,31 +1247,34 @@ public class ConsoleApp {
             controller.staffMenu();
             String option = sc.nextLine();
 
-            switch (option) {
-                case "1": {
-                    //modify Movie
-                    this.modifyMovie(loggedStaff);
-                    break;
+            try {
+                switch (option) {
+                    case "1": {
+                        //modify Movie
+                        this.modifyMovie(loggedStaff);
+                        break;
+                    }
+                    case "2": {
+                        //modify Showtime
+                        this.modifyShowtime(loggedStaff);
+                        break;
+                    }
+                    case "3": {
+                        //modify Screen
+                        this.modifyScreen(loggedStaff);
+                        break;
+                    }
+                    case "4": {
+                        //back
+                        continueLoop = false;
+                        break;
+                    }
+                    default: {
+                        throw new ValidationException("Invalid option. Please enter a number between 1-4!");
+                    }
                 }
-                case "2": {
-                    //modify Showtime
-                    this.modifyShowtime(loggedStaff);
-                    break;
-                }
-                case "3": {
-                    //modify Screen
-                    this.modifyScreen(loggedStaff);
-                    break;
-                }
-                case "4": {
-                    //back
-                    continueLoop = false;
-                    break;
-                }
-                default: {
-                    System.out.println("Invalid input. Please enter a number between 1-3!");
-                    break;
-                }
+            } catch (ValidationException e) {
+                System.out.println(e.getMessage());
             }
         }
     }

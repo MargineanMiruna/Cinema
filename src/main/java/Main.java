@@ -15,8 +15,8 @@ import java.sql.SQLException;
 class Main {
     public static void main(String[] args) {
         Connection connection;
-        //final String DB_URL = "jdbc:sqlite:D:/Facultate/Semestrul3/MAP/Cinema-Management-Project/cinemaDB.db";
-        final String DB_URL = "jdbc:sqlite:C:/Users/aleol/Facultate/Sem3/FP/Cinema-Management-Project/cinemaDB.db";
+        final String DB_URL = "jdbc:sqlite:D:/Facultate/Semestrul3/MAP/Cinema-Management-Project/cinemaDB.db";
+        //final String DB_URL = "jdbc:sqlite:C:/Users/aleol/Facultate/Sem3/FP/Cinema-Management-Project/cinemaDB.db";
 
         try {
             connection = DriverManager.getConnection(DB_URL, "user", "password");
