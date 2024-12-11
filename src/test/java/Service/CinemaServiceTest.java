@@ -930,6 +930,22 @@ void getShowtimeInMemory() {
         assertEquals(newStartDate, fetchedMembership.getStartDate());
         assertEquals(newEndDate, fetchedMembership.getEndDate());
     }
+    @Test
+    void testUpdatePremiumMembershipInMemory2() {
+        PremiumMembership originalMembership = new PremiumMembership(1, 1, LocalDate.of(2023, 1, 1), LocalDate.of(2024, 1, 1));
+        premiumMembershipRepoInMemory.add(originalMembership);
+
+        cinemaServiceInMemory.updatePremiumMembership(1, 1, LocalDate.of(2023, 6, 1), LocalDate.of(2024, 6, 1));
+
+        PremiumMembership updatedMembership = premiumMembershipRepoInMemory.getAll().get(1);
+
+        assertNotNull(updatedMembership);
+        assertEquals(1, updatedMembership.getId());
+        assertEquals(1, updatedMembership.getCustomerId());
+        assertEquals(LocalDate.of(2023, 6, 1), updatedMembership.getStartDate());
+        assertEquals(LocalDate.of(2024, 6, 1), updatedMembership.getEndDate());
+    }
+
 
 
     @Test
@@ -1271,6 +1287,70 @@ void getShowtimeInMemory() {
 
         assertEquals(108.0, discountedPrice, 0.01);
     }
+
+    @Test
+    void testCalculateDiscountedPriceWithPremiumMembership() {
+        Ticket ticket1 = new Ticket(1, 1, 1, 1, 50.0);
+        Ticket ticket2 = new Ticket(2, 1, 1, 2, 60.0);
+
+        ticketRepoInMemory.add(ticket1);
+        ticketRepoInMemory.add(ticket2);
+
+        List<Integer> ticketIds = Arrays.asList(1, 2);
+        Booking booking = new Booking(1, 1, 1, LocalDate.of(2024, 1, 1), 2, ticketIds);
+        bookingRepoInMemory.add(booking);
+
+        PremiumMembership membership = new PremiumMembership(1, 1, LocalDate.of(2023, 1, 1), LocalDate.of(2025, 1, 1));
+        premiumMembershipRepoInMemory.add(membership);
+
+        Customer customer = new Customer(1, "Alice", "Smith", "alice.smith@example.com", true, 1);
+        customerRepoInMemory.add(customer);
+
+        double discountedPrice = cinemaServiceInMemory.calculateDiscountedPrice(1, 1);
+
+        assertEquals(88.0, discountedPrice, 0.01);
+    }
+
+    @Test
+    void testCalculateDiscountedPriceWithoutMembership() {
+        Ticket ticket1 = new Ticket(1, 1, 1, 1, 30.0);
+        Ticket ticket2 = new Ticket(2, 1, 1, 2, 40.0);
+
+        ticketRepoInMemory.add(ticket1);
+        ticketRepoInMemory.add(ticket2);
+
+        List<Integer> ticketIds = Arrays.asList(1, 2);
+        Booking booking = new Booking(1, 1, 1, LocalDate.of(2024, 1, 1), 2, ticketIds);
+        bookingRepoInMemory.add(booking);
+
+        Customer customer = new Customer(1, "Bob", "Johnson", "bob.johnson@example.com", false, 0);
+        customerRepoInMemory.add(customer);
+
+        double discountedPrice = cinemaServiceInMemory.calculateDiscountedPrice(1, 1);
+
+        assertEquals(70.0, discountedPrice, 0.01);
+    }
+
+    @Test
+    void testCalculateDiscountedPriceWithInvalidMembershipType() {
+        Ticket ticket1 = new Ticket(1, 1, 1, 1, 25.0);
+        Ticket ticket2 = new Ticket(2, 1, 1, 2, 35.0);
+
+        ticketRepoInMemory.add(ticket1);
+        ticketRepoInMemory.add(ticket2);
+
+        List<Integer> ticketIds = Arrays.asList(1, 2);
+        Booking booking = new Booking(1, 1, 1, LocalDate.of(2024, 1, 1), 2, ticketIds);
+        bookingRepoInMemory.add(booking);
+
+        Customer customer = new Customer(1, "Charlie", "Brown", "charlie.brown@example.com", true, 3); // Invalid membership type
+        customerRepoInMemory.add(customer);
+
+        double discountedPrice = cinemaServiceInMemory.calculateDiscountedPrice(1, 1);
+
+        assertEquals(60.0, discountedPrice, 0.01);
+    }
+
 
 
     @Test
@@ -1650,5 +1730,27 @@ void getShowtimeInMemory() {
         boolean resultForShowtime3 = cinemaServiceInMemory.hasBookingsForShowtime(3);
         assertFalse(resultForShowtime3);
     }
+    @Test
+    void testHasAssignedShowtimesForMovie() {
+        Movie movie1 = new Movie(1, "Action Movie", true, "Action", LocalDate.of(2024, 1, 1));
+        Movie movie2 = new Movie(2, "Comedy Movie", true, "Comedy", LocalDate.of(2024, 1, 1));
+        Movie movie3 = new Movie(3, "Drama Movie", true, "Drama", LocalDate.of(2024, 1, 1));
+
+        movieRepoInMemory.add(movie1);
+        movieRepoInMemory.add(movie2);
+        movieRepoInMemory.add(movie3);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.now(), LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 2, 1, LocalDate.now(), LocalTime.of(16, 0), 90, List.of());
+
+        showtimeRepoInMemory.add(showtime1);
+        showtimeRepoInMemory.add(showtime2);
+
+        assertTrue(cinemaServiceInMemory.hasAssignedShowtimesForMovie(1));
+        assertFalse(cinemaServiceInMemory.hasAssignedShowtimesForMovie(2));
+        assertFalse(cinemaServiceInMemory.hasAssignedShowtimesForMovie(3));
+        assertFalse(cinemaServiceInMemory.hasAssignedShowtimesForMovie(999));
+    }
+
 
 }

@@ -20,7 +20,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ShowtimeDBRepositoryTest {
     Connection connection;
-    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDB.db";
+    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDBTest.db";
     ShowtimeDBRepository showtimeRepo;
     SeatDBRepository seatRepo;
     Showtime showtime;

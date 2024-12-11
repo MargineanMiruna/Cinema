@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PremiumMembershipDBRepositoryTest {
     Connection connection;
-    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDB.db";
+    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDBTest.db";
     PremiumMembershipDBRepository premiumMembershipRepo;
     PremiumMembership premiumMembership1;
     PremiumMembership premiumMembership2;

@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class MovieDBRepositoryTest {
     Connection connection;
-    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDB.db";
+    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDBTest.db";
     MovieDBRepository movieRepo;
     Movie movie1;
     Movie movie2;

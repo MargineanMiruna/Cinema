@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class BookingDBRepositoryTest {
     Connection connection;
-    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDB.db";
+    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDBTest.db";
     BookingDBRepository bookingRepo;
     TicketDBRepository ticketRepo;
     Booking booking;

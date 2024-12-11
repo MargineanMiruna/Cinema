@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class ScreenDBRepositoryTest {
     Connection connection;
-    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDB.db";
+    final String DB_URL = "jdbc:sqlite:" + System.getProperty("user.dir") + "/src/test/java/Files/cinemaDBTest.db";
     ScreenDBRepository screenRepo;
     SeatDBRepository seatRepo;
     Screen screen;
