@@ -103,7 +103,7 @@ public class Controller {
      */
     public void customerMenu() {
         System.out.println("""
-                =================Menu=================
+                \n=================Menu=================
                 1. View showtimes
                 2. Create a booking
                 3. Create a membership
@@ -119,7 +119,7 @@ public class Controller {
     public void displayShowtimesFilteredByPg(Customer customer) {
         Map<Integer, Showtime> showtimes = cinemaService.filterShowtimesByPg(customer);
 
-        for(Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
+        for (Map.Entry<Integer, Showtime> entry : showtimes.entrySet()) {
             Movie movie = cinemaService.getMovie(entry.getValue().getMovieId());
             System.out.println("\n======================================");
             System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration()+ " min");
@@ -193,7 +193,11 @@ public class Controller {
         }
     }
 
-
+    /**
+     * Displays total price without and with discount for a booking.
+     * @param loggedCustomerId The ID of the customer who made the booking.
+     * @param currentBookingId The ID of the booking containing the tickets.
+     */
     public void calculateTotalPrice(int loggedCustomerId, int currentBookingId) {
         double totalPrice = cinemaService.calculateTotalPrice(currentBookingId);
         double discountedPrice = cinemaService.calculateDiscountedPrice(loggedCustomerId, currentBookingId);
@@ -208,7 +212,7 @@ public class Controller {
      */
     public void staffMenu() {
         System.out.println("""
-                =================Menu=================
+                \n=================Menu=================
                 1. Modify movie
                 2. Modify showtime
                 3. Modify screen
@@ -440,7 +444,6 @@ public class Controller {
             System.out.println("\n======================================");
             System.out.println("\nShowtime " + entry.getKey() + ":\n\tMovie details:\n\t\tTitle: " + movie.getTitle() + "\n\t\tGenre: " + movie.getGenre() + "\n\t\tRealease date: " + movie.getReleaseDate() + "\n\tDate: " + entry.getValue().getDate() + "\n\tRoom " + entry.getValue().getScreenId() + "\n\tStarts at: " + entry.getValue().getStartTime() +  "\n\tDuration: " + entry.getValue().getDuration());
         }
-
     }
 
     /**

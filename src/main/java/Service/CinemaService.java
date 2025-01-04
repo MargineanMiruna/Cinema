@@ -58,7 +58,7 @@ public class CinemaService {
 
     /**
      * Calculates the age of a customer based on their birthdate.
-     * @param birthday The birth date of the customer.
+     * @param birthday The birthdate of the customer.
      * @return The age in years.
      */
     private int getAge(LocalDate birthday) {
@@ -572,18 +572,35 @@ public class CinemaService {
     }
 
     /**
+     * Returns a map of showtimes that are available to watch in the future.
+     * If the showtime date is in the past, it is removed from the map.
+     * @return a map of showtimes available.
+     */
+    public Map<Integer, Showtime> removePastShowtimes() {
+        Map<Integer, Showtime> allShowtimes = showtimeRepo.getAll();
+
+        Map<Integer, Showtime> futureShowtimes = new HashMap<>();
+        for(Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
+            if(entry.getValue().getDate().isAfter(LocalDate.now()) || (entry.getValue().getDate().isEqual(LocalDate.now())&&entry.getValue().getStartTime().isAfter(LocalTime.now().plusMinutes(10))))
+                futureShowtimes.put(entry.getKey(), entry.getValue());
+        }
+
+        return futureShowtimes;
+    }
+
+    /**
      * Returns a list of showtimes that the customer can watch depending on their age status.
      * If the customer is underaged, only non-PG movies are returned.
      * @param customer the customer whose showtimes to display
      * @return a map of showtimes available for the customer
      */
     public Map<Integer, Showtime> filterShowtimesByPg(Customer customer) {
-        Map<Integer, Showtime> unfilteredShowtimes = showtimeRepo.getAll();
+        Map<Integer, Showtime> unfilteredShowtimes = this.removePastShowtimes();
 
         if(customer.getUnderaged()) {
             Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
             for(Map.Entry<Integer, Showtime> entry : unfilteredShowtimes.entrySet()) {
-                if(!movieRepo.read(entry.getValue().getMovieId()).getPg() && (entry.getValue().getDate().isAfter(LocalDate.now()) || (entry.getValue().getDate().isBefore(LocalDate.now())&&entry.getValue().getStartTime().isAfter(LocalTime.now().plusMinutes(10)))))
+                if(!movieRepo.read(entry.getValue().getMovieId()).getPg())
                     filteredShowtimes.put(entry.getKey(), entry.getValue());
             }
 
@@ -687,7 +704,6 @@ public class CinemaService {
         }
     }
 
-
     /**
      * Deletes all showtimes associated with a given screen ID.
      * @param screenId the ID of the screen for which to delete all related showtimes
@@ -749,7 +765,7 @@ public class CinemaService {
     }
 
     /**
-     * Terminates memberships that have expired ( 30 days have passed since the end date).
+     * Terminates memberships that have expired (30 days have passed since the start date).
      */
     public void terminateMemberships() {
         Map<Integer, BasicMembership> basicMembershipMap = basicMembershipRepo.getAll();
@@ -786,7 +802,6 @@ public class CinemaService {
             }
         }
     }
-
 
     /**
      * Filters and retrieves a list of seat numbers based on the specified seat type for a given showtime.
@@ -848,7 +863,6 @@ public class CinemaService {
         }
 
         return sortedShowtimes;
-
     }
 
     /**
@@ -864,8 +878,6 @@ public class CinemaService {
         int movieId = findMovieIdByTitle(movieTitle);
         Map<Integer, Showtime> allShowtimes = filterShowtimesByPg(customer);
         Map<Integer, Showtime> filteredShowtimes = new HashMap<>();
-
-
 
         for (Map.Entry<Integer, Showtime> entry : allShowtimes.entrySet()) {
             if (entry.getValue().getMovieId() == movieId) {

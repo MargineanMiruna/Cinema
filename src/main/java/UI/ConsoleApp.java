@@ -60,7 +60,7 @@ public class ConsoleApp {
                         boolean continueLoop2 = true;
                         while (continueLoop2) {
                             System.out.println("""
-                                    ======================================
+                                    \n======================================
                                     Please choose an option:
                                     1. Log in
                                     2. Sign up
@@ -99,7 +99,7 @@ public class ConsoleApp {
                         boolean continueLoop3 = true;
                         while (continueLoop3) {
                             System.out.println("""
-                                    ======================================
+                                    \n======================================
                                     Please choose an option:
                                     1. Log in
                                     2. Sign up
