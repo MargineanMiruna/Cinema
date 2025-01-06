@@ -19,7 +19,8 @@ This project brings together the convenience of digital booking with the efficie
 
 *UML diagram*
 
-![UML (4)](https://github.com/user-attachments/assets/533e99a9-d940-4cd7-ae7a-77e8a2a3def7)
+
+![UMLDiagramm](https://github.com/user-attachments/assets/70b54f58-5e76-44f3-82c3-9e0649872e92)
 
 
 
