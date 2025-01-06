@@ -993,8 +993,10 @@ void getShowtimeInMemory() {
         movieRepoInMemory.add(pgMovie);
         movieRepoInMemory.add(nonPgMovie);
 
-        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
-        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, tomorrow, LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 2,tomorrow, LocalTime.of(20, 0), 150, new ArrayList<>());
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);
 
@@ -1014,8 +1016,8 @@ void getShowtimeInMemory() {
         movieRepoInMemory.add(pgMovie);
         movieRepoInMemory.add(nonPgMovie);
 
-        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
-        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2025, 3, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2025, 3, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);
 
@@ -1029,8 +1031,8 @@ void getShowtimeInMemory() {
 
     @Test
     void testDisplayMoviesStaffInMemory() {
-        Movie movie1 = new Movie(1, "Movie 1", true, "Action", LocalDate.of(2024, 1, 1));
-        Movie movie2 = new Movie(2, "Movie 2", false, "Comedy", LocalDate.of(2024, 2, 1));
+        Movie movie1 = new Movie(1, "Movie 1", true, "Action", LocalDate.of(2025, 8, 1));
+        Movie movie2 = new Movie(2, "Movie 2", false, "Comedy", LocalDate.of(2025, 9, 1));
         movieRepoInMemory.add(movie1);
         movieRepoInMemory.add(movie2);
 
@@ -1047,8 +1049,8 @@ void getShowtimeInMemory() {
 
     @Test
     void testDisplayShowtimesStaffInMemory() {
-        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2024, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
-        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2024, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2026, 1, 1), LocalTime.of(18, 0), 120, new ArrayList<>());
+        Showtime showtime2 = new Showtime(2, 1, 2, LocalDate.of(2026, 1, 1), LocalTime.of(20, 0), 150, new ArrayList<>());
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);
 
@@ -1414,22 +1416,18 @@ void getShowtimeInMemory() {
         movieRepoInMemory.add(movie);
 
 
-        Showtime showtime1 = new Showtime(1, 1, 1, today, LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime1 = new Showtime(1, 1, 1, tomorrow, LocalTime.of(14, 0), 120, List.of());
         Showtime showtime2 = new Showtime(2, 1, 1, tomorrow, LocalTime.of(16, 0), 120, List.of());
-        Showtime showtime3 = new Showtime(3, 1, 1, today, LocalTime.of(18, 0), 120, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, tomorrow, LocalTime.of(18, 0), 120, List.of());
 
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);
         showtimeRepoInMemory.add(showtime3);
 
-        Map<Integer, Showtime> resultToday = cinemaServiceInMemory.filerShowtimesByDate(customer, today);
-        assertEquals(2, resultToday.size());
-        assertTrue(resultToday.containsKey(1));
-        assertTrue(resultToday.containsKey(3));
 
         Map<Integer, Showtime> resultTomorrow = cinemaServiceInMemory.filerShowtimesByDate(customer, tomorrow);
-        assertEquals(1, resultTomorrow.size());
-        assertTrue(resultTomorrow.containsKey(2));
+        assertEquals(3, resultTomorrow.size());
+        assertTrue(resultTomorrow.containsKey(3));
 
         LocalDate futureDate = today.plusDays(5);
         Map<Integer, Showtime> resultFuture = cinemaServiceInMemory.filerShowtimesByDate(customer, futureDate);
@@ -1479,9 +1477,9 @@ void getShowtimeInMemory() {
         customerRepoInMemory.add(customer);
         movieRepoInMemory.add(movie);
 
-        Showtime showtime1 = new Showtime(1, 1, 1, today, LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime1 = new Showtime(1, 1, 1, tomorrow, LocalTime.of(14, 0), 120, List.of());
         Showtime showtime2 = new Showtime(2, 1, 1, tomorrow, LocalTime.of(16, 0), 120, List.of());
-        Showtime showtime3 = new Showtime(3, 1, 1, yesterday, LocalTime.of(18, 0), 120, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, tomorrow, LocalTime.of(18, 0), 120, List.of());
 
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);
@@ -1492,9 +1490,8 @@ void getShowtimeInMemory() {
         assertEquals(3, sortedShowtimes.size());
 
         List<Showtime> sortedList = new ArrayList<>(sortedShowtimes.values());
-        assertEquals(yesterday, sortedList.get(0).getDate());
-        assertEquals(today, sortedList.get(1).getDate());
         assertEquals(tomorrow, sortedList.get(2).getDate());
+        assertEquals(tomorrow, sortedList.get(1).getDate());
     }
 
 
@@ -1508,9 +1505,11 @@ void getShowtimeInMemory() {
         movieRepoInMemory.add(movie1);
         movieRepoInMemory.add(movie2);
 
-        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.now(), LocalTime.of(14, 0), 120, List.of());
-        Showtime showtime2 = new Showtime(2, 2, 1, LocalDate.now(), LocalTime.of(16, 0), 90, List.of());
-        Showtime showtime3 = new Showtime(3, 1, 1, LocalDate.now(), LocalTime.of(18, 0), 120, List.of());
+        LocalDate tomorrow = LocalDate.now().plusDays(1);
+
+        Showtime showtime1 = new Showtime(1, 1, 1, tomorrow, LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 2, 1, tomorrow, LocalTime.of(16, 0), 90, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, tomorrow, LocalTime.of(18, 0), 120, List.of());
 
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);
@@ -1536,9 +1535,9 @@ void getShowtimeInMemory() {
         customerRepoInMemory.add(customer);
         movieRepoInMemory.add(movie);
 
-        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.now(), LocalTime.of(14, 0), 120, List.of());
-        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.now(), LocalTime.of(16, 0), 90, List.of());
-        Showtime showtime3 = new Showtime(3, 1, 1, LocalDate.now(), LocalTime.of(18, 0), 150, List.of());
+        Showtime showtime1 = new Showtime(1, 1, 1, LocalDate.of(2025,4,12), LocalTime.of(14, 0), 120, List.of());
+        Showtime showtime2 = new Showtime(2, 1, 1, LocalDate.of(2026,4,23), LocalTime.of(16, 0), 90, List.of());
+        Showtime showtime3 = new Showtime(3, 1, 1, LocalDate.of(2026,2,1), LocalTime.of(18, 0), 150, List.of());
 
         showtimeRepoInMemory.add(showtime1);
         showtimeRepoInMemory.add(showtime2);

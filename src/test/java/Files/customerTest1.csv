@@ -1,2 +1,3 @@
 id,firstName,lastName,email,underaged,membershipId
-2,Jane,Doe,jane.doe@gamil.com,true,2
+1,John,Doe,john.doe@gamil.com,false,1
+2,John,Doe,john.doe@gamil.com,false,2
