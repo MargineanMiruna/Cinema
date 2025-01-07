@@ -1,5 +1,10 @@
 id,firstName,lastName,email,underaged,membershipId
-1,Miruna,Marginean,miruna.marginean.2018@gmail.com,false,-1
-2,Tea,Nicola,tea.nicola1104@yahoo.ro,false,-1
+1,Miruna,Marginean,miruna.marginean.2018@gmail.com,false,1
+2,Tea,Nicola,tea.nicola1104@yahoo.ro,false,3
 3,Bence,Molnar,mbence@outlook.com,true,-1
 4,Alin,Ratiu,alinratiu@yahoo.ro,false,1
+5,Daria,Zidu,daria.zidu@yahoo.com,true,2
+6,Adrian,Sorescu,adrian.sorescu@gmail.com,true,2
+7,Olivia,Damian,olivia.damian@gmail.com,false,-1
+8,Radu,Turcescu,radu.turcescu@yahoo.com,false,4
+9,Teodora,Manea,teomanea@gmail.com,true,-1
